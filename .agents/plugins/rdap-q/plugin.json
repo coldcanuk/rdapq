@@ -1,0 +1,11 @@
+{
+  "name": "rdap-q",
+  "version": "1.1.0",
+  "description": "RDAP-Q Agent Engineering Protocol plugin with progressive disclosure playbooks and calibrated scoring.",
+  "rules": [
+    "rules/AGENTS.md"
+  ],
+  "skills": [
+    "skills/rdap-q"
+  ]
+}
