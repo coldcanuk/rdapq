@@ -1,0 +1,31 @@
+flowchart TD
+    A[/rdapq task or resume/] --> B[Resolve RDAPQ_HOME]
+    B --> C[Load Relevant Memory]
+    C --> D[Load Repository State]
+    D --> E[Bootstrap / Observe]
+    E --> F[Establish Facts]
+    F --> G[Identify Unknowns]
+    G --> H[Research / Verify]
+    H --> I[Define Scope]
+    I --> J[Plan]
+    J --> K[Score Plan]
+    K --> L{Plan Gates Pass?}
+    L -- No --> M[Improve / Research]
+    M --> J
+    L -- Yes --> N[Implement Milestone]
+    N --> O[Verify]
+    O --> P[Audit]
+    P --> Q[Score Quality + Confidence]
+    Q --> R{Hard Gates Pass?}
+    R -- No, resolvable --> S[Fix]
+    S --> O
+    R -- No, blocked --> T[BLOCKED / STALLED]
+    R -- Yes --> U{Material Value Remaining?}
+    U -- Yes --> N
+    U -- No --> V[Diminishing Return Exit]
+    V --> W[Adversarial Final Audit]
+    W --> X[Memory Promotion / Invalidation]
+    X --> Y{Completion Gates Pass?}
+    Y -- No --> N
+    Y -- Yes --> Z[Merge / Cleanup]
+    Z --> AA[COMPLETE]

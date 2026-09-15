@@ -1,0 +1,26 @@
+flowchart TD
+    ENV[RDAPQ_HOME set?] -->|Yes| H[Use RDAPQ_HOME]
+    ENV -->|No| OS{Platform}
+    OS -->|Windows| W[%USERPROFILE%/.rdapq]
+    OS -->|Unix-like| U[${HOME}/.rdapq]
+
+    H --> GH[Global RDAP-Q Home]
+    W --> GH
+    U --> GH
+
+    GH --> GM[memory/]
+    GH --> PM[projects/project-id/]
+    GH --> REG[registry/]
+    GH --> SK[skills/]
+
+    REPO[Repository] --> LS[.rdapq/state/]
+
+    GM --> A[Agent]
+    PM --> A
+    LS --> A
+
+    A --> C{New Information}
+    C -->|Transient build state| LS
+    C -->|Durable reusable material fact| P[Memory Promotion Test]
+    P -->|Pass| GM2[Global or Project Memory]
+    P -->|Fail| LS2[Remain Local State]

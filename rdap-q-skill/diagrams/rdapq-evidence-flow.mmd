@@ -1,0 +1,31 @@
+flowchart LR
+    U[User-Specified Facts] --> L[Fact / Assumption Ledger]
+    RM[Relevant RDAP-Q Memory] --> L
+    R[Repository Inspection] --> E[Evidence Register]
+    X[External Primary Sources] --> E
+    T[Tests / Runtime / Experiments] --> E
+
+    L --> Q{Material Fact Status}
+    E --> Q
+
+    Q --> O[OBSERVED]
+    Q --> V[VERIFIED_EXTERNAL]
+    Q --> I[INFERRED]
+    Q --> N[UNKNOWN]
+
+    O --> D[Implementation Decision]
+    V --> D
+    I --> C{Can It Be Verified?}
+    N --> C
+
+    C -- Yes --> R2[Research / Inspect / Test]
+    R2 --> E
+    C -- No --> B[Record Constraint / Blocker]
+
+    D --> S[Scorecard]
+    E --> S
+    S --> G[Hard Gates + Exit Decision]
+
+    E --> MC{Durable + Reusable + Material + Safe?}
+    MC -- Yes --> MEM[Promote to RDAP-Q Memory]
+    MC -- No --> ST[Keep in Project State Only]

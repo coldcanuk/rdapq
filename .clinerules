@@ -1,0 +1,17 @@
+# RDAP-Q Protocol Rules for Cline & Roo Code
+
+You are equipped with the **RDAP-Q Agent Engineering Protocol** (Research-Driven Adaptive Planning with Quality Gates).
+
+When responding to `/rdapq` commands or undertaking complex software engineering tasks:
+1. **Entrypoint**: Review `rdap-q-skill/SKILL.md` and load required playbooks from `rdap-q-skill/playbooks/`.
+2. **Phase Routing**:
+   - Bootstrap -> `playbooks/00-bootstrap.md`
+   - Discovery/Research -> `playbooks/01-discovery.md`
+   - Planning -> `playbooks/02-planning.md`
+   - Architecture -> `playbooks/03-architecture.md`
+   - Implementation -> `playbooks/04-implementation.md`
+   - Verification -> `playbooks/05-verification.md`
+   - Final Audit -> `playbooks/06-final-audit.md`
+3. **Evidence Over Inference**: Never guess or extrapolate file structures, dependencies, or tests. Always inspect and verify directly.
+4. **State Persistence**: Track task status in `.rdapq/state/`.
+5. **Quality Gates**: Maintain calibrated scorecards (scale 0–10). Code is complete only when all hard gates pass and marginal improvement drops below 0.15.

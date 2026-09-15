@@ -1,0 +1,40 @@
+flowchart LR
+    CMD[/rdapq/] --> S[SKILL.md]
+    S --> P{Current Phase}
+
+    P --> B[Bootstrap]
+    P --> D[Discovery]
+    P --> PL[Planning]
+    P --> A[Architecture]
+    P --> I[Implementation]
+    P --> V[Verification]
+    P --> F[Final Audit]
+
+    EVT{Event} --> C[Constitution]
+    EVT --> SC[Scoring]
+    EVT --> G[Gates]
+    EVT --> E[Exit Logic]
+    EVT --> M[Memory Protocol]
+    EVT --> CTRL[Controller]
+
+    H[RDAPQ_HOME] --> GM[(Global / Project Memory)]
+    R[Repository] --> RS[(.rdapq/state)]
+
+    GM --> AG[Agent]
+    RS --> AG
+    S --> AG
+    B --> AG
+    D --> AG
+    PL --> AG
+    A --> AG
+    I --> AG
+    V --> AG
+    F --> AG
+    C --> AG
+    SC --> AG
+    G --> AG
+    E --> AG
+    M --> AG
+    CTRL --> AG
+
+    AG --> X[Repository / Runtime / Tools]

@@ -1,0 +1,9 @@
+# RDAP-Q Protocol Hints for Block Goose
+
+Use the RDAP-Q Agent Engineering Protocol for non-trivial software engineering tasks:
+- Skill: rdap-q-skill/SKILL.md
+- Manifest: manifest.json
+- Command: /rdapq <task>
+- Follow evidence-first verification before concluding tasks.
+- Keep execution state updated in .rdapq/state/.
+- Respect exit criteria: Stop when hard gates pass and marginal improvement is < 0.15.
