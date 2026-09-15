@@ -1,0 +1,40 @@
+{
+  "name": "rdapq",
+  "description": "RDAP-Q: Research-Driven Adaptive Planning with Quality Gates protocol for Claude Code.",
+  "owner": {
+    "name": "coldcanuk",
+    "email": "coldcanuk@users.noreply.github.com"
+  },
+  "plugins": [
+    {
+      "name": "rdap-q",
+      "version": "1.1.0",
+      "description": "Vendor-neutral engineering protocol for evidence-first software development, persistent state, calibrated 0-10 scoring, and diminishing-return exit gates.",
+      "category": "development",
+      "author": {
+        "name": "coldcanuk"
+      },
+      "homepage": "https://github.com/coldcanuk/rdapq",
+      "tags": [
+        "rdap-q",
+        "quality-gates",
+        "planning",
+        "sdlc",
+        "agent-skill",
+        "testing"
+      ],
+      "keywords": [
+        "rdap-q",
+        "adaptive-planning",
+        "quality-gates",
+        "scoring",
+        "evidence-first",
+        "diminishing-returns"
+      ],
+      "source": {
+        "type": "local",
+        "path": "./plugins/rdap-q"
+      }
+    }
+  ]
+}
