@@ -1,0 +1,25 @@
+{
+  "name": "rdap-q",
+  "version": "1.1.0",
+  "displayName": "RDAP-Q: Adaptive Planning with Quality Gates",
+  "description": "Vendor-neutral Research-Driven Adaptive Planning with Quality Gates protocol for Claude Code. Enforces evidence-first engineering, calibrated 0-10 scoring, and diminishing-return exit gates.",
+  "author": {
+    "name": "coldcanuk",
+    "url": "https://github.com/coldcanuk"
+  },
+  "homepage": "https://github.com/coldcanuk/rdapq",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coldcanuk/rdapq.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "commands": [
+    ".claude/commands/rdapq.md"
+  ],
+  "rules": [
+    "CLAUDE.md"
+  ],
+  "skills": [
+    "rdap-q-skill/SKILL.md"
+  ]
+}

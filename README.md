@@ -84,30 +84,138 @@ flowchart TD
 
 ## 📦 Marketplace & Multi-Harness Installation
 
-RDAP-Q is designed to install seamlessly through agent marketplaces, extension managers, and CLI package tools.
+RDAP-Q supports three installation paths:
+1. **[Harness Marketplace via GitHub URL](#1--marketplace-install-via-github-url)** (Direct import in Codex, Claude, Grok, Copilot, Antigravity, Goose, Cline)
+2. **[NPM / NPX](#2--install-via-npm--npx)** (Zero-install execution or global package manager)
+3. **[Universal Install Scripts](#3--universal-install-scripts)** (Shell & PowerShell)
 
 ### Supported AI Harnesses at a Glance
 
-| AI Harness | Support Type | Integration / Config | Invocation Command |
-| :--- | :--- | :--- | :--- |
-| **[OpenAI Codex](#openai-codex)** | Native Agent Protocol | `AGENTS.md` | `/rdapq <task>` |
-| **[xAI Grok](#xai-grok)** | Developer Workspace Agent | `.grok/rules.md` / `AGENTS.md` | `/rdapq <task>` |
-| **[GitHub Copilot](#github-copilot)** | Copilot Workspace & CLI | `.github/copilot-instructions.md` | `/rdapq <task>` |
-| **[Google Antigravity](#google-antigravity)** | Built-in / Custom Skill | `~/.gemini/.../skills/rdap-q/`, `GEMINI.md` | `/rdapq <task>` |
-| **[Block Goose](#block-goose)** | Goose Toolkit & Recipe | `.goosehints` / Goose Toolkit | `goose run` / `/rdapq` |
-| **[Anthropic Claude](#anthropic-claude--claude-code)** | Claude Code & MCP | `CLAUDE.md`, `.claude/commands/rdapq.md` | `/rdapq <task>` |
-| **[Cline & Roo Code](#cline--roo-code)** | VS Code Extension / Rules | `.clinerules`, `.roomodes` | `/rdapq <task>` |
+| AI Harness | Marketplace Method (GitHub URL) | NPM / CLI Setup | Primary Config | Slash Command |
+| :--- | :--- | :--- | :--- | :--- |
+| **[OpenAI Codex](#openai-codex)** | `codex skill add https://github.com/coldcanuk/rdapq` | `npx rdapq --codex` | `AGENTS.md` | `/rdapq <task>` |
+| **[Anthropic Claude](#anthropic-claude--claude-code)** | `claude plugin add https://github.com/coldcanuk/rdapq` | `npx rdapq --claude` | `CLAUDE.md` | `/rdapq <task>` |
+| **[xAI Grok](#xai-grok)** | `grok skill install https://github.com/coldcanuk/rdapq` | `npx rdapq --grok` | `.grok/rules.md` | `/rdapq <task>` |
+| **[GitHub Copilot](#github-copilot)** | `gh extension install coldcanuk/rdapq` | `npx rdapq --copilot` | `.github/copilot-instructions.md` | `/rdapq <task>` |
+| **[Google Antigravity](#google-antigravity)** | `agy skill add https://github.com/coldcanuk/rdapq` | `npx rdapq --antigravity` | `GEMINI.md` | `/rdapq <task>` |
+| **[Block Goose](#block-goose)** | `goose toolkit add https://github.com/coldcanuk/rdapq` | `npx rdapq --goose` | `.goosehints` | `goose run` / `/rdapq` |
+| **[Cline & Roo Code](#cline--roo-code)** | `npx -y @smithery/cli install coldcanuk/rdapq` | `npx rdapq --cline` | `.clinerules` | `/rdapq <task>` |
 
 ---
 
-### Universal One-Line Installer
+### 1. 🛒 Marketplace Install via GitHub URL
+
+Point your AI harness or marketplace directly to the repository URL:
+```text
+https://github.com/coldcanuk/rdapq
+```
+
+Each harness automatically reads its native manifest and bridge:
+
+- **Anthropic Claude Code:**
+  ```bash
+  # Claude Code marketplace plugin import:
+  claude plugin add https://github.com/coldcanuk/rdapq
+  # Or install slash command into ~/.claude/commands:
+  npx rdapq --claude
+  ```
+  *(Claude Code auto-discovers `.claude-plugin/plugin.json`, `CLAUDE.md`, and `.claude/commands/rdapq.md`)*
+
+- **OpenAI Codex & Agents:**
+  ```bash
+  # Import into Codex / Agent skills registry:
+  codex skill add https://github.com/coldcanuk/rdapq
+  ```
+  *(Codex reads `AGENTS.md`, `skills.json`, and `.codex/skill.json`)*
+
+- **xAI Grok:**
+  ```bash
+  # Register in Grok developer workspace:
+  grok skill install https://github.com/coldcanuk/rdapq
+  ```
+  *(Grok reads `.grok/skill.json`, `.grok/rules.md`, and `manifest.json`)*
+
+- **GitHub Copilot:**
+  ```bash
+  # GitHub CLI extension or Copilot agent import:
+  gh extension install coldcanuk/rdapq
+  ```
+  *(Copilot reads `.github/copilot-instructions.md`)*
+
+- **Google Antigravity:**
+  ```bash
+  # Antigravity skill / plugin import:
+  agy skill add https://github.com/coldcanuk/rdapq
+  # Or as a plugin bundle:
+  agy plugin install https://github.com/coldcanuk/rdapq
+  ```
+  *(Antigravity reads `plugin.json`, `GEMINI.md`, and `.agents/skills/rdap-q/`)*
+
+- **Block Goose:**
+  ```bash
+  # Install directly into Goose toolkit catalog:
+  goose toolkit add https://github.com/coldcanuk/rdapq
+  ```
+  *(Goose reads `.goosehints` and `manifest.json`)*
+
+- **Cline & Roo Code:**
+  ```bash
+  # Install via Smithery / Open VSX agent marketplace:
+  npx -y @smithery/cli install coldcanuk/rdapq
+  ```
+  *(Cline reads `.clinerules` and `.roomodes`)*
+
+---
+
+### 2. ⚡ Install via NPM / NPX
+
+RDAP-Q is available as an npm package and runnable via `npx` with zero installation required:
+
+#### Instant Setup (All 7 Harnesses):
+```bash
+# Automatically detects and configures all 7 AI harnesses:
+npx rdapq install --all
+```
+
+#### Initialize Current Project / Workspace:
+```bash
+# Drops AGENTS.md, CLAUDE.md, GEMINI.md, .clinerules, .goosehints, etc. into current directory:
+npx rdapq init
+
+# Or target a specific workspace:
+npx rdapq --repo /path/to/my-project
+```
+
+#### Check Installation Status:
+```bash
+npx rdapq status
+```
+
+#### Install Globally via NPM:
+```bash
+npm install -g rdap-q
+
+# Use the rdapq command anywhere:
+rdapq status
+rdapq init
+rdapq install --claude --copilot --cline
+```
+
+#### Add as a Project Dev Dependency:
+```bash
+npm install --save-dev rdap-q
+```
+
+---
+
+### 3. 📜 Universal Install Scripts
 
 #### Linux / macOS / WSL:
 ```bash
-# Install for ALL supported harnesses and initialize ~/.rdapq:
+# One-line fetch and install:
 curl -fsSL https://raw.githubusercontent.com/coldcanuk/rdapq/main/install.sh | bash
 
-# Or clone and run with specific target flags:
+# Or clone and run with flags:
 git clone https://github.com/coldcanuk/rdapq.git
 cd rdapq
 ./install.sh --all
@@ -121,25 +229,16 @@ cd rdapq
 .\install.ps1 -All
 ```
 
-#### Install into a Specific Project / Workspace:
-```bash
-./install.sh --repo /path/to/your/project
-```
-This deploys all configuration bridges (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.clinerules`, `.goosehints`, `.grok/rules.md`, `.github/copilot-instructions.md`, `.claude/commands/rdapq.md`) into your repository so any developer using any of the 7 harnesses gets instant RDAP-Q enforcement.
-
 ---
 
 ### Harness-Specific Setup Guides
 
 #### OpenAI Codex
 Codex and OpenAI Agents automatically ingest `AGENTS.md` at workspace root.
-1. **Repository setup:** Copy `AGENTS.md` to your repository root:
+1. **Marketplace URL:** Point Codex to `https://github.com/coldcanuk/rdapq`
+2. **NPM / CLI:**
    ```bash
-   cp AGENTS.md /path/to/project/
-   ```
-2. **Global setup:**
-   ```bash
-   ./install.sh --codex
+   npx rdapq --codex
    ```
 3. **Usage:** In Codex CLI or chat, invoke:
    ```text
@@ -148,13 +247,10 @@ Codex and OpenAI Agents automatically ingest `AGENTS.md` at workspace root.
 
 #### xAI Grok
 Grok workspace agents inspect `.grok/rules.md` and root agent manifests.
-1. **Repository setup:**
+1. **Marketplace URL:** Point Grok to `https://github.com/coldcanuk/rdapq`
+2. **NPM / CLI:**
    ```bash
-   mkdir -p .grok && cp .grok/rules.md /path/to/project/.grok/
-   ```
-2. **Global setup:**
-   ```bash
-   ./install.sh --grok
+   npx rdapq --grok
    ```
 3. **Usage:**
    ```text
@@ -163,10 +259,10 @@ Grok workspace agents inspect `.grok/rules.md` and root agent manifests.
 
 #### GitHub Copilot
 GitHub Copilot Workspace, Copilot Chat in VS Code, and Copilot CLI use repository instructions:
-1. **Repository setup:** Add `.github/copilot-instructions.md` to your repository.
-2. **Global setup:**
+1. **Marketplace URL:** Point Copilot to `https://github.com/coldcanuk/rdapq`
+2. **NPM / CLI:**
    ```bash
-   ./install.sh --copilot
+   npx rdapq --copilot
    ```
 3. **Usage:** In VS Code Copilot Chat or Copilot Workspace:
    ```text
@@ -174,26 +270,30 @@ GitHub Copilot Workspace, Copilot Chat in VS Code, and Copilot CLI use repositor
    ```
 
 #### Google Antigravity
-Google Antigravity natively loads skills through `SKILL.md` frontmatter and `GEMINI.md`:
-1. **Automatic discovery:**
+Google Antigravity natively loads skills through `SKILL.md` frontmatter, `plugin.json`, and `GEMINI.md`:
+1. **Marketplace URL:**
    ```bash
-   ./install.sh --antigravity
+   agy skill add https://github.com/coldcanuk/rdapq
    ```
-   Installs skill to `${HOME}/.gemini/antigravity-cli/skills/rdap-q/`.
-2. **Usage:** In Antigravity terminal / chat:
+2. **NPM / CLI:**
+   ```bash
+   npx rdapq --antigravity
+   ```
+3. **Usage:** In Antigravity terminal / chat:
    ```text
    /rdapq Audit cryptographic key management and add rotation tests
    ```
 
 #### Block Goose
 Goose loads toolkits and hints:
-1. **Toolkit registration:**
+1. **Marketplace URL:**
    ```bash
-   ./install.sh --goose
-   # Or add via goose toolkit:
-   goose toolkit add --path /path/to/rdapq/rdap-q-skill
+   goose toolkit add https://github.com/coldcanuk/rdapq
    ```
-2. **Workspace integration:** Include `.goosehints` in your target repository.
+2. **NPM / CLI:**
+   ```bash
+   npx rdapq --goose
+   ```
 3. **Usage:**
    ```text
    goose run "/rdapq Fix memory leak in WebSocket stream handler"
@@ -201,12 +301,14 @@ Goose loads toolkits and hints:
 
 #### Anthropic Claude / Claude Code
 Claude Code natively supports project instructions via `CLAUDE.md` and custom slash commands:
-1. **Slash command setup:**
+1. **Marketplace URL:**
    ```bash
-   ./install.sh --claude
+   claude plugin add https://github.com/coldcanuk/rdapq
    ```
-   Installs `/rdapq` command to `~/.claude/commands/rdapq.md`.
-2. **Workspace instructions:** Keep `CLAUDE.md` in your repository root.
+2. **NPM / CLI:**
+   ```bash
+   npx rdapq --claude
+   ```
 3. **Usage:** In Claude Code:
    ```text
    /rdapq Implement distributed tracing with OpenTelemetry
@@ -214,13 +316,15 @@ Claude Code natively supports project instructions via `CLAUDE.md` and custom sl
 
 #### Cline & Roo Code
 Cline and Roo Code inspect `.clinerules` in the active workspace:
-1. **Workspace integration:**
+1. **Marketplace URL:**
    ```bash
-   cp .clinerules /path/to/project/
+   npx -y @smithery/cli install coldcanuk/rdapq
    ```
-2. **Global configuration:**
+2. **NPM / CLI:**
    ```bash
-   ./install.sh --cline
+   npx rdapq --cline
+   # Or configure repo:
+   npx rdapq init
    ```
 3. **Usage:** In Cline chat:
    ```text

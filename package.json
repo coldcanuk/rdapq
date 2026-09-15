@@ -3,6 +3,11 @@
   "version": "1.1.0",
   "description": "Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) — Vendor-neutral AI agent engineering protocol & skill for Codex, Grok, Copilot, Antigravity, Goose, Claude, and Cline. Evidence-first software engineering, persistent memory, and calibrated quality gates.",
   "main": "rdap-q-skill/SKILL.md",
+  "bin": {
+    "rdapq": "./bin/rdapq.js",
+    "rdap-q": "./bin/rdapq.js",
+    "rdapq-install": "./install.sh"
+  },
   "author": "coldcanuk",
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/coldcanuk/rdapq#readme",
@@ -22,6 +27,7 @@
     "github-copilot",
     "claude-code",
     "claude-skill",
+    "claude-plugin",
     "anthropic-claude",
     "openai-codex",
     "codex-skill",
@@ -44,26 +50,30 @@
     "llm-code-quality",
     "marketplace"
   ],
-  "bin": {
-    "rdapq-install": "install.sh"
-  },
   "scripts": {
-    "install:all": "bash install.sh --all",
-    "install:claude": "bash install.sh --claude",
-    "install:cline": "bash install.sh --cline",
-    "install:copilot": "bash install.sh --copilot",
-    "install:antigravity": "bash install.sh --antigravity",
-    "install:codex": "bash install.sh --codex",
-    "install:grok": "bash install.sh --grok",
-    "install:goose": "bash install.sh --goose"
+    "start": "node bin/rdapq.js",
+    "init": "node bin/rdapq.js init",
+    "status": "node bin/rdapq.js status",
+    "install:all": "node bin/rdapq.js install --all",
+    "install:claude": "node bin/rdapq.js install --claude",
+    "install:cline": "node bin/rdapq.js install --cline",
+    "install:copilot": "node bin/rdapq.js install --copilot",
+    "install:antigravity": "node bin/rdapq.js install --antigravity",
+    "install:codex": "node bin/rdapq.js install --codex",
+    "install:grok": "node bin/rdapq.js install --grok",
+    "install:goose": "node bin/rdapq.js install --goose"
   },
   "engines": {
     "node": ">=16.0.0"
   },
   "files": [
+    "bin",
     "rdap-q-skill",
     "marketplace.json",
     "manifest.json",
+    "skills.json",
+    "agentskills.json",
+    "plugin.json",
     "install.sh",
     "install.ps1",
     "AGENTS.md",
@@ -71,6 +81,11 @@
     "GEMINI.md",
     ".clinerules",
     ".goosehints",
-    ".github/copilot-instructions.md"
+    ".claude-plugin",
+    ".claude",
+    ".github",
+    ".grok",
+    ".codex",
+    ".agents"
   ]
 }
