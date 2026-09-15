@@ -1,0 +1,88 @@
+{
+  "name": "rdap-q",
+  "version": "1.1.0",
+  "protocol_name": "RDAP-Q Agent Engineering Protocol",
+  "entrypoint": "rdap-q-skill/SKILL.md",
+  "invocation": "/rdapq",
+  "home_env": "RDAPQ_HOME",
+  "home_defaults": {
+    "windows": "%USERPROFILE%\\.rdapq",
+    "unix": "${HOME}/.rdapq"
+  },
+  "repository_state": ".rdapq/state",
+  "always_load": [
+    "rdap-q-skill/SKILL.md"
+  ],
+  "phase_load": {
+    "BOOTSTRAP": [
+      "rdap-q-skill/playbooks/00-bootstrap.md",
+      "rdap-q-skill/playbooks/07-git-worktree.md"
+    ],
+    "DISCOVERY": [
+      "rdap-q-skill/playbooks/01-discovery.md"
+    ],
+    "PLAN": [
+      "rdap-q-skill/playbooks/02-planning.md"
+    ],
+    "ARCHITECTURE": [
+      "rdap-q-skill/playbooks/03-architecture.md"
+    ],
+    "IMPLEMENT": [
+      "rdap-q-skill/playbooks/04-implementation.md"
+    ],
+    "VERIFY": [
+      "rdap-q-skill/playbooks/05-verification.md"
+    ],
+    "AUDIT": [
+      "rdap-q-skill/playbooks/06-final-audit.md",
+      "rdap-q-skill/playbooks/07-git-worktree.md"
+    ]
+  },
+  "event_load": {
+    "methodology_conflict_or_drift": [
+      "rdap-q-skill/core/constitution.md"
+    ],
+    "controller_ambiguity": [
+      "rdap-q-skill/core/controller.md"
+    ],
+    "tool_mapping": [
+      "rdap-q-skill/core/capabilities.md"
+    ],
+    "memory_read_write_invalidate": [
+      "rdap-q-skill/core/memory.md"
+    ],
+    "gate_evaluation": [
+      "rdap-q-skill/core/gates.md"
+    ],
+    "score_calculation": [
+      "rdap-q-skill/core/scoring.md"
+    ],
+    "milestone_quality_decision": [
+      "rdap-q-skill/core/scoring.md",
+      "rdap-q-skill/core/gates.md",
+      "rdap-q-skill/core/exit-logic.md"
+    ],
+    "terminal_decision": [
+      "rdap-q-skill/core/scoring.md",
+      "rdap-q-skill/core/gates.md",
+      "rdap-q-skill/core/exit-logic.md"
+    ]
+  },
+  "commands": {
+    "/rdapq": "Start or continue RDAP-Q execution on the supplied task.",
+    "/rdapq status": "Show phase, quality, confidence, gates, blockers, and iteration state.",
+    "/rdapq score": "Calculate or display the current evidence-linked scorecard.",
+    "/rdapq audit": "Run the adversarial final-audit procedure.",
+    "/rdapq resume": "Reload persistent memory/state, inspect drift, and resume safely.",
+    "/rdapq memory": "Show relevant RDAP-Q memory and its validity status.",
+    "/rdapq research": "Enter or re-enter discovery/research.",
+    "/rdapq explain": "Explain the current RDAP-Q phase/decision."
+  },
+  "terminal_states": [
+    "COMPLETE",
+    "BLOCKED",
+    "STALLED",
+    "CONSTRAINT_LIMITED",
+    "FAILED_VERIFICATION"
+  ]
+}

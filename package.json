@@ -1,0 +1,76 @@
+{
+  "name": "rdap-q",
+  "version": "1.1.0",
+  "description": "Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) — Vendor-neutral AI agent engineering protocol & skill for Codex, Grok, Copilot, Antigravity, Goose, Claude, and Cline. Evidence-first software engineering, persistent memory, and calibrated quality gates.",
+  "main": "rdap-q-skill/SKILL.md",
+  "author": "coldcanuk",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/coldcanuk/rdapq#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coldcanuk/rdapq.git"
+  },
+  "bugs": {
+    "url": "https://github.com/coldcanuk/rdapq/issues"
+  },
+  "keywords": [
+    "rdap-q",
+    "rdapq",
+    "ai-agent",
+    "agent-skills",
+    "copilot-extension",
+    "github-copilot",
+    "claude-code",
+    "claude-skill",
+    "anthropic-claude",
+    "openai-codex",
+    "codex-skill",
+    "xai-grok",
+    "grok-skill",
+    "google-antigravity",
+    "antigravity-skill",
+    "block-goose",
+    "goose-toolkit",
+    "cline",
+    "cline-rules",
+    "roo-code",
+    "quality-gates",
+    "adaptive-planning",
+    "software-engineering-protocol",
+    "evidence-first",
+    "autonomous-agent",
+    "sdlc-automation",
+    "slash-commands",
+    "llm-code-quality",
+    "marketplace"
+  ],
+  "bin": {
+    "rdapq-install": "install.sh"
+  },
+  "scripts": {
+    "install:all": "bash install.sh --all",
+    "install:claude": "bash install.sh --claude",
+    "install:cline": "bash install.sh --cline",
+    "install:copilot": "bash install.sh --copilot",
+    "install:antigravity": "bash install.sh --antigravity",
+    "install:codex": "bash install.sh --codex",
+    "install:grok": "bash install.sh --grok",
+    "install:goose": "bash install.sh --goose"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "rdap-q-skill",
+    "marketplace.json",
+    "manifest.json",
+    "install.sh",
+    "install.ps1",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    ".clinerules",
+    ".goosehints",
+    ".github/copilot-instructions.md"
+  ]
+}

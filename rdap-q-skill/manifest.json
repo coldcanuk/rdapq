@@ -1,0 +1,88 @@
+{
+  "name": "rdap-q",
+  "version": "1.1.0",
+  "protocol_name": "RDAP-Q Agent Engineering Protocol",
+  "entrypoint": "SKILL.md",
+  "invocation": "/rdapq",
+  "home_env": "RDAPQ_HOME",
+  "home_defaults": {
+    "windows": "%USERPROFILE%\\.rdapq",
+    "unix": "${HOME}/.rdapq"
+  },
+  "repository_state": ".rdapq/state",
+  "always_load": [
+    "SKILL.md"
+  ],
+  "phase_load": {
+    "BOOTSTRAP": [
+      "playbooks/00-bootstrap.md",
+      "playbooks/07-git-worktree.md"
+    ],
+    "DISCOVERY": [
+      "playbooks/01-discovery.md"
+    ],
+    "PLAN": [
+      "playbooks/02-planning.md"
+    ],
+    "ARCHITECTURE": [
+      "playbooks/03-architecture.md"
+    ],
+    "IMPLEMENT": [
+      "playbooks/04-implementation.md"
+    ],
+    "VERIFY": [
+      "playbooks/05-verification.md"
+    ],
+    "AUDIT": [
+      "playbooks/06-final-audit.md",
+      "playbooks/07-git-worktree.md"
+    ]
+  },
+  "event_load": {
+    "methodology_conflict_or_drift": [
+      "core/constitution.md"
+    ],
+    "controller_ambiguity": [
+      "core/controller.md"
+    ],
+    "tool_mapping": [
+      "core/capabilities.md"
+    ],
+    "memory_read_write_invalidate": [
+      "core/memory.md"
+    ],
+    "gate_evaluation": [
+      "core/gates.md"
+    ],
+    "score_calculation": [
+      "core/scoring.md"
+    ],
+    "milestone_quality_decision": [
+      "core/scoring.md",
+      "core/gates.md",
+      "core/exit-logic.md"
+    ],
+    "terminal_decision": [
+      "core/scoring.md",
+      "core/gates.md",
+      "core/exit-logic.md"
+    ]
+  },
+  "commands": {
+    "/rdapq": "Start or continue RDAP-Q execution on the supplied task.",
+    "/rdapq status": "Show phase, quality, confidence, gates, blockers, and iteration state.",
+    "/rdapq score": "Calculate or display the current evidence-linked scorecard.",
+    "/rdapq audit": "Run the adversarial final-audit procedure.",
+    "/rdapq resume": "Reload persistent memory/state, inspect drift, and resume safely.",
+    "/rdapq memory": "Show relevant RDAP-Q memory and its validity status.",
+    "/rdapq research": "Enter or re-enter discovery/research.",
+    "/rdapq explain": "Explain the current RDAP-Q phase/decision."
+  },
+  "terminal_states": [
+    "COMPLETE",
+    "BLOCKED",
+    "STALLED",
+    "CONSTRAINT_LIMITED",
+    "FAILED_VERIFICATION"
+  ]
+}

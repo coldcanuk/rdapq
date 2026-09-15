@@ -1,0 +1,104 @@
+{
+  "$schema": "https://raw.githubusercontent.com/agent-skills/spec/main/marketplace.schema.json",
+  "name": "rdap-q",
+  "displayName": "RDAP-Q: Adaptive Planning with Quality Gates",
+  "version": "1.1.0",
+  "protocol": "RDAP-Q Agent Engineering Protocol",
+  "summary": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and quality gates across Codex, Grok, Copilot, Antigravity, Goose, Claude, and Cline.",
+  "description": "Vendor-neutral Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) enables autonomous AI coding agents to execute non-trivial software tasks with disciplined evidence collection, deterministic phase execution, persistent project state, calibrated quality scoring (0-10 scale), and diminishing-return exit logic. Native support for OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, and Cline.",
+  "author": {
+    "name": "coldcanuk",
+    "url": "https://github.com/coldcanuk"
+  },
+  "license": "GPL-3.0-or-later",
+  "repository": "https://github.com/coldcanuk/rdapq",
+  "categories": [
+    "Software Engineering",
+    "Agent Protocols",
+    "Quality Assurance",
+    "Productivity",
+    "Developer Tools"
+  ],
+  "tags": [
+    "rdap-q",
+    "agent-skill",
+    "quality-gates",
+    "adaptive-planning",
+    "codex",
+    "grok",
+    "copilot",
+    "antigravity",
+    "goose",
+    "claude",
+    "cline",
+    "evidence-first"
+  ],
+  "entrypoint": "rdap-q-skill/SKILL.md",
+  "invocation": "/rdapq",
+  "supported_harnesses": [
+    {
+      "id": "codex",
+      "name": "OpenAI Codex / Agents",
+      "status": "supported",
+      "configuration": "AGENTS.md",
+      "marketplace_identifier": "rdapq-codex-skill"
+    },
+    {
+      "id": "grok",
+      "name": "xAI Grok",
+      "status": "supported",
+      "configuration": ".grok/rules.md",
+      "marketplace_identifier": "rdapq-grok-skill"
+    },
+    {
+      "id": "copilot",
+      "name": "GitHub Copilot",
+      "status": "supported",
+      "configuration": ".github/copilot-instructions.md",
+      "marketplace_identifier": "coldcanuk.rdapq-copilot"
+    },
+    {
+      "id": "antigravity",
+      "name": "Google Antigravity",
+      "status": "supported",
+      "configuration": "GEMINI.md",
+      "marketplace_identifier": "rdap-q"
+    },
+    {
+      "id": "goose",
+      "name": "Block Goose",
+      "status": "supported",
+      "configuration": ".goosehints",
+      "marketplace_identifier": "rdapq-goose-toolkit"
+    },
+    {
+      "id": "claude",
+      "name": "Anthropic Claude / Claude Code",
+      "status": "supported",
+      "configuration": "CLAUDE.md",
+      "marketplace_identifier": "rdapq-claude-plugin"
+    },
+    {
+      "id": "cline",
+      "name": "Cline & Roo Code",
+      "status": "supported",
+      "configuration": ".clinerules",
+      "marketplace_identifier": "coldcanuk.rdapq-cline"
+    }
+  ],
+  "commands": {
+    "/rdapq": "Execute task using RDAP-Q protocol with evidence gathering and adaptive quality gates.",
+    "/rdapq status": "Inspect current lifecycle phase, quality scorecard, confidence levels, and active gates.",
+    "/rdapq score": "Calculate or display the current calibrated 8-dimension scorecard.",
+    "/rdapq audit": "Trigger the adversarial final-audit verification checklist.",
+    "/rdapq resume": "Safely reload persistent project state and verify environment drift before continuing.",
+    "/rdapq memory": "Query durable cross-session patterns, lessons, and constraints.",
+    "/rdapq research": "Initiate structured evidence gathering and discovery for the current task.",
+    "/rdapq explain": "Provide transparent rationale for the current quality decision or state transition."
+  },
+  "links": {
+    "documentation": "https://github.com/coldcanuk/rdapq/blob/main/rdap-q-skill/README.md",
+    "specification": "https://github.com/coldcanuk/rdapq/blob/main/rdap-q-skill/SKILL.md",
+    "issues": "https://github.com/coldcanuk/rdapq/issues"
+  }
+}

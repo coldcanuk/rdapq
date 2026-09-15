@@ -1,0 +1,24 @@
+flowchart TD
+    A[Collect Evidence] --> B[Apply Evidence Caps]
+    B --> C[Score Quality Dimensions]
+    C --> D[Compute Weighted Quality]
+    D --> E[Score Confidence]
+    E --> F[Calculate Evidence Coverage]
+    F --> G[Evaluate Hard Gates]
+
+    G --> H{Any Gate Fails?}
+    H -- Yes --> I{Credible Fix?}
+    I -- Yes --> J[ITERATE]
+    I -- No --> K[BLOCKED / STALLED / FAILED]
+
+    H -- No --> L[Rank Improvements]
+    L --> M{HIGH/CRITICAL Defect?}
+    M -- Yes --> J
+    M -- No --> N{Expected ΔQ >= 0.20?}
+    N -- Yes --> J
+    N -- No --> O{Material Risk Reduction?}
+    O -- Yes --> J
+    O -- No --> P{Diminishing Return Reached?}
+    P -- No --> J
+    P -- Yes --> Q[Memory Finalization]
+    Q --> R[COMPLETE]

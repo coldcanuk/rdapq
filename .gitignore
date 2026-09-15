@@ -1,0 +1,156 @@
+# ==============================================================================
+# RDAP-Q Repository .gitignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# RDAP-Q Runtime & Execution State
+# ------------------------------------------------------------------------------
+# Ignore transient runtime state created by /rdapq execution inside workspaces
+.rdapq/state/
+.rdapq/cache/
+.rdapq/logs/
+.rdapq/sessions/
+.rdapq/*.tmp
+.rdapq/*.log
+*.rdapq.tmp
+*.rdapq.bak
+
+# Preserve gitkeep if state directories need to exist in templates
+!rdap-q-skill/state/*.md
+!rdap-q-skill/memory/*.md
+!rdap-q-skill/projects/*.md
+!rdap-q-skill/templates/*.md
+
+# ------------------------------------------------------------------------------
+# Secrets & Credentials (NEVER PERSIST OR COMMIT)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+credentials.json
+auth.json
+token.txt
+secrets.json
+*secret*
+*password*
+*api_key*
+*apikey*
+
+# ------------------------------------------------------------------------------
+# AI Agent & Harness Artifacts
+# ------------------------------------------------------------------------------
+# Claude Code / Anthropic
+.claude/history/
+.claude/sessions/
+.claude/cache/
+*.claude.json
+
+# Cline & Roo Code
+.cline/history/
+.cline/sessions/
+.roomodes.local
+.cline_history*
+
+# Goose
+.goose/
+.goosehints.local
+
+# GitHub Copilot & VS Code
+.copilot/
+.copilot-history/
+
+# OpenAI Codex & Grok
+.codex/sessions/
+.grok/sessions/
+
+# ------------------------------------------------------------------------------
+# Operating System Artifacts
+# ------------------------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.directory
+.fuse_hidden*
+.nfs*
+
+# ------------------------------------------------------------------------------
+# Editor & IDE Configurations
+# ------------------------------------------------------------------------------
+.idea/
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+.cursor/
+.windsurf/
+
+# VS Code - Ignore local user state but allow workspace team configs
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ------------------------------------------------------------------------------
+# Package Managers & Build Outputs
+# ------------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+dist/
+build/
+out/
+target/
+.turbo/
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+venv/
+.venv/
+env/
+.env/
+
+# ------------------------------------------------------------------------------
+# Temporary Files & Git Worktrees
+# ------------------------------------------------------------------------------
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+*.patch
+.worktrees/
+git-worktrees/
