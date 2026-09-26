@@ -2,7 +2,7 @@ phase: BOOTSTRAP
 do:
   - resolve home from SKILL.md; if unwritable, record that and use repo state only
   - read memory/index.md; do not bulk-load memory/ or projects/
-  - if any memory or state file exceeds caps in SKILL.md, compact first: archive overflow, mark STALE/SUPERSEDED out of the load set, rewrite the index
+  - if any memory or state file exceeds SKILL.md memory_caps, compact first: archive overflow, mark STALE/SUPERSEDED out of the load set, rewrite the index
   - if compact would require guessing, emit MEMORY_CAP, stop promoting, continue with repo state only
   - load at most 12 matching full records (project before global, ACTIVE only)
   - inspect root, status, branch, remotes, worktrees, languages, manifests, lockfiles, test, CI
