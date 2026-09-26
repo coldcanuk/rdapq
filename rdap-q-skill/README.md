@@ -1,4 +1,4 @@
-# RDAP-Q Skill v1.1.0
+# RDAP-Q Skill v1.2.0
 
 **Research-Driven Adaptive Planning with Quality Gates**
 

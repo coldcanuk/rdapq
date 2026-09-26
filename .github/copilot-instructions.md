@@ -1,6 +1,6 @@
 # GitHub Copilot Instructions — RDAP-Q Protocol
 
-This repository uses the **RDAP-Q Agent Engineering Protocol** (v1.1.0).
+This repository uses the **RDAP-Q Agent Engineering Protocol** (v1.2.0).
 
 ## Directives for GitHub Copilot
 

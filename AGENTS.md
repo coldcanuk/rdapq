@@ -1,7 +1,7 @@
 # RDAP-Q Agent Instructions (AGENTS.md)
 <!-- Compatible with OpenAI Codex, xAI Grok, and Universal Agent Frameworks -->
 
-This workspace supports and adheres to the **RDAP-Q Agent Engineering Protocol** (v1.1.0).
+This workspace supports and adheres to the **RDAP-Q Agent Engineering Protocol** (v1.2.0).
 
 ## Core Directive
 

@@ -1,6 +1,6 @@
 ---
 name: rdap-q
-version: 1.1.0
+version: 1.2.0
 title: RDAP-Q
 description: >
   Vendor-neutral Research-Driven Adaptive Planning with Quality Gates for

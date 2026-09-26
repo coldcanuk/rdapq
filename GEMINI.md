@@ -1,6 +1,6 @@
 # RDAP-Q Guidelines for Google Antigravity & Gemini
 
-This repository implements the **RDAP-Q Agent Engineering Protocol** (`v1.1.0`).
+This repository implements the **RDAP-Q Agent Engineering Protocol** (`v1.2.0`).
 
 ## Rules
 

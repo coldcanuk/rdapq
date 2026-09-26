@@ -1,6 +1,6 @@
 # RDAP-Q Protocol for Claude & Claude Code
 
-This repository integrates the **RDAP-Q Agent Engineering Protocol** (`v1.1.0`).
+This repository integrates the **RDAP-Q Agent Engineering Protocol** (`v1.2.0`).
 
 ## Activation
 

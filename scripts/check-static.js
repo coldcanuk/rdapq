@@ -1,0 +1,63 @@
+'use strict';
+
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.resolve(__dirname, '..');
+const failures = [];
+
+function read(rel) {
+  return fs.readFileSync(path.join(ROOT, rel), 'utf8');
+}
+
+function ban(rel, pattern, why) {
+  if (pattern.test(read(rel))) failures.push(`${rel}: ${why}`);
+}
+
+function need(rel, pattern, why) {
+  if (!pattern.test(read(rel))) failures.push(`${rel}: ${why}`);
+}
+
+ban('install.sh', /\brm\b/, 'wrapper must not delete user files');
+ban('install.sh', /\|\|\s*true/, 'wrapper must not hide copy failures');
+need('install.sh', /refusing a piped install/, 'wrapper must refuse curl | bash');
+need('install.ps1', /refusing a piped install/, 'wrapper must refuse irm | iex');
+ban('install.ps1', /Remove-Item/, 'wrapper must not delete user files');
+ban('rdap-q-skill/install/install-unix.sh', /rm -rf "\$TARGET\/skills\/rdap-q"/, 'must not delete the live skill before the copy succeeds');
+ban('rdap-q-skill/install/install-unix.sh', /\|\|\s*true/, 'must not hide copy failures');
+need('rdap-q-skill/install/install-unix.sh', /SKILL\.md/, 'must verify the staged skill before swapping');
+need('.gitignore', /^\.code-dr\/$/m, 'diagnostic artifacts must be ignored');
+
+const pkg = JSON.parse(read('package.json'));
+const bin = pkg.bin || {};
+if (bin['rdapq-install'] && String(bin['rdapq-install']).includes('install.sh')) {
+  failures.push('package.json bin.rdapq-install must not point at the shell script');
+}
+if (bin.rdapq !== './bin/rdapq.js' || bin['rdap-q'] !== './bin/rdapq.js') {
+  failures.push('package.json bin entries must point at bin/rdapq.js');
+}
+
+for (const rel of ['bin/rdapq.js', 'lib/installer.js', 'scripts/check-versions.js', 'scripts/check-static.js', 'scripts/materialize-skill-links.js']) {
+  const checked = spawnSync(process.execPath, ['--check', path.join(ROOT, rel)], { encoding: 'utf8' });
+  if (checked.status !== 0) {
+    failures.push(`${rel}: node --check failed\n${checked.stderr}`);
+  }
+}
+
+const pluginPath = path.join(ROOT, '.agents/plugins/rdap-q/plugin.json');
+const plugin = JSON.parse(fs.readFileSync(pluginPath, 'utf8'));
+const base = path.dirname(pluginPath);
+for (const rel of [...(plugin.rules || []), ...(plugin.skills || [])]) {
+  const resolved = path.resolve(base, rel);
+  if (!fs.existsSync(resolved)) {
+    failures.push(`.agents plugin path does not exist: ${rel} -> ${resolved}`);
+  }
+}
+
+if (failures.length) {
+  process.stderr.write(`${failures.join('\n')}\n`);
+  process.exit(1);
+}
+
+process.stdout.write('static checks ok\n');
