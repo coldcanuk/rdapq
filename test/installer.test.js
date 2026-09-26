@@ -50,7 +50,7 @@ test('bare install command still installs every harness', () => {
   const result = run(['install'], env);
   assert.equal(result.code, 0, result.err);
   assert.equal(fs.existsSync(path.join(env.CODEX_HOME, 'AGENTS.md')), true);
-  assert.equal(fs.existsSync(path.join(env.GROK_HOME, 'rules.md')), true);
+  assert.equal(fs.existsSync(path.join(env.GROK_HOME, 'skills', 'rdap-q', 'SKILL.md')), true);
   assert.equal(fs.existsSync(path.join(env.CLAUDE_HOME, 'commands', 'rdapq.md')), true);
 });
 
@@ -60,12 +60,13 @@ test('install --claude does not install the other harnesses', () => {
   assert.equal(result.code, 0, result.err);
   assert.equal(fs.existsSync(path.join(env.RDAPQ_HOME, 'skills', 'rdap-q', 'SKILL.md')), true);
   assert.equal(fs.existsSync(path.join(env.CLAUDE_HOME, 'commands', 'rdapq.md')), true);
+  assert.equal(fs.existsSync(path.join(env.CLAUDE_HOME, 'skills', 'rdap-q', 'SKILL.md')), true);
   assert.equal(fs.existsSync(path.join(env.CODEX_HOME, 'AGENTS.md')), false);
-  assert.equal(fs.existsSync(path.join(env.GROK_HOME, 'rules.md')), false);
-  assert.equal(fs.existsSync(path.join(env.COPILOT_HOME, 'rdapq-instructions.md')), false);
-  assert.equal(fs.existsSync(path.join(env.CLINE_HOME, 'rdapq.rules.md')), false);
+  assert.equal(fs.existsSync(path.join(env.GROK_HOME, 'skills', 'rdap-q', 'SKILL.md')), false);
+  assert.equal(fs.existsSync(path.join(env.COPILOT_HOME, 'copilot-instructions.md')), false);
+  assert.equal(fs.existsSync(path.join(env.CLINE_HOME, 'rules', 'rdapq.md')), false);
   assert.equal(fs.existsSync(path.join(env.GEMINI_HOME, 'antigravity-cli', 'skills', 'rdap-q', 'SKILL.md')), false);
-  assert.equal(fs.existsSync(path.join(env.GOOSE_HOME, 'toolkits', 'rdap-q', 'SKILL.md')), false);
+  assert.equal(fs.existsSync(path.join(env.GOOSE_HOME, '.goosehints')), false);
   assert.equal(fs.existsSync(path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'SKILL.md')), false);
   const pkg = require('../package.json');
   assert.match(result.out, new RegExp(`v${pkg.version.replace(/\./g, '\\.')}`));
@@ -76,7 +77,7 @@ test('rdapq-install alias defaults to install and honors selectors', () => {
   const { env } = tempLayout();
   const result = run(['--grok'], env, { invokedAs: 'rdapq-install' });
   assert.equal(result.code, 0, result.err);
-  assert.equal(fs.existsSync(path.join(env.GROK_HOME, 'rules.md')), true);
+  assert.equal(fs.existsSync(path.join(env.GROK_HOME, 'skills', 'rdap-q', 'SKILL.md')), true);
   assert.equal(fs.existsSync(path.join(env.CODEX_HOME, 'AGENTS.md')), false);
 });
 
@@ -87,16 +88,20 @@ test('install --all covers every harness and honors home overrides', () => {
   const expected = [
     path.join(env.RDAPQ_HOME, 'skills', 'rdap-q', 'SKILL.md'),
     path.join(env.GEMINI_HOME, 'antigravity-cli', 'skills', 'rdap-q', 'SKILL.md'),
+    path.join(env.GEMINI_HOME, 'config', 'skills', 'rdap-q', 'SKILL.md'),
     path.join(env.CLAUDE_HOME, 'commands', 'rdapq.md'),
-    path.join(env.CLINE_HOME, 'rdapq.rules.md'),
-    path.join(env.COPILOT_HOME, 'rdapq-instructions.md'),
+    path.join(env.CLAUDE_HOME, 'skills', 'rdap-q', 'SKILL.md'),
+    path.join(env.CLINE_HOME, 'rules', 'rdapq.md'),
+    path.join(env.COPILOT_HOME, 'copilot-instructions.md'),
+    path.join(env.COPILOT_HOME, 'skills', 'rdap-q', 'SKILL.md'),
     path.join(env.CODEX_HOME, 'AGENTS.md'),
-    path.join(env.GROK_HOME, 'rules.md'),
-    path.join(env.GOOSE_HOME, 'toolkits', 'rdap-q', 'SKILL.md'),
+    path.join(home, '.agents', 'skills', 'rdap-q', 'SKILL.md'),
+    path.join(env.GROK_HOME, 'skills', 'rdap-q', 'SKILL.md'),
+    path.join(env.GOOSE_HOME, '.goosehints'),
     path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'SKILL.md'),
   ];
   for (const file of expected) assert.equal(fs.existsSync(file), true, file);
-  assert.equal(fs.existsSync(path.join(home, '.config', 'github-copilot')), false);
+  assert.equal(fs.existsSync(path.join(home, '.copilot')), false);
   assert.equal(fs.existsSync(path.join(home, '.codex')), false);
   assert.equal(fs.existsSync(path.join(home, '.cursor')), false);
 });
@@ -138,6 +143,8 @@ test('init keeps a custom harness file unless --force, and never follows a symli
   assert.match(fs.readFileSync(path.join(repo, 'AGENTS.md.rdapq'), 'utf8'), /RDAP-Q/);
   assert.equal(fs.existsSync(path.join(repo, '.rdapq', 'state')), true);
   assert.equal(fs.existsSync(path.join(repo, '.agents', 'skills', 'rdap-q', 'SKILL.md')), true);
+  assert.equal(fs.existsSync(path.join(repo, '.claude', 'skills', 'rdap-q', 'SKILL.md')), true);
+  assert.equal(fs.existsSync(path.join(repo, '.clinerules', 'rdapq.md')), true);
   assert.equal(fs.existsSync(path.join(repo, 'CLAUDE.md')), true);
 
   const linked = path.join(repo, 'linked-target.md');

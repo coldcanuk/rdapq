@@ -1,6 +1,6 @@
 {
   "name": "rdap-q",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "protocol_name": "RDAP-Q Agent Engineering Protocol",
   "entrypoint": "SKILL.md",
   "invocation": "/rdapq",

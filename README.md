@@ -3,17 +3,17 @@
 
 [![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Protocol Version](https://img.shields.io/badge/Protocol-v1.2.2-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![Protocol Version](https://img.shields.io/badge/Protocol-v1.2.3-emerald.svg)](https://github.com/coldcanuk/rdapq)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
-[![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#openai-codex)
-[![Grok](https://img.shields.io/badge/xAI%20Grok-Supported-blue.svg)](#xai-grok)
-[![Copilot](https://img.shields.io/badge/GitHub%20Copilot-Supported-darkviolet.svg)](#github-copilot)
-[![Antigravity](https://img.shields.io/badge/Google%20Antigravity-Supported-red.svg)](#google-antigravity)
-[![Goose](https://img.shields.io/badge/Block%20Goose-Supported-teal.svg)](#block-goose)
-[![Claude](https://img.shields.io/badge/Anthropic%20Claude-Supported-coral.svg)](#anthropic-claude--claude-code)
-[![Cline](https://img.shields.io/badge/Cline%20%26%20Roo-Supported-yellow.svg)](#cline--roo-code)
-[![Cursor](https://img.shields.io/badge/Cursor-Supported-black.svg)](#cursor)
+[![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#in-harness-marketplace-installation)
+[![Grok](https://img.shields.io/badge/xAI%20Grok-Supported-blue.svg)](#in-harness-marketplace-installation)
+[![Copilot](https://img.shields.io/badge/GitHub%20Copilot-Supported-darkviolet.svg)](#in-harness-marketplace-installation)
+[![Antigravity](https://img.shields.io/badge/Google%20Antigravity-Supported-red.svg)](#in-harness-marketplace-installation)
+[![Goose](https://img.shields.io/badge/Block%20Goose-Supported-teal.svg)](#in-harness-marketplace-installation)
+[![Claude](https://img.shields.io/badge/Anthropic%20Claude-Supported-coral.svg)](#in-harness-marketplace-installation)
+[![Cline](https://img.shields.io/badge/Cline%20%26%20Roo-Supported-yellow.svg)](#in-harness-marketplace-installation)
+[![Cursor](https://img.shields.io/badge/Cursor-Supported-black.svg)](#in-harness-marketplace-installation)
 
 ---
 
@@ -29,7 +29,7 @@
   "@type": "SoftwareSourceCode",
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
@@ -68,15 +68,7 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
 - [📌 Description](#description)
 - [🚀 Overview](#overview)
 - [🧭 System Architecture & Control Loop](#system-architecture)
-- [📦 In-Harness Marketplace Installation (Recommended)](#in-harness-marketplace-installation)
-  - [xAI Grok (TUI Menu GUI & CLI)](#xai-grok-marketplace)
-  - [Anthropic Claude Code (TUI Menu GUI & CLI)](#anthropic-claude-marketplace)
-  - [Google Antigravity (Skills Palette & CLI)](#google-antigravity-marketplace)
-  - [OpenAI Codex & Agents](#openai-codex-marketplace)
-  - [Block Goose](#block-goose-marketplace)
-  - [GitHub Copilot](#github-copilot-marketplace)
-  - [Cline & Roo Code](#cline--roo-code-marketplace)
-  - [Cursor](#cursor)
+- [📦 Harness install](#in-harness-marketplace-installation)
 - [⚡ Install](#npm-npx-installation)
 - [📜 Local clone](#universal-install-scripts)
 - [🔄 Update](#update)
@@ -117,197 +109,45 @@ flowchart TD
 
 ---
 
-## <a id="in-harness-marketplace-installation"></a> 📦 In-Harness Marketplace Installation (Recommended)
+## <a id="in-harness-marketplace-installation"></a> 📦 Harness install
 
-RDAP-Q is packaged natively as a marketplace plugin across major AI coding harnesses. You can install it directly inside your harness via its **text-based TUI menu** (e.g. `/skills` or `/plugins`), or via the harness CLI by pointing to the GitHub marketplace repository `coldcanuk/rdapq`.
+This package is not in the Anthropic, xAI, or GitHub Copilot catalogs. Do not use `gh extension install`, a VS Code extension search, or `goose toolkit add`. Those commands do not install RDAP-Q.
 
-### Supported AI Harnesses at a Glance
+The supported install is `npx --yes rdap-q`. `install --<harness>` writes that harness's user files. `init` writes the project files. A harness slash command is `/rdap-q` when the client loads `SKILL.md`. `/rdapq` works where a project bridge or Claude command file is present.
 
-| AI Harness | In-Harness TUI Menu GUI | CLI Marketplace Command | Primary Config | Invocation |
+| Harness | User install | What it writes | Project install (`init`) | Invoke |
 | :--- | :--- | :--- | :--- | :--- |
-| **[xAI Grok](#xai-grok-marketplace)** | `/skills` or `/plugins` → Marketplace | `grok plugin marketplace add coldcanuk/rdapq` | `.grok/rules.md` | `/rdapq <task>` |
-| **[Anthropic Claude Code](#anthropic-claude-marketplace)** | `/plugins` → Marketplace | `claude plugin marketplace add coldcanuk/rdapq` | `CLAUDE.md` | `/rdapq <task>` |
-| **[Google Antigravity](#google-antigravity-marketplace)** | `/skills` menu palette | `agy plugin marketplace add coldcanuk/rdapq` | `GEMINI.md` | `/rdapq <task>` |
-| **[OpenAI Codex](#openai-codex-marketplace)** | `/skills` → Marketplace | `codex skill add https://github.com/coldcanuk/rdapq` | `AGENTS.md` | `/rdapq <task>` |
-| **[Block Goose](#block-goose-marketplace)** | Interactive Toolkit Selector | `goose toolkit add coldcanuk/rdapq` | `.goosehints` | `goose run` / `/rdapq` |
-| **[GitHub Copilot](#github-copilot-marketplace)** | VS Code Extensions Market | `gh extension install coldcanuk/rdapq` | `.github/copilot-instructions.md` | `/rdapq <task>` |
-| **[Cline & Roo Code](#cline--roo-code-marketplace)** | Modes & Rules GUI | `npx --yes rdap-q install --cline` | `.clinerules` | `/rdapq <task>` |
-| **[Cursor](#cursor)** | Agent chat `/` menu | `npx --yes rdap-q install --cursor` | `~/.cursor/skills/rdap-q` | `/rdap-q` or `/rdapq` |
+| **Cursor** | `--cursor` | `~/.cursor/skills/rdap-q/` | `AGENTS.md`, `.agents/skills/rdap-q/` | `/rdap-q`, or `/rdapq` after `init` |
+| **Codex** | `--codex` | `~/.codex/AGENTS.md`, `~/.agents/skills/rdap-q/` | `AGENTS.md`, `.agents/skills/rdap-q/` | `/rdap-q` |
+| **Claude Code** | `--claude` | `~/.claude/skills/rdap-q/`, `~/.claude/commands/rdapq.md` | `CLAUDE.md`, `.claude/skills/rdap-q/`, `.claude/commands/rdapq.md` | `/rdap-q` or `/rdapq` |
+| **Copilot** | `--copilot` | `~/.copilot/copilot-instructions.md`, `~/.copilot/skills/rdap-q/` | `.github/copilot-instructions.md`, `.agents/skills/rdap-q/` | instructions are always on; `/rdap-q` where skills load |
+| **Grok Build** | `--grok` | `~/.grok/skills/rdap-q/` | `.grok/rules.md` | `/rdap-q` |
+| **Antigravity** | `--antigravity` | `~/.gemini/antigravity-cli/skills/rdap-q/`, `~/.gemini/config/skills/rdap-q/` | `GEMINI.md`, `AGENTS.md`, `.agents/skills/rdap-q/` | `/rdap-q` |
+| **Goose** | `--goose` | `~/.config/goose/.goosehints` | `.goosehints` | no slash command; hints load when the Developer extension is on |
+| **Cline** | `--cline` | `~/.cline/rules/rdapq.md` | `.clinerules/rdapq.md` | rules load with the workspace; there is no marketplace entry |
 
----
+`CURSOR_HOME`, `CODEX_HOME`, `CLAUDE_HOME`, `COPILOT_HOME`, `GROK_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLINE_HOME`, and `AGENTS_HOME` override those directories.
 
-### <a id="xai-grok"></a><a id="xai-grok-marketplace"></a> 🤖 xAI Grok (TUI Menu GUI & CLI)
-
-#### Step 1: Add marketplace and install plugin
 ```bash
-grok plugin marketplace add coldcanuk/rdapq
-grok plugin install rdap-q --trust
-```
-
-#### Step 2: Enable the plugin
-```bash
-grok plugin enable rdap-q
-```
-
-#### Step 3: Or install via the in-harness Text-Based Menu GUI (TUI):
-1. In your Grok session, type `/skills` or `/plugins` to open the text-based interactive menu.
-2. Use arrow keys or `Tab` to navigate to the **Marketplace** / **Plugins** tab.
-3. Select **rdap-q**.
-4. Press `Space` to enable/install.
-5. Press `r` to reload (or start a new session).
-
-#### One-shot install from plugin path:
-```bash
-grok plugin install coldcanuk/rdapq#plugins/rdap-q --trust
-```
-
-#### Local clone:
-```bash
-git clone https://github.com/coldcanuk/rdapq.git
-grok plugin marketplace add ./rdapq
-grok plugin install rdap-q --trust
-```
-
-#### How to use in Grok:
-- Slash command: `/rdapq <task>`
-- The installed bridge loads `rdap-q-skill/SKILL.md` only when you invoke `/rdapq`. It does not turn the protocol on for every engineering task.
-
----
-
-### <a id="anthropic-claude--claude-code"></a><a id="anthropic-claude-marketplace"></a> 🎭 Anthropic Claude Code (TUI Menu GUI & CLI)
-
-#### CLI Install:
-```bash
-claude plugin marketplace add coldcanuk/rdapq
-claude plugin install rdap-q
-```
-
-#### In-Harness TUI Menu:
-1. In Claude Code, run `/plugins` or `/skills` to display the interactive plugins menu.
-2. Select **Marketplace** and choose **rdap-q**.
-3. Hit `Enter` to install and enable.
-4. Run `/rdapq <task>` in your project.
-
----
-
-### <a id="google-antigravity"></a><a id="google-antigravity-marketplace"></a> 🛸 Google Antigravity (Skills Palette & CLI)
-
-#### CLI Install:
-```bash
-# Register marketplace repository and install plugin:
-agy plugin marketplace add coldcanuk/rdapq
-agy plugin install rdap-q
-
-# Or install skill directly:
-agy skill add https://github.com/coldcanuk/rdapq
-```
-
-#### In-Harness Skills Palette:
-1. Open Antigravity and type `/skills`.
-2. Browse installed or discovered workspace skills.
-3. Select **rdap-q** to activate the engineering protocol.
-
----
-
-### <a id="openai-codex"></a><a id="openai-codex-marketplace"></a> 🧠 OpenAI Codex & Agents
-
-#### CLI Install:
-```bash
-codex skill add https://github.com/coldcanuk/rdapq
-```
-
-#### In-Harness GUI:
-1. Open Codex / ChatGPT Developer Assistant.
-2. Open `/skills` or the Agent Skills catalog.
-3. Search for **RDAP-Q** (or paste repository URL `https://github.com/coldcanuk/rdapq`).
-4. Toggle on **rdap-q** to enable evidence-first quality gating.
-
----
-
-### <a id="block-goose"></a><a id="block-goose-marketplace"></a> 🪿 Block Goose
-
-#### CLI Install:
-```bash
-goose toolkit add coldcanuk/rdapq
-```
-
-#### Interactive Session:
-1. Run `goose session`.
-2. Inspect toolkits via the session prompt.
-3. Invoke `/rdapq <task>` or `goose run "/rdapq <task>"`.
-
----
-
-### <a id="github-copilot"></a><a id="github-copilot-marketplace"></a> 🐙 GitHub Copilot
-
-#### CLI / Extension Install:
-```bash
-gh extension install coldcanuk/rdapq
-```
-
-#### VS Code In-App Marketplace:
-1. Press `Ctrl+Shift+X` (or `Cmd+Shift+X` on macOS) in VS Code.
-2. Search for Copilot Extension: **RDAP-Q**.
-3. In Copilot Chat, use `@workspace /rdapq <task>`.
-
----
-
-### <a id="cline--roo-code"></a><a id="cline--roo-code-marketplace"></a> 💻 Cline & Roo Code
-
-#### First-party install:
-```bash
-npx --yes rdap-q install --cline
-```
-
-#### Optional third-party installer:
-```bash
-# Smithery can auto-approve a remote install. Prefer the first-party command above.
-npx -y @smithery/cli install coldcanuk/rdapq
-```
-
-#### In-App Settings GUI:
-1. Open the Cline panel in VS Code.
-2. Click on **Settings** (⚙️) → **Prompts / Rules**.
-3. Import from URL: `https://github.com/coldcanuk/rdapq`.
-4. In chat, type `/rdapq <task>`.
-
----
-
-### <a id="cursor"></a> 🖱️ Cursor
-
-Cursor has no marketplace flag in this repo. It reads `AGENTS.md` and skills in `.agents/skills/` or `~/.cursor/skills/`. The skill id is `rdap-q`, so the slash command is `/rdap-q`. `/rdapq` also works when `AGENTS.md` is in the project, because that file tells the agent to load the same skill.
-
-The skill does not auto-run on every task. Cursor loads it when you invoke `/rdap-q`.
-
-#### This project
-```bash
+npx --yes rdap-q install --cursor
+npx --yes rdap-q install --codex --claude
 npx --yes rdap-q init
 ```
 
-Then open the folder in Cursor and start a new Agent chat. `init` writes `AGENTS.md` and `.agents/skills/rdap-q/`. Type `/rdap-q` or `/rdapq <task>`.
+Claude Code can also add this repository as a plugin marketplace from inside a session, because `.claude-plugin/marketplace.json` is in the repo:
 
-#### Every project on this machine
-```bash
-npx --yes rdap-q install --cursor
+```text
+/plugin marketplace add coldcanuk/rdapq
+/plugin install rdap-q@rdapq
 ```
 
-That installs the skill at `~/.cursor/skills/rdap-q/` (`CURSOR_HOME` overrides the directory). Restart Cursor, then type `/rdap-q` in Agent chat. This does not write `AGENTS.md` into other repositories. Run `init` in a repo when you also want `/rdapq` from the project bridge.
-
-From a checkout:
-
-```bash
-./install.sh --cursor
-```
-
-```powershell
-.\install.ps1 -Cursor
-```
+That is optional. It is not required for `install --claude` or `init`.
 
 ---
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 18 or newer is required. The published package is [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. The current release is **1.2.2**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
+Node.js 18 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.2.3**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -327,7 +167,7 @@ npx --yes rdap-q install --cursor
 npx --yes rdap-q install --codex --grok
 
 # This release, not whatever is tagged latest later:
-npx --yes rdap-q@1.2.2 install --claude
+npx --yes rdap-q@1.2.3 install --claude
 ```
 
 ### All 8 harnesses:
@@ -354,7 +194,7 @@ npx --yes rdap-q init --force
 npx --yes rdap-q --repo /path/to/my-project
 ```
 
-`init` writes `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.clinerules`, `.goosehints`, `.grok/rules.md`, `.github/copilot-instructions.md`, `.claude/commands/rdapq.md`, and the skill tree at `.agents/skills/rdap-q/`. Cursor reads that skill tree and `AGENTS.md` without a separate `--cursor` install.
+`init` writes `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.clinerules/rdapq.md`, `.goosehints`, `.grok/rules.md`, `.github/copilot-instructions.md`, `.claude/commands/rdapq.md`, and skill trees at `.agents/skills/rdap-q/` and `.claude/skills/rdap-q/`. Cursor, Codex, Copilot, and Antigravity read `.agents/skills`. Claude Code reads `.claude/skills`.
 
 ### Check installation status:
 ```bash
@@ -423,7 +263,7 @@ npx --yes rdap-q@latest status
 Use the same harness flags you used the first time. `--cursor` above is only an example. To stay on this release:
 
 ```bash
-npx --yes rdap-q@1.2.2 install --cursor
+npx --yes rdap-q@1.2.3 install --cursor
 ```
 
 ### Command installed globally
@@ -437,7 +277,7 @@ rdapq status
 ```bash
 cd rdapq
 git fetch origin --tags
-git checkout v1.2.2          # or: git pull origin main
+git checkout v1.2.3          # or: git pull origin main
 ./install.sh --claude        # same flags as the first install
 ./install.sh status
 ```
@@ -445,7 +285,7 @@ git checkout v1.2.2          # or: git pull origin main
 ```powershell
 cd rdapq
 git fetch origin --tags
-git checkout v1.2.2
+git checkout v1.2.3
 .\install.ps1 -Claude
 node .\bin\rdapq.js status
 ```
@@ -598,7 +438,7 @@ rdapq/
 ├── lib/installer.js              # Installer implementation
 ├── test/                         # node:test coverage for install/init/status/pack
 ├── scripts/                      # Version, static, and npm pack checks
-├── .clinerules                   # Cline & Roo Code custom rules
+├── .clinerules/rdapq.md          # Cline workspace rule
 ├── .goosehints                   # Block Goose agent hints
 ├── .claude-plugin/               # Claude Code marketplace definition
 ├── .grok-plugin/                 # xAI Grok marketplace definition

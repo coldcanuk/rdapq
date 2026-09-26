@@ -3,7 +3,7 @@
   "skills": [
     {
       "name": "rdap-q",
-      "version": "1.2.2",
+      "version": "1.2.3",
       "title": "RDAP-Q: Research-Driven Adaptive Planning with Quality Gates",
       "description": "Vendor-neutral engineering protocol for evidence-first software development, persistent state, calibrated 0-10 scoring, and diminishing-return exit gates.",
       "entrypoint": "rdap-q-skill/SKILL.md",
