@@ -3,7 +3,7 @@
 
 [![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Protocol Version](https://img.shields.io/badge/Protocol-v1.2.3-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![Protocol Version](https://img.shields.io/badge/Protocol-v1.2.4-emerald.svg)](https://github.com/coldcanuk/rdapq)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
 [![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#in-harness-marketplace-installation)
@@ -29,7 +29,7 @@
   "@type": "SoftwareSourceCode",
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
@@ -148,7 +148,7 @@ That is optional. It is not required for `install --claude` or `init`.
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 18 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.2.3**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
+Node.js 18 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.2.4**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -168,7 +168,7 @@ npx --yes rdap-q install --cursor
 npx --yes rdap-q install --codex --grok
 
 # This release, not whatever is tagged latest later:
-npx --yes rdap-q@1.2.3 install --claude
+npx --yes rdap-q@1.2.4 install --claude
 ```
 
 ### All 8 harnesses:
@@ -264,7 +264,7 @@ npx --yes rdap-q@latest status
 Use the same harness flags you used the first time. `--cursor` above is only an example. To stay on this release:
 
 ```bash
-npx --yes rdap-q@1.2.3 install --cursor
+npx --yes rdap-q@1.2.4 install --cursor
 ```
 
 ### Command installed globally
@@ -278,7 +278,7 @@ rdapq status
 ```bash
 cd rdapq
 git fetch origin --tags
-git checkout v1.2.3          # or: git pull origin main
+git checkout v1.2.4          # or: git pull origin main
 ./install.sh --claude        # same flags as the first install
 ./install.sh status
 ```
@@ -286,7 +286,7 @@ git checkout v1.2.3          # or: git pull origin main
 ```powershell
 cd rdapq
 git fetch origin --tags
-git checkout v1.2.3
+git checkout v1.2.4
 .\install.ps1 -Claude
 node .\bin\rdapq.js status
 ```

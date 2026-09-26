@@ -10,8 +10,10 @@ prompt that a local model can read. Exit 0 when every claim still matches,
 from __future__ import annotations
 
 import argparse
+import hashlib
+import ipaddress
 import json
-import ssl
+import socket
 import sys
 import time
 import urllib.error
@@ -28,14 +30,65 @@ TIMEOUT = 25
 REDIRECTS = (301, 302, 303, 307, 308)
 
 
+class RefuseAutoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code, msg, headers, fp)
+
+
+OPENER = urllib.request.build_opener(RefuseAutoRedirect)
+
+
+def url_refusal(url: str) -> str | None:
+    """Refuse anything a weekly cron on a home server should not request."""
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or parsed.username or parsed.password:
+        return "only https URLs without credentials are fetched"
+    host = (parsed.hostname or "").lower().rstrip(".")
+    if not host:
+        return "missing host"
+    if host == "localhost" or host.endswith(".local") or host.endswith(".internal"):
+        return "local hostname refused"
+    try:
+        literal = ipaddress.ip_address(host)
+        addresses = [literal]
+    except ValueError:
+        try:
+            answers = socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)
+        except socket.gaierror as error:
+            return f"dns failed: {error}"
+        addresses = []
+        for answer in answers:
+            try:
+                addresses.append(ipaddress.ip_address(answer[4][0]))
+            except ValueError:
+                return "unreadable address"
+    for ip in addresses:
+        if any([
+            ip.is_private,
+            ip.is_loopback,
+            ip.is_link_local,
+            ip.is_reserved,
+            ip.is_multicast,
+            ip.is_unspecified,
+        ]):
+            return f"refusing non-public address {ip}"
+    return None
+
+
 def fetch(url: str) -> tuple[str, str, str]:
     current = url
     last_error = "no response"
     for _ in range(6):
+        refusal = url_refusal(current)
+        if refusal:
+            return current, refusal, ""
         req = urllib.request.Request(current, headers={"User-Agent": USER_AGENT})
         try:
-            with urllib.request.urlopen(req, timeout=TIMEOUT, context=ssl.create_default_context()) as response:
+            with OPENER.open(req, timeout=TIMEOUT) as response:
                 final = response.geturl()
+                final_refusal = url_refusal(final)
+                if final_refusal:
+                    return final, final_refusal, ""
                 body = response.read(MAX_BYTES + 1)
                 if len(body) > MAX_BYTES:
                     body = body[:MAX_BYTES]
@@ -44,7 +97,7 @@ def fetch(url: str) -> tuple[str, str, str]:
             location = error.headers.get("Location") if error.headers else None
             if error.code in REDIRECTS and location:
                 current = urljoin(current, location)
-                last_error = f"HTTP {error.code} -> {current}"
+                last_error = f"HTTP {error.code}"
                 continue
             return current, f"HTTP {error.code}", ""
         except Exception as error:  # noqa: BLE001 - report the network failure, do not crash the sweep
@@ -64,6 +117,13 @@ def load_cache(path: Path, max_age: int, refresh: bool) -> dict | None:
     if age > max_age:
         return None
     body_path = Path(cached.get("body", ""))
+    try:
+        body_path = body_path.resolve()
+        cache_root = path.parent.resolve()
+    except OSError:
+        return None
+    if cache_root not in body_path.parents:
+        return None
     if not body_path.is_file():
         return None
     cached["text"] = body_path.read_text(encoding="utf-8", errors="replace")
@@ -84,7 +144,7 @@ def store_cache(path: Path, url: str, final: str, status: str, text: str) -> Non
 
 
 def cached_fetch(url: str, cache_dir: Path, max_age: int, refresh: bool) -> dict:
-    key = "".join(ch if ch.isalnum() else "_" for ch in url)[:180]
+    key = hashlib.sha256(url.encode("utf-8")).hexdigest()
     slot = cache_dir / f"{key}.json"
     cached = load_cache(slot, max_age, refresh)
     if cached:
@@ -101,13 +161,16 @@ def links_in(text: str) -> list[str]:
     token = []
     for char in text:
         if char in " \t\r\n<>\"'()[]":
-            if token and token[0].startswith("http"):
-                found.append("".join(token).rstrip(".,"))
+            word = "".join(token)
+            if word.startswith("https://"):
+                found.append(word.rstrip(".,"))
             token = []
             continue
         token.append(char)
-    if token and token[0].startswith("http"):
-        found.append("".join(token).rstrip(".,"))
+    if token:
+        word = "".join(token)
+        if word.startswith("https://"):
+            found.append(word.rstrip(".,"))
     return found
 
 
@@ -273,7 +336,12 @@ def self_test() -> int:
     row = report["results"][0]
     assert row["installer"] and row["readme"] and not row["docs"]
     assert status_of(row) == "UNCHECKED"
-    assert "goose toolkit add" not in report["forbidden"]
+    assert links_in("see https://example.com/skills.md now") == ["https://example.com/skills.md"]
+    assert url_refusal("http://example.com/a") == "only https URLs without credentials are fetched"
+    assert url_refusal("https://user:pass@example.com/a") == "only https URLs without credentials are fetched"
+    assert url_refusal("https://127.0.0.1/a") == "refusing non-public address 127.0.0.1"
+    assert url_refusal("https://10.1.1.1/a") == "refusing non-public address 10.1.1.1"
+    assert url_refusal("https://athena.local/a") == "local hostname refused"
     bad = evaluate(spec, "nope", "goose toolkit add", Path("/tmp"), 0, True)
     assert bad["forbidden"] == ["goose toolkit add"]
     assert exit_code(bad) == 1

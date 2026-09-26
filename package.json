@@ -1,6 +1,6 @@
 {
   "name": "rdap-q",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) — Vendor-neutral AI agent engineering protocol & skill for Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor. Evidence-first software engineering, persistent memory, and calibrated quality gates.",
   "main": "rdap-q-skill/SKILL.md",
   "bin": {
