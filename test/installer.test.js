@@ -67,7 +67,8 @@ test('install --claude does not install the other harnesses', () => {
   assert.equal(fs.existsSync(path.join(env.GEMINI_HOME, 'antigravity-cli', 'skills', 'rdap-q', 'SKILL.md')), false);
   assert.equal(fs.existsSync(path.join(env.GOOSE_HOME, 'toolkits', 'rdap-q', 'SKILL.md')), false);
   assert.equal(fs.existsSync(path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'SKILL.md')), false);
-  assert.match(result.out, /v1\.2\.0/);
+  const pkg = require('../package.json');
+  assert.match(result.out, new RegExp(`v${pkg.version.replace(/\./g, '\\.')}`));
   assert.match(result.out, /Done in \d+ms/);
 });
 

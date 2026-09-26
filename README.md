@@ -3,7 +3,7 @@
 
 [![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Protocol Version](https://img.shields.io/badge/Protocol-v1.2.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![Protocol Version](https://img.shields.io/badge/Protocol-v1.2.1-emerald.svg)](https://github.com/coldcanuk/rdapq)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
 [![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#openai-codex)
@@ -29,7 +29,7 @@
   "@type": "SoftwareSourceCode",
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
@@ -328,8 +328,8 @@ npx --yes github:coldcanuk/rdapq install --cursor
 # Codex and Grok together:
 npx --yes github:coldcanuk/rdapq install --codex --grok
 
-# Pin the 1.2.0 tag instead of the default branch:
-npx --yes github:coldcanuk/rdapq#v1.2.0 install --claude
+# Pin the 1.2.1 tag instead of the default branch:
+npx --yes github:coldcanuk/rdapq#v1.2.1 install --claude
 ```
 
 ### All 8 harnesses:
@@ -416,7 +416,7 @@ These are not inside the skill tree and are kept:
 ```bash
 cd rdapq
 git fetch origin --tags
-git checkout v1.2.0          # or: git pull origin main
+git checkout v1.2.1          # or: git pull origin main
 ./install.sh --claude        # same flags as the first install
 ./install.sh status
 ```
@@ -424,7 +424,7 @@ git checkout v1.2.0          # or: git pull origin main
 ```powershell
 cd rdapq
 git fetch origin --tags
-git checkout v1.2.0
+git checkout v1.2.1
 .\install.ps1 -Claude
 node .\bin\rdapq.js status
 ```
@@ -436,7 +436,7 @@ rdapq install --claude
 rdapq status
 ```
 
-Pin a tag with `npm install -g github:coldcanuk/rdapq#v1.2.0`. Re-run that install to move later. Then run `rdapq install` again so the files on disk match the new package. `npm install -g` alone does not refresh `~/.rdapq` or the harness files.
+Pin a tag with `npm install -g github:coldcanuk/rdapq#v1.2.1`. Re-run that install to move later. Then run `rdapq install` again so the files on disk match the new package. `npm install -g` alone does not refresh `~/.rdapq` or the harness files.
 
 ### Take the new harness text
 A re-install that sees a different `AGENTS.md`, `CLAUDE.md`, or other bridge leaves your file in place and writes the packaged copy next to it as `<file>.rdapq`. Diff that sidecar. When you want the packaged text:

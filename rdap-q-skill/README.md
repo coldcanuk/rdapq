@@ -1,4 +1,4 @@
-# RDAP-Q Skill v1.2.0
+# RDAP-Q Skill v1.2.1
 
 `SKILL.md` is the instruction source. This README is not a second copy of the protocol.
 
