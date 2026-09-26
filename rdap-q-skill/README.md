@@ -1,5 +1,7 @@
 # RDAP-Q Skill v1.2.0
 
+`SKILL.md` is the instruction source. This README is not a second copy of the protocol.
+
 **Research-Driven Adaptive Planning with Quality Gates**
 
 RDAP-Q is a portable agent-engineering protocol for evidence-first software
@@ -106,7 +108,6 @@ rdap-q-skill/
 ├── README.md
 ├── manifest.json
 ├── core/
-│   ├── constitution.md
 │   ├── controller.md
 │   ├── capabilities.md
 │   ├── memory.md

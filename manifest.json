@@ -15,8 +15,7 @@
   ],
   "phase_load": {
     "BOOTSTRAP": [
-      "rdap-q-skill/playbooks/00-bootstrap.md",
-      "rdap-q-skill/playbooks/07-git-worktree.md"
+      "rdap-q-skill/playbooks/00-bootstrap.md"
     ],
     "DISCOVERY": [
       "rdap-q-skill/playbooks/01-discovery.md"
@@ -39,9 +38,6 @@
     ]
   },
   "event_load": {
-    "methodology_conflict_or_drift": [
-      "rdap-q-skill/core/constitution.md"
-    ],
     "controller_ambiguity": [
       "rdap-q-skill/core/controller.md"
     ],
@@ -66,6 +62,9 @@
       "rdap-q-skill/core/scoring.md",
       "rdap-q-skill/core/gates.md",
       "rdap-q-skill/core/exit-logic.md"
+    ],
+    "git_mutation": [
+      "rdap-q-skill/playbooks/07-git-worktree.md"
     ]
   },
   "commands": {

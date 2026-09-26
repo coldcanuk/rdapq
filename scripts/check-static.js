@@ -55,6 +55,29 @@ for (const rel of [...(plugin.rules || []), ...(plugin.skills || [])]) {
   }
 }
 
+need('rdap-q-skill/README.md', /SKILL\.md` is the instruction source/, 'README must point at SKILL.md and not act as a second protocol');
+
+for (const rel of ['manifest.json', 'rdap-q-skill/manifest.json']) {
+  const manifest = JSON.parse(read(rel));
+  const bootstrap = (manifest.phase_load && manifest.phase_load.BOOTSTRAP) || [];
+  if (bootstrap.some((item) => String(item).includes('07-git-worktree'))) {
+    failures.push(`${rel}: BOOTSTRAP must not load the git mutation playbook`);
+  }
+  const events = manifest.event_load || {};
+  const listed = Object.values(events).flat().join('\n');
+  if (listed.includes('constitution.md')) {
+    failures.push(`${rel}: constitution.md must not be an event load`);
+  }
+  if (!Object.prototype.hasOwnProperty.call(events, 'git_mutation')) {
+    failures.push(`${rel}: git_mutation event must point at the worktree playbook`);
+  }
+}
+need('rdap-q-skill/SKILL.md', /BOOTSTRAP: \[playbooks\/00-bootstrap\.md\]/, 'SKILL bootstrap must load inspection only');
+ban('rdap-q-skill/SKILL.md', /methodology_conflict/, 'SKILL must not load the constitution stub');
+if (fs.existsSync(path.join(ROOT, 'rdap-q-skill/core/constitution.md'))) {
+  failures.push('rdap-q-skill/core/constitution.md must stay deleted');
+}
+
 if (failures.length) {
   process.stderr.write(`${failures.join('\n')}\n`);
   process.exit(1);

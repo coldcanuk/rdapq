@@ -33,7 +33,7 @@ exit: {iterate_dQ: ">=0.20", diminish_dQ: "<0.15", stall_dQ: "<0.10", done: "Vib
 terminal: [COMPLETE, BLOCKED, STALLED, CONSTRAINT_LIMITED, FAILED_VERIFICATION]
 tools: [SEARCH, FETCH, INSPECT, EXECUTE, EDIT, TEST, VCS]
 phases:
-  BOOTSTRAP: [playbooks/00-bootstrap.md, playbooks/07-git-worktree.md]
+  BOOTSTRAP: [playbooks/00-bootstrap.md]
   DISCOVERY: [playbooks/01-discovery.md]
   PLAN: [playbooks/02-planning.md]
   ARCHITECTURE: [playbooks/03-architecture.md]
@@ -45,6 +45,6 @@ on:
   gates: core/gates.md
   score: core/scoring.md
   milestone_or_exit: [core/scoring.md, core/gates.md, core/exit-logic.md]
-  methodology_conflict: core/constitution.md
+  git_mutation: playbooks/07-git-worktree.md
   controller_ambiguity: core/controller.md
   tool_mapping: core/capabilities.md

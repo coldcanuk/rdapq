@@ -1,5 +1,6 @@
 phase: GIT
-inspect: ["git status --short", "git branch --show-current", "git remote -v", "git branch -a", "git worktree list"]
+when: [worktree_requested, commit_requested, push_requested, audit_cleanup]
+inspect_already_in: playbooks/00-bootstrap.md
 never_without_explicit_authorization: ["git reset --hard", "git clean -fd", "git push --force"]
 forbid: destroying_unrelated_work
 worktree_when_requested:
