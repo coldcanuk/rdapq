@@ -8,5 +8,5 @@ gates:
   regression: [existing_tests_pass, no_known_material_regression]
   security: [no_new_material_issue, no_secrets_stored, destructive_safeguards, risk_proportional_checks]
   repository: [diff_reviewed, no_unintended_files, no_conflicts, state_understood, unrelated_work_kept]
-  memory: [no_secrets, promotion_test, stale_handled, state_not_promoted_as_global]
+  memory: [no_secrets, promotion_test, stale_handled, state_not_promoted_as_global, under_cap, index_current]
   quality: target_met_or_diminishing_returns_and_other_gates_pass

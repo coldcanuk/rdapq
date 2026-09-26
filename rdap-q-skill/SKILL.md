@@ -11,7 +11,19 @@ home_env: RDAPQ_HOME
 home: RDAPQ_HOME else ~/.rdapq (Windows %USERPROFILE%\.rdapq)
 state: .rdapq/state
 memory: $RDAPQ_HOME/memory
+memory_index: $RDAPQ_HOME/memory/index.md
 facts: [OBSERVED, USER_SPECIFIED, VERIFIED_EXTERNAL, INFERRED, UNKNOWN]
+caps:
+  load_full_records: 12
+  load_index_rows: 80
+  fact_chars: 240
+  evidence_chars: 160
+  file_bytes: 24576
+  global_active: 80
+  project_active: 40
+  state_evidence_records: 80
+  state_iteration_rounds: 20
+  state_file_bytes: 49152
 rules:
   - evidence before inference; never invent paths, APIs, versions, flags, tests, env, or architecture
   - INFERRED or UNKNOWN cannot decide implementation when verification is possible
@@ -21,17 +33,19 @@ rules:
   - task state stays in .rdapq/state; memory is reusable only; current evidence beats memory
   - never store secret values; a source plus an identifier is allowed
   - do not load manifest.json, other playbooks, diagrams, or bulk memory
+  - load memory/index.md first, then at most 12 matching full records; compact before work if over cap
+  - never bulk-read memory/ or projects/; never gzip, base64, or one-line-tarball memory
 commands:
   status: phase, quality, confidence, gates, blockers, iteration
   score: evidence-linked scorecard
   audit: adversarial final audit
-  resume: reload memory and state, then check drift
-  memory: relevant memories and status; never print secrets
+  resume: compact if over cap, reload index and hits plus state, then check drift
+  memory: relevant ACTIVE memories and status; never print secrets; never dump the store
   research: discovery
   explain: why this phase or exit
 weights: {correctness: 25, coverage: 15, verification: 15, integration: 10, security: 10, maintainability: 10, architecture: 8, operability: 7}
 anchors: {0: absent, "1-2": broken, "3-4": deficient, 5: unverified, 6: gaps, 7: solid, 8: production, 9: exceptional, 10: reference}
-caps: {unverified: 5, inferred_dependency: 5, known_defect: 4}
+caps_score: {unverified: 5, inferred_dependency: 5, known_defect: 4}
 hard_fail: [required_test_fail, unexercised_integration]
 risk_target: {LOW: 7.2, MODERATE: 7.6, HIGH: 8.0, CRITICAL: 8.3}
 exit: {iterate_dQ: ">=0.20", diminish_dQ: "<0.15", stall_dQ: "<0.10", done: "Vibe Code Build complete."}
