@@ -14,6 +14,8 @@
 .rdapq/*.log
 *.rdapq.tmp
 *.rdapq.bak
+# Weekly vendor-doc audit cache and reports. The checker script is tracked.
+reports/harness-audit/
 
 # Preserve gitkeep if state directories need to exist in templates
 !rdap-q-skill/state/*.md

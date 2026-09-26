@@ -72,6 +72,7 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
 - [⚡ Install](#npm-npx-installation)
 - [📜 Local clone](#universal-install-scripts)
 - [🔄 Update](#update)
+- [🔁 Weekly harness audit](#harness-audit)
 - [⚡ Canonical Commands (`/rdapq`)](#canonical-commands)
 - [🎯 Calibrated Quality Scale (0–10)](#calibrated-quality-scale)
   - [Default Implementation Dimensions](#default-implementation-dimensions)
@@ -305,6 +306,19 @@ npx --yes rdap-q init
 ```
 
 That refreshes `.agents/skills/rdap-q/` and creates any bridge that is missing. Add `--force` only when you want the bridges replaced. Start a new harness session afterward so it does not keep the previous `SKILL.md` in context.
+
+---
+
+## <a id="harness-audit"></a> 🔁 Weekly harness audit
+
+Vendor docs move. `scripts/harness-audit/check.py` fetches each vendor `llms.txt`, then the skills and rules pages linked from it, and checks that the paths in `lib/installer.js` and this README are still on those pages. A passing run does not call a model. If a path disappears, it writes `reports/harness-audit/review-prompt.md` for a local model. That directory is gitignored.
+
+```bash
+python3 scripts/harness-audit/check.py --self-test
+./scripts/harness-audit/weekly.sh
+```
+
+The weekly script is what you cron. It does not use Grok cloud credits. Set `RDAPQ_AUDIT_REVIEW` only if a failed run should be handed to a local model.
 
 ---
 

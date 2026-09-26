@@ -1,0 +1,192 @@
+{
+  "installer": "lib/installer.js",
+  "readme": "README.md",
+  "forbidden_in_readme": [
+    "gh extension install coldcanuk/rdapq",
+    "goose toolkit add",
+    "codex skill add",
+    "agy plugin marketplace add"
+  ],
+  "harnesses": [
+    {
+      "id": "cursor",
+      "indexes": ["https://cursor.com/llms.txt"],
+      "pins": [
+        "https://cursor.com/docs/skills.md",
+        "https://cursor.com/docs/rules.md"
+      ],
+      "follow": ["skills.md", "rules.md"],
+      "claims": [
+        {
+          "id": "user-skill",
+          "installer": "path.join(home, '.cursor')",
+          "docs": ".cursor/skills",
+          "readme": "~/.cursor/skills/rdap-q/"
+        },
+        {
+          "id": "project-skill",
+          "installer": "path.join(layout.agents, 'skills', 'rdap-q')",
+          "docs": ".agents/skills",
+          "readme": ".agents/skills/rdap-q/"
+        }
+      ]
+    },
+    {
+      "id": "codex",
+      "indexes": ["https://developers.openai.com/llms.txt"],
+      "pins": [
+        "https://learn.chatgpt.com/docs/build-skills.md",
+        "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
+        "https://developers.openai.com/codex/skills.md"
+      ],
+      "follow": ["codex", "agents-md", "skill"],
+      "allow_hosts": ["learn.chatgpt.com", "developers.openai.com"],
+      "claims": [
+        {
+          "id": "user-agents",
+          "installer": "path.join(layout.codex, 'AGENTS.md')",
+          "docs": ".codex",
+          "readme": "~/.codex/AGENTS.md"
+        },
+        {
+          "id": "user-skill",
+          "installer": "path.join(layout.agents, 'skills', 'rdap-q')",
+          "docs": ".agents/skills",
+          "readme": "~/.agents/skills/rdap-q/"
+        }
+      ]
+    },
+    {
+      "id": "claude",
+      "indexes": ["https://code.claude.com/docs/llms.txt"],
+      "pins": ["https://code.claude.com/docs/en/skills.md"],
+      "follow": ["/skills.md"],
+      "claims": [
+        {
+          "id": "user-skill",
+          "installer": "path.join(layout.claude, 'skills', 'rdap-q')",
+          "docs": ".claude/skills",
+          "readme": "~/.claude/skills/rdap-q/"
+        },
+        {
+          "id": "slash-command",
+          "installer": "path.join(layout.claude, 'commands', 'rdapq.md')",
+          "docs": ".claude/commands",
+          "readme": "~/.claude/commands/rdapq.md"
+        }
+      ]
+    },
+    {
+      "id": "copilot",
+      "indexes": ["https://docs.github.com/llms.txt"],
+      "pins": [
+        "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions.md",
+        "https://docs.github.com/copilot/reference/customization-cheat-sheet.md"
+      ],
+      "follow": ["copilot-instructions", "customization-cheat-sheet", "custom-instructions"],
+      "claims": [
+        {
+          "id": "user-instructions",
+          "installer": "path.join(home, '.copilot')",
+          "docs": ".copilot",
+          "readme": "~/.copilot/copilot-instructions.md"
+        },
+        {
+          "id": "repo-instructions",
+          "installer": "copilot-instructions.md",
+          "docs": "copilot-instructions.md",
+          "readme": ".github/copilot-instructions.md"
+        },
+        {
+          "id": "user-skill",
+          "installer": "path.join(layout.copilot, 'skills', 'rdap-q')",
+          "docs": ".github/skills",
+          "readme": "~/.copilot/skills/rdap-q/"
+        }
+      ]
+    },
+    {
+      "id": "grok",
+      "indexes": ["https://docs.x.ai/llms.txt"],
+      "pins": ["https://docs.x.ai/build/features/skills-plugins-marketplaces.md"],
+      "follow": ["skills-plugins", "project-rules"],
+      "claims": [
+        {
+          "id": "user-skill",
+          "installer": "path.join(layout.grok, 'skills', 'rdap-q')",
+          "docs": ".grok/skills",
+          "readme": "~/.grok/skills/rdap-q/"
+        }
+      ]
+    },
+    {
+      "id": "antigravity",
+      "indexes": ["https://antigravity.google/llms.txt"],
+      "pins": [
+        "https://antigravity.google/docs/skills.md",
+        "https://antigravity.google/docs/skills"
+      ],
+      "follow": ["/docs/skills", "gcli-migration", "plugins"],
+      "claims": [
+        {
+          "id": "cli-skill",
+          "installer": "path.join(layout.gemini, 'antigravity-cli', 'skills', 'rdap-q')",
+          "docs": "antigravity-cli",
+          "readme": "~/.gemini/antigravity-cli/skills/rdap-q/"
+        },
+        {
+          "id": "ide-skill",
+          "installer": "path.join(layout.gemini, 'config', 'skills', 'rdap-q')",
+          "docs": "config/skills",
+          "readme": "~/.gemini/config/skills/rdap-q/"
+        },
+        {
+          "id": "project-skill",
+          "installer": "path.join(abs, '.agents', 'skills', 'rdap-q')",
+          "docs": ".agents/skills",
+          "readme": ".agents/skills/rdap-q/"
+        }
+      ]
+    },
+    {
+      "id": "goose",
+      "indexes": ["https://goose-docs.ai/llms.txt"],
+      "pins": ["https://goose-docs.ai/docs/guides/context-engineering/using-goosehints"],
+      "follow": ["goosehints", "hint"],
+      "claims": [
+        {
+          "id": "global-hints",
+          "installer": "path.join(layout.goose, '.goosehints')",
+          "docs": ".goosehints",
+          "readme": "~/.config/goose/.goosehints"
+        },
+        {
+          "id": "home",
+          "installer": "path.join(home, '.config', 'goose')",
+          "docs": ".config/goose",
+          "readme": "~/.config/goose/.goosehints"
+        }
+      ]
+    },
+    {
+      "id": "cline",
+      "indexes": ["https://docs.cline.bot/llms.txt"],
+      "pins": ["https://docs.cline.bot/customization/cline-rules.md"],
+      "follow": ["cline-rules"],
+      "claims": [
+        {
+          "id": "user-rules",
+          "installer": "path.join(layout.cline, 'rules', 'rdapq.md')",
+          "docs": ".cline/rules",
+          "readme": "~/.cline/rules/rdapq.md"
+        },
+        {
+          "id": "project-rules",
+          "installer": "path.join('.clinerules', 'rdapq.md')",
+          "docs": ".clinerules",
+          "readme": ".clinerules/rdapq.md"
+        }
+      ]
+    }
+  ]
+}

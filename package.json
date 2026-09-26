@@ -68,7 +68,8 @@
     "install:codex": "node bin/rdapq.js install --codex",
     "install:grok": "node bin/rdapq.js install --grok",
     "install:goose": "node bin/rdapq.js install --goose",
-    "install:cursor": "node bin/rdapq.js install --cursor"
+    "install:cursor": "node bin/rdapq.js install --cursor",
+    "audit:harnesses": "python3 scripts/harness-audit/check.py"
   },
   "engines": {
     "node": ">=18.0.0"
