@@ -13,7 +13,7 @@ state: .rdapq/state
 memory: $RDAPQ_HOME/memory
 memory_index: $RDAPQ_HOME/memory/index.md
 facts: [OBSERVED, USER_SPECIFIED, VERIFIED_EXTERNAL, INFERRED, UNKNOWN]
-caps:
+memory_caps:
   load_full_records: 12
   load_index_rows: 80
   fact_chars: 240
@@ -45,7 +45,7 @@ commands:
   explain: why this phase or exit
 weights: {correctness: 25, coverage: 15, verification: 15, integration: 10, security: 10, maintainability: 10, architecture: 8, operability: 7}
 anchors: {0: absent, "1-2": broken, "3-4": deficient, 5: unverified, 6: gaps, 7: solid, 8: production, 9: exceptional, 10: reference}
-caps_score: {unverified: 5, inferred_dependency: 5, known_defect: 4}
+caps: {unverified: 5, inferred_dependency: 5, known_defect: 4}
 hard_fail: [required_test_fail, unexercised_integration]
 risk_target: {LOW: 7.2, MODERATE: 7.6, HIGH: 8.0, CRITICAL: 8.3}
 exit: {iterate_dQ: ">=0.20", diminish_dQ: "<0.15", stall_dQ: "<0.10", done: "Vibe Code Build complete."}
