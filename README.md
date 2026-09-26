@@ -131,8 +131,8 @@ RDAP-Q is packaged natively as a marketplace plugin across major AI coding harne
 | **[OpenAI Codex](#openai-codex-marketplace)** | `/skills` → Marketplace | `codex skill add https://github.com/coldcanuk/rdapq` | `AGENTS.md` | `/rdapq <task>` |
 | **[Block Goose](#block-goose-marketplace)** | Interactive Toolkit Selector | `goose toolkit add coldcanuk/rdapq` | `.goosehints` | `goose run` / `/rdapq` |
 | **[GitHub Copilot](#github-copilot-marketplace)** | VS Code Extensions Market | `gh extension install coldcanuk/rdapq` | `.github/copilot-instructions.md` | `/rdapq <task>` |
-| **[Cline & Roo Code](#cline--roo-code-marketplace)** | Modes & Rules GUI | `npx --yes github:coldcanuk/rdapq install --cline` | `.clinerules` | `/rdapq <task>` |
-| **[Cursor](#cursor)** | Agent chat `/` menu | `npx --yes github:coldcanuk/rdapq install --cursor` | `~/.cursor/skills/rdap-q` | `/rdap-q` or `/rdapq` |
+| **[Cline & Roo Code](#cline--roo-code-marketplace)** | Modes & Rules GUI | `npx --yes rdap-q install --cline` | `.clinerules` | `/rdapq <task>` |
+| **[Cursor](#cursor)** | Agent chat `/` menu | `npx --yes rdap-q install --cursor` | `~/.cursor/skills/rdap-q` | `/rdap-q` or `/rdapq` |
 
 ---
 
@@ -256,7 +256,7 @@ gh extension install coldcanuk/rdapq
 
 #### First-party install:
 ```bash
-npx --yes github:coldcanuk/rdapq install --cline
+npx --yes rdap-q install --cline
 ```
 
 #### Optional third-party installer:
@@ -281,14 +281,14 @@ The skill does not auto-run on every task. Cursor loads it when you invoke `/rda
 
 #### This project
 ```bash
-npx --yes github:coldcanuk/rdapq init
+npx --yes rdap-q init
 ```
 
 Then open the folder in Cursor and start a new Agent chat. `init` writes `AGENTS.md` and `.agents/skills/rdap-q/`. Type `/rdap-q` or `/rdapq <task>`.
 
 #### Every project on this machine
 ```bash
-npx --yes github:coldcanuk/rdapq install --cursor
+npx --yes rdap-q install --cursor
 ```
 
 That installs the skill at `~/.cursor/skills/rdap-q/` (`CURSOR_HOME` overrides the directory). Restart Cursor, then type `/rdap-q` in Agent chat. This does not write `AGENTS.md` into other repositories. Run `init` in a repo when you also want `/rdapq` from the project bridge.
@@ -307,9 +307,7 @@ From a checkout:
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 18 or newer is required. Do not pipe the installer (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
-
-`rdap-q` is not on the npm registry yet. Use a checkout or the GitHub package. After a Trusted Publisher release, `npx rdap-q` will be the same CLI.
+Node.js 18 or newer is required. The published package is [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. The current release is **1.2.1**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -320,26 +318,26 @@ Edited harness files are kept. Pass `--force` to replace one. The previous file 
 ### One harness, or several:
 ```bash
 # Core skill plus Claude only.
-npx --yes github:coldcanuk/rdapq install --claude
+npx --yes rdap-q install --claude
 
 # Cursor only. The skill lands in ~/.cursor/skills/rdap-q.
-npx --yes github:coldcanuk/rdapq install --cursor
+npx --yes rdap-q install --cursor
 
 # Codex and Grok together:
-npx --yes github:coldcanuk/rdapq install --codex --grok
+npx --yes rdap-q install --codex --grok
 
-# Pin the 1.2.1 tag instead of the default branch:
-npx --yes github:coldcanuk/rdapq#v1.2.1 install --claude
+# This release, not whatever is tagged latest later:
+npx --yes rdap-q@1.2.1 install --claude
 ```
 
 ### All 8 harnesses:
 ```bash
-npx --yes github:coldcanuk/rdapq install --all
+npx --yes rdap-q install --all
 ```
 
 ### This repository only, no harness files:
 ```bash
-npx --yes github:coldcanuk/rdapq install --global-only
+npx --yes rdap-q install --global-only
 ```
 
 That writes `$RDAPQ_HOME` (default `~/.rdapq`): `skills/rdap-q/`, plus empty `memory/`, `projects/`, and `registry/` directories. It does not create harness bridges.
@@ -347,31 +345,33 @@ That writes `$RDAPQ_HOME` (default `~/.rdapq`): `skills/rdap-q/`, plus empty `me
 ### Initialize the current project:
 ```bash
 # Missing bridges and .rdapq/state. Does not clobber a file you already edited.
-npx --yes github:coldcanuk/rdapq init
+npx --yes rdap-q init
 
 # Replace existing bridges, keeping backups:
-npx --yes github:coldcanuk/rdapq init --force
+npx --yes rdap-q init --force
 
 # Or target a specific workspace:
-npx --yes github:coldcanuk/rdapq --repo /path/to/my-project
+npx --yes rdap-q --repo /path/to/my-project
 ```
 
 `init` writes `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.clinerules`, `.goosehints`, `.grok/rules.md`, `.github/copilot-instructions.md`, `.claude/commands/rdapq.md`, and the skill tree at `.agents/skills/rdap-q/`. Cursor reads that skill tree and `AGENTS.md` without a separate `--cursor` install.
 
 ### Check installation status:
 ```bash
-npx --yes github:coldcanuk/rdapq status
+npx --yes rdap-q status
 ```
 
 ### Install the command globally:
 ```bash
-npm install -g github:coldcanuk/rdapq
+npm install -g rdap-q
 rdapq install --claude
 rdapq status
 rdapq init
 ```
 
-Harness homes can be redirected without touching the real user profile. `RDAPQ_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLAUDE_HOME`, `CLINE_HOME`, `CODEX_HOME`, `GROK_HOME`, and `COPILOT_HOME` are all honored.
+Harness homes can be redirected without touching the real user profile. `RDAPQ_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLAUDE_HOME`, `CLINE_HOME`, `CODEX_HOME`, `GROK_HOME`, `COPILOT_HOME`, and `CURSOR_HOME` are all honored.
+
+A checkout of a branch that is not released yet can still be installed with `npx --yes github:coldcanuk/rdapq`. The registry package is the supported install.
 
 ---
 
@@ -403,7 +403,7 @@ cd rdapq
 
 ## <a id="update"></a> 🔄 Update
 
-There is no `update` command. Install again with the same flags. A newer skill tree is staged and swapped in only after its `SKILL.md` verifies. The previous tree is removed only after that rename. If the copy fails, the previous tree is put back.
+There is no `update` command. Install the same flags again. A newer skill tree is staged and swapped in only after its `SKILL.md` verifies. The previous tree is removed only after that rename. If the copy fails, the previous tree is put back.
 
 These are not inside the skill tree and are kept:
 
@@ -411,6 +411,27 @@ These are not inside the skill tree and are kept:
 - `$RDAPQ_HOME/projects/`
 - repository task state in `<repo>/.rdapq/state/`
 - a harness file you have edited, unless you pass `--force`
+
+`npm install` updates the CLI package only. It does not refresh `~/.rdapq` or the harness files. Run `rdapq install` again after the package is newer.
+
+### Registry (normal path)
+```bash
+npx --yes rdap-q@latest install --cursor
+npx --yes rdap-q@latest status
+```
+
+Use the same harness flags you used the first time. `--cursor` above is only an example. To stay on this release:
+
+```bash
+npx --yes rdap-q@1.2.1 install --cursor
+```
+
+### Command installed globally
+```bash
+npm install -g rdap-q@latest
+rdapq install --cursor
+rdapq status
+```
 
 ### Checkout you already have
 ```bash
@@ -429,27 +450,18 @@ git checkout v1.2.1
 node .\bin\rdapq.js status
 ```
 
-### Global npm install from GitHub
-```bash
-npm install -g github:coldcanuk/rdapq
-rdapq install --claude
-rdapq status
-```
-
-Pin a tag with `npm install -g github:coldcanuk/rdapq#v1.2.1`. Re-run that install to move later. Then run `rdapq install` again so the files on disk match the new package. `npm install -g` alone does not refresh `~/.rdapq` or the harness files.
-
 ### Take the new harness text
 A re-install that sees a different `AGENTS.md`, `CLAUDE.md`, or other bridge leaves your file in place and writes the packaged copy next to it as `<file>.rdapq`. Diff that sidecar. When you want the packaged text:
 
 ```bash
-./install.sh --claude --force
+npx --yes rdap-q install --claude --force
 ```
 
 `--force` copies the current file to `<file>.rdapq-backup`, then writes the new one. It does not delete `$RDAPQ_HOME/memory`.
 
 ### Workspace already initialized
 ```bash
-./install.sh init
+npx --yes rdap-q init
 ```
 
 That refreshes `.agents/skills/rdap-q/` and creates any bridge that is missing. Add `--force` only when you want the bridges replaced. Start a new harness session afterward so it does not keep the previous `SKILL.md` in context.
