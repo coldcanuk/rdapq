@@ -1,16 +1,4 @@
-# RDAP-Q Global Memory Templates
-
-These files belong under:
-
-```text
-$RDAPQ_HOME/memory/
-```
-
-Default locations:
-
-```text
-Unix-like: ${HOME}/.rdapq/memory/
-Windows:   %USERPROFILE%\.rdapq\memory\
-```
-
-Only persist information that is durable, reusable, material, safe, and grounded.
+role: durable memory
+path: $RDAPQ_HOME/memory
+schema: core/memory.md
+promote_if: [durable, reusable, material, safe, grounded]

@@ -1,12 +1,12 @@
 {
   "name": "rdap-q",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) — Vendor-neutral AI agent engineering protocol & skill for Codex, Grok, Copilot, Antigravity, Goose, Claude, and Cline. Evidence-first software engineering, persistent memory, and calibrated quality gates.",
   "main": "rdap-q-skill/SKILL.md",
   "bin": {
     "rdapq": "./bin/rdapq.js",
     "rdap-q": "./bin/rdapq.js",
-    "rdapq-install": "./install.sh"
+    "rdapq-install": "./bin/rdapq.js"
   },
   "author": "coldcanuk",
   "license": "GPL-3.0-or-later",
@@ -54,6 +54,10 @@
     "start": "node bin/rdapq.js",
     "init": "node bin/rdapq.js init",
     "status": "node bin/rdapq.js status",
+    "test": "node scripts/check-versions.js && node scripts/check-static.js && node --test --test-concurrency=1 test/*.js",
+    "check": "node scripts/check-versions.js && node scripts/check-static.js",
+    "prepack": "node scripts/materialize-skill-links.js materialize",
+    "postpack": "node scripts/materialize-skill-links.js restore",
     "install:all": "node bin/rdapq.js install --all",
     "install:claude": "node bin/rdapq.js install --claude",
     "install:cline": "node bin/rdapq.js install --cline",
@@ -64,7 +68,7 @@
     "install:goose": "node bin/rdapq.js install --goose"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "files": [
     "bin",
@@ -76,6 +80,8 @@
     "plugin.json",
     "install.sh",
     "install.ps1",
+    "lib",
+    "scripts",
     "AGENTS.md",
     "CLAUDE.md",
     "GEMINI.md",

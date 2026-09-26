@@ -1,7 +1,2 @@
-# Risk Register
-
-| ID | Risk | Probability | Impact | Evidence IDs | Mitigation | Status |
-|---|---|---:|---:|---|---|---|
-| R-001 | TBD | TBD | TBD | — | TBD | OPEN |
-
-Do not manufacture risks merely to reach an arbitrary count.
+records: [] # id, risk, probability, impact, evidence_ids, mitigation, status
+forbid: invented_risks_to_fill_a_quota

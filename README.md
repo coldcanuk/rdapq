@@ -1,8 +1,9 @@
 # RDAP-Q: Research-Driven Adaptive Planning with Quality Gates
 ### Universal Autonomous AI Agent Engineering Protocol & Marketplace Skill
 
+[![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Protocol Version](https://img.shields.io/badge/Protocol-v1.1.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![Protocol Version](https://img.shields.io/badge/Protocol-v1.2.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
 [![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#openai-codex)
@@ -27,7 +28,7 @@
   "@type": "SoftwareSourceCode",
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, and Cline.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
@@ -75,7 +76,7 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
   - [GitHub Copilot](#github-copilot-marketplace)
   - [Cline & Roo Code](#cline--roo-code-marketplace)
 - [⚡ Install via NPM / NPX](#npm-npx-installation)
-- [📜 Universal Install Scripts & Local Clone](#universal-install-scripts)
+- [📜 Local clone](#universal-install-scripts)
 - [⚡ Canonical Commands (`/rdapq`)](#canonical-commands)
 - [🎯 Calibrated Quality Scale (0–10)](#calibrated-quality-scale)
   - [Default Implementation Dimensions](#default-implementation-dimensions)
@@ -91,6 +92,8 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
 ---
 
 ## <a id="system-architecture"></a> 🧭 System Architecture & Control Loop
+
+The host model is the control plane. RDAP-Q does not run a server. `bin/rdapq.js` is the only installer implementation; `install.sh` and `install.ps1` refuse a piped launch and then exec that CLI. Personal harness files are created when missing and are not replaced unless you pass `--force` (the previous file is kept as `*.rdapq-backup`). Skill trees are staged and renamed into place, so a failed copy cannot delete a working install.
 
 ```mermaid
 flowchart TD
@@ -125,7 +128,7 @@ RDAP-Q is packaged natively as a marketplace plugin across major AI coding harne
 | **[OpenAI Codex](#openai-codex-marketplace)** | `/skills` → Marketplace | `codex skill add https://github.com/coldcanuk/rdapq` | `AGENTS.md` | `/rdapq <task>` |
 | **[Block Goose](#block-goose-marketplace)** | Interactive Toolkit Selector | `goose toolkit add coldcanuk/rdapq` | `.goosehints` | `goose run` / `/rdapq` |
 | **[GitHub Copilot](#github-copilot-marketplace)** | VS Code Extensions Market | `gh extension install coldcanuk/rdapq` | `.github/copilot-instructions.md` | `/rdapq <task>` |
-| **[Cline & Roo Code](#cline--roo-code-marketplace)** | Modes & Rules GUI | `npx -y @smithery/cli install coldcanuk/rdapq` | `.clinerules` | `/rdapq <task>` |
+| **[Cline & Roo Code](#cline--roo-code-marketplace)** | Modes & Rules GUI | `npx rdap-q install --cline` | `.clinerules` | `/rdapq <task>` |
 
 ---
 
@@ -248,8 +251,14 @@ gh extension install coldcanuk/rdapq
 
 ### <a id="cline--roo-code"></a><a id="cline--roo-code-marketplace"></a> 💻 Cline & Roo Code
 
-#### CLI / Smithery Install:
+#### First-party install:
 ```bash
+npx rdap-q install --cline
+```
+
+#### Optional third-party installer:
+```bash
+# Smithery can auto-approve a remote install. Prefer the first-party command above.
 npx -y @smithery/cli install coldcanuk/rdapq
 ```
 
@@ -263,65 +272,75 @@ npx -y @smithery/cli install coldcanuk/rdapq
 
 ## <a id="npm-npx-installation"></a> ⚡ Install via NPM / NPX
 
-RDAP-Q is published as an npm package and can be run instantly via `npx` with zero installation required:
+RDAP-Q is published as `rdap-q`. The first-party CLI is the supported installer. It needs Node.js 18 or newer and does not install anything from a `curl | bash` pipe.
 
-### Instant Setup (All 7 Harnesses):
+Existing personal files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.clinerules`, `.goosehints`, and the other harness bridges) are left alone when they already differ. Pass `--force` to replace one; the previous contents are saved next to it as `<file>.rdapq-backup`. A file that is kept also gets a proposed copy at `<file>.rdapq`.
+
+### Selective harness install:
 ```bash
-# Automatically detects and configures all 7 AI harnesses:
-npx rdapq install --all
+# Core skill plus Claude only. Other harness homes are not touched.
+npx rdap-q install --claude
+
+# Codex and Grok together:
+npx rdap-q install --codex --grok
 ```
 
-### Initialize Current Project / Workspace:
+### All 7 harnesses:
 ```bash
-# Drops AGENTS.md, CLAUDE.md, GEMINI.md, .clinerules, .goosehints, etc. into current directory:
-npx rdapq init
+npx rdap-q install --all
+```
+
+### Initialize the current project:
+```bash
+# Writes missing bridges and .rdapq/state. Does not clobber a file you already edited.
+npx rdap-q init
+
+# Replace existing bridges, keeping backups:
+npx rdap-q init --force
 
 # Or target a specific workspace:
-npx rdapq --repo /path/to/my-project
+npx rdap-q --repo /path/to/my-project
 ```
 
-### Check Installation Status Matrix:
+### Check installation status:
 ```bash
-npx rdapq status
+npx rdap-q status
 ```
 
-### Install Globally via NPM:
+### Install the command globally:
 ```bash
 npm install -g rdap-q
-
-# Use the rdapq command anywhere:
 rdapq status
 rdapq init
 rdapq install --all
 ```
 
-### Add as a Project Dev Dependency:
-```bash
-npm install --save-dev rdap-q
-```
+Harness homes can be redirected without touching the real user profile. `RDAPQ_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLAUDE_HOME`, `CLINE_HOME`, `CODEX_HOME`, `GROK_HOME`, and `COPILOT_HOME` are all honored.
 
 ---
 
-## <a id="universal-install-scripts"></a> 📜 Universal Install Scripts & Local Clone
+## <a id="universal-install-scripts"></a> 📜 Local clone
+
+Do not pipe the installer from the network. A piped script cannot see this repository and is refused on purpose.
 
 ### Linux / macOS / WSL:
 ```bash
-# One-line fetch and install:
-curl -fsSL https://raw.githubusercontent.com/coldcanuk/rdapq/main/install.sh | bash
-
-# Or clone and run with flags:
 git clone https://github.com/coldcanuk/rdapq.git
 cd rdapq
-./install.sh --all
+./install.sh --all          # every harness
+./install.sh --claude       # one harness
+npm test                    # installer, packaging, and version checks
 ```
 
 ### Windows (PowerShell):
 ```powershell
-# Clone and install for all harnesses:
 git clone https://github.com/coldcanuk/rdapq.git
 cd rdapq
 .\install.ps1 -All
+.\install.ps1 -Claude -Force
 ```
+
+`install.sh` and `install.ps1` are wrappers around `node bin/rdapq.js`.
 
 ---
 
@@ -449,8 +468,12 @@ rdapq/
 ├── marketplace.json              # Agent Skills Marketplace catalog entry
 ├── package.json                  # NPM / VS Code registry metadata & keywords
 ├── manifest.json                 # RDAP-Q protocol entrypoint definition
-├── install.sh                    # Multi-harness Unix installer
-├── install.ps1                   # Multi-harness Windows PowerShell installer
+├── install.sh                    # Thin Unix wrapper around bin/rdapq.js
+├── install.ps1                   # Thin Windows wrapper around bin/rdapq.js
+├── bin/rdapq.js                  # CLI entrypoint
+├── lib/installer.js              # Installer implementation
+├── test/                         # node:test coverage for install/init/status/pack
+├── scripts/                      # Version, static, and npm pack checks
 ├── .clinerules                   # Cline & Roo Code custom rules
 ├── .goosehints                   # Block Goose agent hints
 ├── .claude-plugin/               # Claude Code marketplace definition
@@ -496,6 +519,7 @@ No. RDAP-Q scales adaptively. For simple bug fixes or localized edits, the agent
 <summary><strong>How do I override the default storage directory?</strong></summary>
 Set the <code>RDAPQ_HOME</code> environment variable:
 <pre><code>export RDAPQ_HOME=/custom/path/.rdapq</code></pre>
+Per-harness homes use <code>CODEX_HOME</code>, <code>GROK_HOME</code>, <code>COPILOT_HOME</code>, <code>CLAUDE_HOME</code>, <code>CLINE_HOME</code>, <code>GEMINI_HOME</code>, and <code>GOOSE_HOME</code>.
 This is particularly useful in containerized environments, sandboxed CI jobs, and bubblewrap runtimes.
 </details>
 
@@ -513,8 +537,9 @@ Contributions are welcome! If you want to add support for a new AI harness, opti
 
 1. Fork the repository: [https://github.com/coldcanuk/rdapq](https://github.com/coldcanuk/rdapq)
 2. Create a feature branch: `git checkout -b feature/new-harness-support`
-3. Verify your changes pass verification with `/rdapq audit`
-4. Submit a Pull Request.
+3. Run `npm test` (Node.js 18+). It checks installer behavior, the npm tarball, and version consistency.
+4. Tag a release `vX.Y.Z` only after the version in `package.json` matches every manifest. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
+5. Submit a Pull Request.
 
 **Maintained by:** [@coldcanuk](https://github.com/coldcanuk)  
 **Issues & Discussions:** [https://github.com/coldcanuk/rdapq/issues](https://github.com/coldcanuk/rdapq/issues)
