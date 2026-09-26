@@ -1,7 +1,7 @@
 {
   "name": "rdap-q",
   "version": "1.2.0",
-  "description": "Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) — Vendor-neutral AI agent engineering protocol & skill for Codex, Grok, Copilot, Antigravity, Goose, Claude, and Cline. Evidence-first software engineering, persistent memory, and calibrated quality gates.",
+  "description": "Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) — Vendor-neutral AI agent engineering protocol & skill for Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor. Evidence-first software engineering, persistent memory, and calibrated quality gates.",
   "main": "rdap-q-skill/SKILL.md",
   "bin": {
     "rdapq": "./bin/rdapq.js",
@@ -37,6 +37,8 @@
     "antigravity-skill",
     "block-goose",
     "goose-toolkit",
+    "cursor",
+    "cursor-skill",
     "cline",
     "cline-rules",
     "roo-code",
@@ -65,7 +67,8 @@
     "install:antigravity": "node bin/rdapq.js install --antigravity",
     "install:codex": "node bin/rdapq.js install --codex",
     "install:grok": "node bin/rdapq.js install --grok",
-    "install:goose": "node bin/rdapq.js install --goose"
+    "install:goose": "node bin/rdapq.js install --goose",
+    "install:cursor": "node bin/rdapq.js install --cursor"
   },
   "engines": {
     "node": ">=18.0.0"

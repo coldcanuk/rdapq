@@ -13,13 +13,14 @@
 [![Goose](https://img.shields.io/badge/Block%20Goose-Supported-teal.svg)](#block-goose)
 [![Claude](https://img.shields.io/badge/Anthropic%20Claude-Supported-coral.svg)](#anthropic-claude--claude-code)
 [![Cline](https://img.shields.io/badge/Cline%20%26%20Roo-Supported-yellow.svg)](#cline--roo-code)
+[![Cursor](https://img.shields.io/badge/Cursor-Supported-black.svg)](#cursor)
 
 ---
 
 ## <a id="description"></a> 📌 Description
 
 > **Short Description (SEO & Registries):**  
-> **RDAP-Q: Research-Driven Adaptive Planning with Quality Gates** — Vendor-neutral AI agent engineering protocol & marketplace skill for **Codex, Grok, Copilot, Antigravity, Goose, Claude, and Cline**. Delivers evidence-first software engineering, calibrated quality scoring (0–10), persistent project state, and diminishing-return exit gates.
+> **RDAP-Q: Research-Driven Adaptive Planning with Quality Gates** — Vendor-neutral AI agent engineering protocol & marketplace skill for **Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor**. Delivers evidence-first software engineering, calibrated quality scoring (0–10), persistent project state, and diminishing-return exit gates.
 
 <!-- Machine-Readable Structured Metadata (Schema.org / JSON-LD for Crawlers & Robots) -->
 ```json
@@ -29,13 +30,13 @@
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
   "version": "1.2.0",
-  "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, and Cline.",
+  "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
   "programmingLanguage": ["JavaScript", "YAML", "Markdown", "Shell", "PowerShell", "JSON"],
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Linux, macOS, Windows",
-  "keywords": "ai-agent, agent-skills, openai-codex, xai-grok, github-copilot, google-antigravity, block-goose, anthropic-claude, claude-code, cline, roo-code, quality-gates, adaptive-planning, software-engineering, autonomous-agent, sdlc-automation, slash-command, evidence-first, calibrated-scoring"
+  "keywords": "ai-agent, agent-skills, openai-codex, xai-grok, github-copilot, google-antigravity, block-goose, anthropic-claude, claude-code, cline, roo-code, cursor, quality-gates, adaptive-planning, software-engineering, autonomous-agent, sdlc-automation, slash-command, evidence-first, calibrated-scoring"
 }
 ```
 
@@ -58,7 +59,7 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
 | **Vague Quality Metrics** | **Calibrated 8-Dimension Scoring**: Evaluates Functional Correctness (25%), Requirements Coverage (15%), Verification Strength (15%), and more on an anchored 0–10 scale. |
 | **Context Window Amnesia** | **Dual Persistence Model**: Separates ephemeral repository state (`.rdapq/state/`) from durable, secret-free cross-session memory (`$RDAPQ_HOME/memory/`). |
 | **Runaway Agent Costs** | **Diminishing-Return Exit Logic**: Mathematically halts iterations when marginal quality improvement drops below threshold ($< 0.15$), saving tokens and compute. |
-| **Vendor Lock-in** | **Universal Harness Support**: Native plug-and-play configuration for **Codex, Grok, Copilot, Antigravity, Goose, Claude, and Cline**. |
+| **Vendor Lock-in** | **Universal Harness Support**: Native plug-and-play configuration for **Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor**. |
 
 ---
 
@@ -75,6 +76,7 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
   - [Block Goose](#block-goose-marketplace)
   - [GitHub Copilot](#github-copilot-marketplace)
   - [Cline & Roo Code](#cline--roo-code-marketplace)
+  - [Cursor](#cursor)
 - [⚡ Install](#npm-npx-installation)
 - [📜 Local clone](#universal-install-scripts)
 - [🔄 Update](#update)
@@ -130,6 +132,7 @@ RDAP-Q is packaged natively as a marketplace plugin across major AI coding harne
 | **[Block Goose](#block-goose-marketplace)** | Interactive Toolkit Selector | `goose toolkit add coldcanuk/rdapq` | `.goosehints` | `goose run` / `/rdapq` |
 | **[GitHub Copilot](#github-copilot-marketplace)** | VS Code Extensions Market | `gh extension install coldcanuk/rdapq` | `.github/copilot-instructions.md` | `/rdapq <task>` |
 | **[Cline & Roo Code](#cline--roo-code-marketplace)** | Modes & Rules GUI | `npx --yes github:coldcanuk/rdapq install --cline` | `.clinerules` | `/rdapq <task>` |
+| **[Cursor](#cursor)** | Agent chat `/` menu | `npx --yes github:coldcanuk/rdapq install --cursor` | `~/.cursor/skills/rdap-q` | `/rdap-q` or `/rdapq` |
 
 ---
 
@@ -270,6 +273,38 @@ npx -y @smithery/cli install coldcanuk/rdapq
 
 ---
 
+### <a id="cursor"></a> 🖱️ Cursor
+
+Cursor has no marketplace flag in this repo. It reads `AGENTS.md` and skills in `.agents/skills/` or `~/.cursor/skills/`. The skill id is `rdap-q`, so the slash command is `/rdap-q`. `/rdapq` also works when `AGENTS.md` is in the project, because that file tells the agent to load the same skill.
+
+The skill does not auto-run on every task. Cursor loads it when you invoke `/rdap-q`.
+
+#### This project
+```bash
+npx --yes github:coldcanuk/rdapq init
+```
+
+Then open the folder in Cursor and start a new Agent chat. `init` writes `AGENTS.md` and `.agents/skills/rdap-q/`. Type `/rdap-q` or `/rdapq <task>`.
+
+#### Every project on this machine
+```bash
+npx --yes github:coldcanuk/rdapq install --cursor
+```
+
+That installs the skill at `~/.cursor/skills/rdap-q/` (`CURSOR_HOME` overrides the directory). Restart Cursor, then type `/rdap-q` in Agent chat. This does not write `AGENTS.md` into other repositories. Run `init` in a repo when you also want `/rdapq` from the project bridge.
+
+From a checkout:
+
+```bash
+./install.sh --cursor
+```
+
+```powershell
+.\install.ps1 -Cursor
+```
+
+---
+
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
 Node.js 18 or newer is required. Do not pipe the installer (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
@@ -278,7 +313,7 @@ Node.js 18 or newer is required. Do not pipe the installer (`curl | bash`, `irm 
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
-With no harness flag, `install` configures all seven. Name a harness to leave the others alone. `init` and `install` are separate commands. Do not pass harness flags to `init`.
+With no harness flag, `install` configures all eight. Name a harness to leave the others alone. `init` and `install` are separate commands. Do not pass harness flags to `init`.
 
 Edited harness files are kept. Pass `--force` to replace one. The previous file is saved as `<file>.rdapq-backup`. A file that is kept also gets the new copy beside it as `<file>.rdapq`. Skill trees are copied to a staging directory and renamed into place only after `SKILL.md` is present, so a failed update does not delete a working install.
 
@@ -287,6 +322,9 @@ Edited harness files are kept. Pass `--force` to replace one. The previous file 
 # Core skill plus Claude only.
 npx --yes github:coldcanuk/rdapq install --claude
 
+# Cursor only. The skill lands in ~/.cursor/skills/rdap-q.
+npx --yes github:coldcanuk/rdapq install --cursor
+
 # Codex and Grok together:
 npx --yes github:coldcanuk/rdapq install --codex --grok
 
@@ -294,7 +332,7 @@ npx --yes github:coldcanuk/rdapq install --codex --grok
 npx --yes github:coldcanuk/rdapq#v1.2.0 install --claude
 ```
 
-### All 7 harnesses:
+### All 8 harnesses:
 ```bash
 npx --yes github:coldcanuk/rdapq install --all
 ```
@@ -318,7 +356,7 @@ npx --yes github:coldcanuk/rdapq init --force
 npx --yes github:coldcanuk/rdapq --repo /path/to/my-project
 ```
 
-`init` writes `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.clinerules`, `.goosehints`, `.grok/rules.md`, `.github/copilot-instructions.md`, `.claude/commands/rdapq.md`, and the skill tree at `.agents/skills/rdap-q/`.
+`init` writes `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.clinerules`, `.goosehints`, `.grok/rules.md`, `.github/copilot-instructions.md`, `.claude/commands/rdapq.md`, and the skill tree at `.agents/skills/rdap-q/`. Cursor reads that skill tree and `AGENTS.md` without a separate `--cursor` install.
 
 ### Check installation status:
 ```bash
@@ -347,6 +385,7 @@ git clone https://github.com/coldcanuk/rdapq.git
 cd rdapq
 ./install.sh --all          # every harness
 ./install.sh --claude       # one harness
+./install.sh --cursor       # Cursor skill only
 npm test                    # installer, packaging, and version checks
 ```
 
@@ -358,7 +397,7 @@ cd rdapq
 .\install.ps1 -Claude -Force
 ```
 
-`install.sh` and `install.ps1` are wrappers around `node bin/rdapq.js`. With no harness flag they install all seven. `.\install.ps1` has no `status` switch. Use `node .\bin\rdapq.js status`.
+`install.sh` and `install.ps1` are wrappers around `node bin/rdapq.js`. With no harness flag they install all eight. `.\install.ps1` has no `status` switch. Use `node .\bin\rdapq.js status`.
 
 ---
 

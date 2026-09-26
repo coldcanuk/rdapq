@@ -26,6 +26,7 @@ function tempLayout() {
     CODEX_HOME: path.join(root, 'codex'),
     GROK_HOME: path.join(root, 'grok'),
     COPILOT_HOME: path.join(root, 'copilot'),
+    CURSOR_HOME: path.join(root, 'cursor'),
   };
   return { root, home, env };
 }
@@ -65,6 +66,7 @@ test('install --claude does not install the other harnesses', () => {
   assert.equal(fs.existsSync(path.join(env.CLINE_HOME, 'rdapq.rules.md')), false);
   assert.equal(fs.existsSync(path.join(env.GEMINI_HOME, 'antigravity-cli', 'skills', 'rdap-q', 'SKILL.md')), false);
   assert.equal(fs.existsSync(path.join(env.GOOSE_HOME, 'toolkits', 'rdap-q', 'SKILL.md')), false);
+  assert.equal(fs.existsSync(path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'SKILL.md')), false);
   assert.match(result.out, /v1\.2\.0/);
   assert.match(result.out, /Done in \d+ms/);
 });
@@ -90,10 +92,25 @@ test('install --all covers every harness and honors home overrides', () => {
     path.join(env.CODEX_HOME, 'AGENTS.md'),
     path.join(env.GROK_HOME, 'rules.md'),
     path.join(env.GOOSE_HOME, 'toolkits', 'rdap-q', 'SKILL.md'),
+    path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'SKILL.md'),
   ];
   for (const file of expected) assert.equal(fs.existsSync(file), true, file);
   assert.equal(fs.existsSync(path.join(home, '.config', 'github-copilot')), false);
   assert.equal(fs.existsSync(path.join(home, '.codex')), false);
+  assert.equal(fs.existsSync(path.join(home, '.cursor')), false);
+});
+
+test('install --cursor writes a Cursor skill and leaves other harnesses alone', () => {
+  const { env, home } = tempLayout();
+  const result = run(['install', '--cursor'], env);
+  assert.equal(result.code, 0, result.err);
+  const skill = path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'SKILL.md');
+  const body = fs.readFileSync(skill, 'utf8');
+  assert.match(body, /^---\nname: rdap-q\n/);
+  assert.match(body, /disable-model-invocation: true/);
+  assert.equal(fs.existsSync(path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'playbooks', '00-bootstrap.md')), true);
+  assert.equal(fs.existsSync(path.join(env.CLAUDE_HOME, 'commands', 'rdapq.md')), false);
+  assert.equal(fs.existsSync(path.join(home, '.cursor')), false);
 });
 
 test('reinstall replaces skill trees but keeps durable memory and drops stale files', () => {

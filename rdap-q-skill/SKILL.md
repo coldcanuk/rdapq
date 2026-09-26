@@ -1,3 +1,8 @@
+---
+name: rdap-q
+description: Run the RDAP-Q evidence-first engineering protocol. Invoke with /rdap-q or /rdapq. Load this file, then the current phase playbook only.
+disable-model-invocation: true
+---
 name: rdap-q
 version: "1.2.0"
 description: Evidence-first engineering protocol. Load this file, then the current phase playbook only.

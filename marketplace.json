@@ -4,8 +4,8 @@
   "displayName": "RDAP-Q: Adaptive Planning with Quality Gates",
   "version": "1.2.0",
   "protocol": "RDAP-Q Agent Engineering Protocol",
-  "summary": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and quality gates across Codex, Grok, Copilot, Antigravity, Goose, Claude, and Cline.",
-  "description": "Vendor-neutral Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) enables autonomous AI coding agents to execute non-trivial software tasks with disciplined evidence collection, deterministic phase execution, persistent project state, calibrated quality scoring (0-10 scale), and diminishing-return exit logic. Native support for OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, and Cline.",
+  "summary": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and quality gates across Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor.",
+  "description": "Vendor-neutral Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) enables autonomous AI coding agents to execute non-trivial software tasks with disciplined evidence collection, deterministic phase execution, persistent project state, calibrated quality scoring (0-10 scale), and diminishing-return exit logic. Native support for OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
   "author": {
     "name": "coldcanuk",
     "url": "https://github.com/coldcanuk"
@@ -31,6 +31,7 @@
     "goose",
     "claude",
     "cline",
+    "cursor",
     "evidence-first"
   ],
   "entrypoint": "rdap-q-skill/SKILL.md",
@@ -84,6 +85,13 @@
       "status": "supported",
       "configuration": ".clinerules",
       "marketplace_identifier": "coldcanuk.rdapq-cline"
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "status": "supported",
+      "configuration": ".agents/skills/rdap-q/SKILL.md",
+      "marketplace_identifier": "rdap-q"
     }
   ],
   "commands": {
