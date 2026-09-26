@@ -1,19 +1,3 @@
-# Assumption Ledger
-
-Status values:
-
-- `OBSERVED`
-- `USER_SPECIFIED`
-- `VERIFIED_EXTERNAL`
-- `INFERRED`
-- `UNKNOWN`
-- `RESOLVED`
-
-| ID | Statement | Status | Materiality | Evidence IDs | Resolution / Next Action |
-|---|---|---|---|---|---|
-| A-001 | TBD | UNKNOWN | HIGH | — | Inspect / research |
-
-No CRITICAL assumption may remain UNKNOWN before implementation.
-
-HIGH assumptions affecting architecture, interfaces, security, persistence,
-compatibility, or destructive behaviour must be resolved before dependent work.
+# classes: SKILL.md facts plus RESOLVED
+records: [] # id, statement, status, materiality, evidence_ids, next
+block: critical UNKNOWN before implementation; unresolved HIGH on architecture, interfaces, security, persistence, compatibility, or destructive work

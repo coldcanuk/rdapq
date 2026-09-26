@@ -1,60 +1,6 @@
-# Planning Playbook
-
-Goal: produce an evidence-grounded executable plan without forcing speculative
-details.
-
-Structure:
-
-`Phases -> Milestones -> Tasks`
-
-## Every task records
-
-- Task ID;
-- Milestone ID;
-- objective;
-- affected files/components when known;
-- prerequisite evidence;
-- action;
-- commands/code when established;
-- verification;
-- expected observable outcome;
-- dependencies.
-
-## Exact command rule
-
-Provide exact commands only after environment evidence establishes them.
-
-Otherwise use:
-
-```text
-TBD-EVIDENCE: <fact required before command can be specified>
-```
-
-Never hallucinate commands to satisfy the template.
-
-## Plan quality dimensions
-
-| Dimension | Weight |
-|---|---:|
-| Requirements coverage | 15% |
-| Repository/evidence grounding | 15% |
-| Architecture correctness | 15% |
-| Task completeness | 10% |
-| Dependency/order correctness | 10% |
-| Verification design | 15% |
-| Risk coverage | 10% |
-| Reproducibility | 5% |
-| Git/execution safety | 5% |
-
-## Plan hard gates
-
-Do not execute while:
-
-- success criteria are materially ambiguous;
-- a CRITICAL assumption remains unresolved;
-- plan depends on imagined repository structure;
-- a material task lacks verification;
-- destructive action lacks safeguards;
-- known dependency ordering is wrong.
-
-Write the approved plan to `<repo>/.rdapq/state/plan.md`.
+phase: PLAN
+shape: [phases, milestones, tasks]
+task: [id, milestone, objective, files_if_known, evidence, action, commands_or_TBD-EVIDENCE, verification, observable, dependencies]
+plan_weights: {coverage: 15, grounding: 15, architecture: 15, completeness: 10, order: 10, verification: 15, risk: 10, repro: 5, git_safety: 5}
+block_execute_if: [ambiguous_success, critical_assumption_open, imagined_paths, task_without_verification, destructive_without_safeguard, bad_order]
+out: .rdapq/state/plan.md

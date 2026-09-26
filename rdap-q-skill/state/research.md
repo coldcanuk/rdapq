@@ -1,47 +1,13 @@
-# Research
-
-## Questions
-
-1. TBD
-
-## Repository Findings
-
-- TBD
-
-## Architecture Findings
-
-- TBD
-
-## External Findings
-
-- TBD
-
-## Experiments
-
-- TBD
-
-## Resolved Questions
-
-- TBD
-
-## Unresolved Questions
-
-- TBD
-
-## Implementation Implications
-
-- TBD
-
-## Memory Candidates
-
-- TBD
-
-## Evidence
-
-- TBD
-
-## Research Readiness
-
-Score: `TBD / 10`
-
-Hard gates: `PASS | FAIL`
+questions: []
+repo: []
+architecture: []
+external: []
+experiments: []
+resolved: []
+unresolved: []
+implications: []
+memory_candidates: []
+evidence_ids: []
+readiness:
+  score:
+  gates:

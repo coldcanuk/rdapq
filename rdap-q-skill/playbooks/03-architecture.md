@@ -1,35 +1,6 @@
-# Architecture Playbook
-
-Use when interfaces, boundaries, persistence, security, concurrency, or
-integration design materially affect correctness.
-
-Document in `decisions.md`:
-
-- components changed;
-- responsibilities;
-- interfaces;
-- data flow;
-- persistence model;
-- compatibility;
-- error/failure model;
-- security boundaries;
-- runtime/deployment implications;
-- rejected alternatives when material.
-
-Decision record:
-
-```text
-Decision:
-Evidence:
-Alternatives:
-Why selected:
-Risks:
-Verification:
-```
-
-Architecture must fit the current system unless the task explicitly changes it.
-
-Avoid unrelated broad refactors.
-
-Promote stable architecture facts to project memory only after they are verified
-and clearly durable.
+phase: ARCHITECTURE
+when: [interfaces, boundaries, persistence, security, concurrency, integration]
+record: [components, responsibilities, interfaces, data_flow, persistence, compatibility, failures, security, runtime, rejected]
+decision: [decision, evidence, alternatives, why, risks, verification]
+rules: [fit_current_system, no_unrelated_refactor, promote_only_if_durable_and_verified]
+out: decisions.md

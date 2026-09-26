@@ -1,41 +1,6 @@
-# Verification Playbook
-
-Goal: establish evidence that the implemented system satisfies requirements
-without material regression.
-
-Use only verification supported by the real stack:
-
-- unit tests;
-- integration tests;
-- end-to-end tests;
-- build;
-- lint;
-- formatter/check mode;
-- type checking;
-- static analysis;
-- security/dependency checks;
-- race/concurrency checks;
-- migration validation;
-- performance checks;
-- controlled manual/runtime verification.
-
-Do not invent ceremonial commands.
-
-Each important result gets an evidence ID.
-
-If verification fails:
-
-1. record evidence;
-2. classify severity;
-3. identify root cause;
-4. return to implementation;
-5. re-run affected verification;
-6. do not average failure into a score.
-
-If a required check cannot run:
-
-```text
-NOT VERIFIED — ENVIRONMENTAL CONSTRAINT
-```
-
-Then evaluate the affected hard gate honestly.
+phase: VERIFY
+use_real_stack_only: [unit, integration, e2e, build, lint, format, types, static_analysis, security, race, migration, perf, manual]
+on_fail: [record, severity, cause, return_to_IMPLEMENT, rerun]
+if_cannot_run: "NOT VERIFIED — ENVIRONMENTAL CONSTRAINT"
+forbid: [invented_commands, averaging_a_failure_into_the_score]
+each_result: evidence_id
