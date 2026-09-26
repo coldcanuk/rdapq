@@ -4,14 +4,26 @@ description: Run the RDAP-Q evidence-first engineering protocol. Invoke with /rd
 disable-model-invocation: true
 ---
 name: rdap-q
-version: "1.2.4"
+version: "1.2.5"
 description: Evidence-first engineering protocol. Load this file, then the current phase playbook only.
 invocation: /rdapq
 home_env: RDAPQ_HOME
 home: RDAPQ_HOME else ~/.rdapq (Windows %USERPROFILE%\.rdapq)
 state: .rdapq/state
 memory: $RDAPQ_HOME/memory
+memory_index: $RDAPQ_HOME/memory/index.md
 facts: [OBSERVED, USER_SPECIFIED, VERIFIED_EXTERNAL, INFERRED, UNKNOWN]
+memory_caps:
+  load_full_records: 12
+  load_index_rows: 80
+  fact_chars: 240
+  evidence_chars: 160
+  file_bytes: 24576
+  global_active: 80
+  project_active: 40
+  state_evidence_records: 80
+  state_iteration_rounds: 20
+  state_file_bytes: 49152
 rules:
   - evidence before inference; never invent paths, APIs, versions, flags, tests, env, or architecture
   - INFERRED or UNKNOWN cannot decide implementation when verification is possible
@@ -21,12 +33,14 @@ rules:
   - task state stays in .rdapq/state; memory is reusable only; current evidence beats memory
   - never store secret values; a source plus an identifier is allowed
   - do not load manifest.json, other playbooks, diagrams, or bulk memory
+  - load memory/index.md first, then at most 12 matching full records; compact before work if over cap
+  - never bulk-read memory/ or projects/; never gzip, base64, or one-line-tarball memory
 commands:
   status: phase, quality, confidence, gates, blockers, iteration
   score: evidence-linked scorecard
   audit: adversarial final audit
-  resume: reload memory and state, then check drift
-  memory: relevant memories and status; never print secrets
+  resume: compact if over cap, reload index and hits plus state, then check drift
+  memory: relevant ACTIVE memories and status; never print secrets; never dump the store
   research: discovery
   explain: why this phase or exit
 weights: {correctness: 25, coverage: 15, verification: 15, integration: 10, security: 10, maintainability: 10, architecture: 8, operability: 7}
