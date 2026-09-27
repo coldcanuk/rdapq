@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/agent-skills/spec/main/marketplace.schema.json",
   "name": "rdap-q",
   "displayName": "RDAP-Q: Adaptive Planning with Quality Gates",
-  "version": "1.2.5",
+  "version": "1.3.0",
   "protocol": "RDAP-Q Agent Engineering Protocol",
   "summary": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and quality gates across Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor.",
   "description": "Vendor-neutral Research-Driven Adaptive Planning with Quality Gates (RDAP-Q) enables autonomous AI coding agents to execute non-trivial software tasks with disciplined evidence collection, deterministic phase execution, persistent project state, calibrated quality scoring (0-10 scale), and diminishing-return exit logic. Native support for OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
@@ -95,14 +95,15 @@
     }
   ],
   "commands": {
-    "/rdapq": "Execute task using RDAP-Q protocol with evidence gathering and adaptive quality gates.",
-    "/rdapq status": "Inspect current lifecycle phase, quality scorecard, confidence levels, and active gates.",
-    "/rdapq score": "Calculate or display the current calibrated 8-dimension scorecard.",
+    "/rdapq": "Execute task using RDAP-Q. Default depth is lean.",
+    "/rdapq status": "Show phase, depth, oracle Q, gates, and round.",
+    "/rdapq score": "Show oracle Q. The 8-dimension card is a model label and is written only for this command.",
+    "/rdapq depth": "Set lean, standard, or full. User switch wins.",
     "/rdapq audit": "Trigger the adversarial final-audit verification checklist.",
-    "/rdapq resume": "Safely reload persistent project state and verify environment drift before continuing.",
+    "/rdapq resume": "Reload persistent project state and verify environment drift before continuing.",
     "/rdapq memory": "Query durable cross-session patterns, lessons, and constraints.",
-    "/rdapq research": "Initiate structured evidence gathering and discovery for the current task.",
-    "/rdapq explain": "Provide transparent rationale for the current quality decision or state transition."
+    "/rdapq research": "Enter discovery. Implies standard or full for this task.",
+    "/rdapq explain": "Explain the current depth, phase, or exit."
   },
   "links": {
     "documentation": "https://github.com/coldcanuk/rdapq/blob/main/rdap-q-skill/README.md",
