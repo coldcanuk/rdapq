@@ -1,4 +1,4 @@
-# RDAP-Q Skill v1.2.5
+# RDAP-Q Skill v1.3.0
 
 `SKILL.md` is the instruction source. This README is not a second copy of the protocol.
 
@@ -12,9 +12,10 @@ It uses:
 - deterministic phase loading;
 - persistent repository state;
 - durable Markdown memory;
-- evidence-linked scoring;
+- selectable depth (`lean`, `standard`, `full`);
+- oracle-only quality score (Q) from real commands and inspections;
 - hard quality gates;
-- diminishing-return exit logic;
+- a 3-round cap with honest non-complete exits;
 - vendor-neutral capability names;
 - a collision-resistant `/rdapq` command namespace.
 
@@ -68,7 +69,9 @@ Repository-local:
 ├── scorecard.md
 ├── risks.md
 ├── decisions.md
-└── iteration-log.md
+├── iteration-log.md
+├── depth.md        # only after /rdapq depth
+└── train.md        # one compact row per checkpoint
 ```
 
 ## Memory versus state
@@ -91,6 +94,7 @@ Never persist secret values.
 
 ```text
 /rdapq <task>
+/rdapq depth lean|standard|full
 /rdapq status
 /rdapq score
 /rdapq audit
@@ -133,7 +137,9 @@ rdap-q-skill/
 │   ├── scorecard.md
 │   ├── risks.md
 │   ├── decisions.md
-│   └── iteration-log.md
+│   ├── iteration-log.md
+│   ├── depth.md
+│   └── train.md
 ├── memory/
 │   ├── README.md
 │   ├── engineering-preferences.md

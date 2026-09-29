@@ -3,7 +3,7 @@
 
 [![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Protocol Version](https://img.shields.io/badge/Protocol-v1.2.4-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![Protocol Version](https://img.shields.io/badge/Protocol-v1.3.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
 [![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#in-harness-marketplace-installation)
@@ -29,7 +29,7 @@
   "@type": "SoftwareSourceCode",
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
-  "version": "1.2.4",
+  "version": "1.3.0",
   "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
@@ -148,7 +148,7 @@ That is optional. It is not required for `install --claude` or `init`.
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 18 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.2.4**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
+Node.js 18 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.3.0**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -168,7 +168,7 @@ npx --yes rdap-q install --cursor
 npx --yes rdap-q install --codex --grok
 
 # This release, not whatever is tagged latest later:
-npx --yes rdap-q@1.2.4 install --claude
+npx --yes rdap-q@1.3.0 install --claude
 ```
 
 ### All 8 harnesses:
@@ -264,7 +264,7 @@ npx --yes rdap-q@latest status
 Use the same harness flags you used the first time. `--cursor` above is only an example. To stay on this release:
 
 ```bash
-npx --yes rdap-q@1.2.4 install --cursor
+npx --yes rdap-q@1.3.0 install --cursor
 ```
 
 ### Command installed globally
@@ -278,7 +278,7 @@ rdapq status
 ```bash
 cd rdapq
 git fetch origin --tags
-git checkout v1.2.4          # or: git pull origin main
+git checkout v1.3.0          # or: git pull origin main
 ./install.sh --claude        # same flags as the first install
 ./install.sh status
 ```
@@ -286,7 +286,7 @@ git checkout v1.2.4          # or: git pull origin main
 ```powershell
 cd rdapq
 git fetch origin --tags
-git checkout v1.2.4
+git checkout v1.3.0
 .\install.ps1 -Claude
 node .\bin\rdapq.js status
 ```
@@ -328,14 +328,15 @@ Every harness adheres to the standardized `/rdapq` command suite:
 
 | Command | Action / Semantic Meaning |
 | :--- | :--- |
-| `/rdapq <task>` | Execute task using RDAP-Q protocol: load memory, gather evidence, plan, execute adaptive quality loop, and stop cleanly. |
-| `/rdapq status` | Show current lifecycle phase, scorecard, confidence levels, active gates, blockers, and iteration history. |
-| `/rdapq score` | Calculate or display the current evidence-weighted 8-dimension scorecard. |
-| `/rdapq audit` | Run the adversarial final-audit verification checklist. |
+| `/rdapq <task>` | Execute task using RDAP-Q protocol at the current depth: implement, verify with real commands, and stop cleanly within 3 rounds. |
+| `/rdapq depth lean\|standard\|full` | Set how many phases run. `lean` (default): IMPLEMENT + VERIFY. `standard`: adds BOOTSTRAP + DISCOVERY. `full`: all phases. The user switch wins over the effort fallback. |
+| `/rdapq status` | Show phase, depth, oracle Q, gates, blockers, and round. |
+| `/rdapq score` | Show oracle Q. Writes the 8-dimension self-card only for this command, as a label that never enters Q or the exit. |
+| `/rdapq audit` | Run the adversarial final-audit verification checklist. Loads AUDIT even at `lean`. |
 | `/rdapq resume` | Reload persistent memory/state, check for file/git drift, and safely resume. |
 | `/rdapq memory` | Query active persistent memories, lessons, patterns, and constraints. |
-| `/rdapq research`| Trigger structured discovery and evidence collection before planning. |
-| `/rdapq explain` | Output transparent rationale for the current quality score or state transition. |
+| `/rdapq research`| Trigger structured discovery and evidence collection. Implies `standard` or `full` for this task. |
+| `/rdapq explain` | Explain the current depth, phase, or exit decision. |
 
 ---
 
@@ -356,9 +357,23 @@ RDAP-Q rejects arbitrary scores. All scores must be backed by verifiable evidenc
 | **10**| Reference Quality | Benchmark gold standard; mathematically proven or reference implementation. Rare. |
 
 > [!NOTE]
-> `8.x` is an excellent, production-ready stopping point. Do not burn unnecessary tokens chasing a theoretical 10.0 when marginal value has saturated.
+> This scale labels the optional 8-dimension self-card written by `/rdapq score`. Since 1.3.0 the self-card is annotation only: it never enters Q and never decides an exit.
 
-### <a id="default-implementation-dimensions"></a> Default Implementation Dimensions
+### <a id="oracle-q"></a> Oracle Q
+
+Q is computed only from oracles a tool can observe. Each oracle is `pass` (10), `partial` (5), `fail` (0), or not run (excluded):
+
+| Oracle | Weight | Pass when |
+| :--- | :---: | :--- |
+| runtime | 35 | Every required command exits 0, with an evidence id. |
+| repo | 25 | The inspected diff matches the stated files. |
+| external | 15 | Material external claims are `VERIFIED_EXTERNAL`. |
+| claims | 15 | Scaled by verified / total material claims. |
+| repro | 10 | The reported failure was reproduced, or the regression command passed. |
+
+Q is the weighted mean of the oracles that ran. If none ran, Q is `UNMEASURED` and the task cannot be `COMPLETE`. Completion also needs every applicable gate to pass and Q to meet the risk floor (LOW 7.2, MODERATE 7.6, HIGH 8.0, CRITICAL 8.3).
+
+### <a id="default-implementation-dimensions"></a> Self-card Dimensions (annotation only)
 
 ```
 Functional Correctness        [25%] █████████████████████████
@@ -404,10 +419,12 @@ RDAP-Q strictly decouples working project state from reusable cross-project memo
     ├── evidence.md               # Empirical observations (test runs, inspects)
     ├── research.md               # Discovery findings & API contracts
     ├── plan.md                   # Milestone roadmap & phase checklist
-    ├── scorecard.md              # Current calibrated 8-dimension scores
+    ├── scorecard.md              # Oracle Q rows; self-card only after /rdapq score
     ├── risks.md                  # Identified risks & mitigations
     ├── decisions.md              # Architectural Decision Records (ADRs)
-    └── iteration-log.md          # Round-by-round quality deltas
+    ├── iteration-log.md          # One row per round (max 3)
+    ├── depth.md                  # Present only after /rdapq depth
+    └── train.md                  # One compact oracle row per checkpoint (cap 40)
 ```
 
 ### <a id="strict-memory-safety-rules"></a> Strict Memory Safety Rules
@@ -416,19 +433,20 @@ RDAP-Q strictly decouples working project state from reusable cross-project memo
 
 ---
 
-## <a id="exit-criteria"></a> 🛑 Exit Criteria & Diminishing Returns
+## <a id="exit-criteria"></a> 🛑 Exit Criteria & Round Cap
 
-Agents using RDAP-Q stop automatically according to clear mathematical criteria:
+Agents using RDAP-Q stop within 3 rounds:
 
-- **CONTINUE / ITERATE**:
-  - Any resolvable hard gate is failing.
-  - An in-scope `HIGH` or `CRITICAL` defect remains.
-  - Expected weighted quality improvement is $\ge 0.20$.
-- **DIMINISHING RETURNS (Stop Work)**:
-  - All completion gates pass, AND:
-  - The last two completed rounds each yielded $< 0.15$ improvement; OR
-  - Best remaining credible improvement is $< 0.20$ with no material risk remaining.
-- **TERMINAL SUCCESS**:
+- **ITERATE** (only while rounds remain):
+  - A gate failed with a new failing oracle, or
+  - An in-scope `HIGH` or `CRITICAL` defect has a reproduction.
+  - Self-score gaps, prose polish, and a repeated identical failure never justify another round.
+- **STOP, NOT COMPLETE**:
+  - The same oracle fails twice: `STALLED`.
+  - Round cap with ambiguous success criteria: `UNCLEAR_TASK`.
+  - Round cap with no verification command run: `MISSING_TEST`.
+  - Also `BLOCKED`, `CONSTRAINT_LIMITED`, and `FAILED_VERIFICATION`.
+- **TERMINAL SUCCESS** (all applicable gates pass, Q measured and at the risk floor):
   - The agent declares: **`Vibe Code Build complete.`**
 
 ---
