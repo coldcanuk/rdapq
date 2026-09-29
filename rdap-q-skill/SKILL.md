@@ -31,6 +31,8 @@ depth:
     - phases 00-03 are not mandatory
     - do not load a skipped phase playbook
     - do not write plan, architecture, or discovery state for a skipped phase
+    - without BOOTSTRAP, IMPLEMENT observes repo state itself (git status, branch, diff) before the first edit
+    - without BOOTSTRAP, memory is not loaded and nothing is promoted; memory load checks are N/A
 memory_caps:
   load_full_records: 12
   load_index_rows: 80
