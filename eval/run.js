@@ -43,6 +43,7 @@ function parseArgs(argv) {
     timeoutMin: 20,
     out: null,
     work: null,
+    hook: true,
   };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -62,6 +63,7 @@ function parseArgs(argv) {
     else if (arg === '--timeout-min') opts.timeoutMin = Number(next());
     else if (arg === '--out') opts.out = path.resolve(next());
     else if (arg === '--work') opts.work = path.resolve(next());
+    else if (arg === '--no-hook') opts.hook = false;
     else throw new Error(`unknown option: ${arg}`);
   }
   for (const c of opts.conditions) {
@@ -95,15 +97,20 @@ function copyDir(src, dest) {
 }
 
 /** Build the starting repository for one run. */
-function prepare(task, condition, workdir, rdapqHome) {
+function prepare(task, condition, workdir, rdapqHome, hook) {
   copyDir(path.join(task.dir, 'repo'), workdir);
   fs.writeFileSync(path.join(workdir, 'package.json'), `${JSON.stringify({ name: task.id, private: true, scripts: { test: 'node --test' } }, null, 2)}\n`);
   fs.writeFileSync(path.join(workdir, '.gitignore'), 'node_modules/\n');
   if (condition !== 'none') {
-    const init = sh(process.execPath, [path.join(ROOT, 'bin', 'rdapq.js'), 'init', '--quiet'], workdir, { ...process.env, RDAPQ_HOME: rdapqHome });
+    const args = [path.join(ROOT, 'bin', 'rdapq.js'), 'init', '--quiet'];
+    // --hook exists from 2.0; older checkouts reject it, so only pass it when the installer knows it.
+    if (hook && fs.readFileSync(path.join(ROOT, 'lib', 'installer.js'), 'utf8').includes("'--hook'")) args.push('--hook');
+    const init = sh(process.execPath, args, workdir, { ...process.env, RDAPQ_HOME: rdapqHome });
     if (init.status !== 0) throw new Error(`rdapq init failed: ${init.stderr}`);
+    // 1.x reads .rdapq/state/depth.md; 2.x reads .rdapq/depth.
     fs.mkdirSync(path.join(workdir, '.rdapq', 'state'), { recursive: true });
     fs.writeFileSync(path.join(workdir, '.rdapq', 'state', 'depth.md'), `value: ${condition}\nset_by: user\n`);
+    fs.writeFileSync(path.join(workdir, '.rdapq', 'depth'), `${condition}\n`);
   }
   git(workdir, 'init', '-q', '-b', 'main');
   git(workdir, 'add', '-A');
@@ -140,6 +147,20 @@ function changedFiles(workdir, base) {
   const committed = sh('git', ['diff', '--name-only', base], workdir).stdout;
   const untracked = sh('git', ['ls-files', '--others', '--exclude-standard'], workdir).stdout;
   return [...new Set(`${committed}\n${untracked}`.split('\n').filter(Boolean))].sort();
+}
+
+/** The engine's own last verdict, when the agent ran `gate` (RDAP-Q 2.x). */
+function gateVerdict(workdir) {
+  const log = path.join(workdir, '.rdapq', 'state.jsonl');
+  if (!fs.existsSync(log)) return null;
+  const gates = fs.readFileSync(log, 'utf8').split('\n').filter(Boolean).map((l) => {
+    try {
+      return JSON.parse(l);
+    } catch {
+      return {};
+    }
+  }).filter((e) => e.kind === 'gate');
+  return gates.length ? gates[gates.length - 1].verdict : null;
 }
 
 function stateFootprint(workdir) {
@@ -214,7 +235,7 @@ async function runOne(job, opts) {
   const rdapqHome = path.join(base, 'rdapq-home');
   fs.rmSync(base, { recursive: true, force: true });
   fs.mkdirSync(base, { recursive: true });
-  const base0 = prepare(task, condition, workdir, rdapqHome);
+  const base0 = prepare(task, condition, workdir, rdapqHome, opts.hook);
 
   const env = cleanEnv({ RDAPQ_HOME: rdapqHome });
   const result = await runAgent(agent, promptFor(task, condition), workdir, env, opts.timeoutMin * 60000);
@@ -235,6 +256,8 @@ async function runOne(job, opts) {
     hiddenPass: tests.hidden.ok,
     hiddenTests: { pass: tests.hidden.pass, fail: tests.hidden.fail },
     falseDone: claim === 'DONE' && !tests.hidden.ok,
+    gate: gateVerdict(workdir),
+    hook: condition !== 'none' && opts.hook,
     turns: result.turns ?? null,
     tokensIn: result.tokensIn ?? null,
     tokensOut: result.tokensOut ?? null,
@@ -246,6 +269,7 @@ async function runOne(job, opts) {
     skillRead: result.skillRead ?? null,
     playbooksRead: result.playbooksRead ?? null,
     stateWrites: result.stateWrites ?? null,
+    engineCalls: result.engineCalls ?? null,
     state: stateFootprint(workdir),
     error: result.error || null,
   };

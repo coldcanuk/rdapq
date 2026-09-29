@@ -44,6 +44,7 @@ function toolSummary(events) {
     skillRead: calls.some((c) => /rdap-q\/SKILL\.md/.test(touched(c))),
     playbooksRead: [...new Set(calls.flatMap((c) => touched(c).match(/playbooks\/\d\d-[\w-]+\.md/g) || []))].sort(),
     stateWrites: calls.filter((c) => (c.name === 'Write' || c.name === 'Edit') && /\.rdapq\/state\//.test(touched(c))).length,
+    engineCalls: calls.filter((c) => c.name === 'Bash' && /rdapq(\.js)?\s+(start|plan|check|gate|claim|note|state|memory)\b/.test(String(c.input.command || ''))).length,
   };
 }
 
