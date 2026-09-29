@@ -10,7 +10,7 @@ order:
   - invalid plan at depth full -> PLAN; at lean or standard, ask or mark UNCLEAR_TASK
   - gate fail with a new oracle and rounds < 3 -> one fix
   - same oracle twice, or round cap -> STALLED, UNCLEAR_TASK, or MISSING_TEST
-  - gates pass and oracle Q meets the risk floor -> COMPLETE
+  - gates pass and every required oracle passes -> COMPLETE
   - else emit the accurate non-complete terminal state
   - promote only durable lessons that pass write_forbid and caps, and only if the memory index was loaded this task
 precedence: [user_depth_switch, user_intent, direct_evidence, repo_state, project_memory, global_memory, external_for_this_version, inference]

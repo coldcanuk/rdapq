@@ -1,4 +1,4 @@
-complete: all_applicable_pass AND Q is not UNMEASURED AND oracle Q meets risk floor
+complete: all_applicable_pass AND Q is not UNMEASURED AND every required oracle passes
 score_never_completes: true
 self_score_never_completes: true
 gates:
@@ -10,6 +10,6 @@ gates:
   security: [no_new_material_issue, no_secrets_stored, destructive_safeguards, risk_proportional_checks]
   repository: [diff_reviewed, no_unintended_files, no_conflicts, state_understood, unrelated_work_kept]
   memory: [no_secrets, promotion_test, stale_handled, state_not_promoted_as_global, under_cap, index_current]
-  quality: oracle_Q_meets_floor_or_round_cap_already_emitted
+  quality: required_oracles_pass_and_no_oracle_fails
 not_applicable:
   memory_not_loaded: [promotion_test, stale_handled, under_cap, index_current] # BOOTSTRAP skipped and nothing promoted

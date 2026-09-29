@@ -363,15 +363,25 @@ RDAP-Q rejects arbitrary scores. All scores must be backed by verifiable evidenc
 
 Q is computed only from oracles a tool can observe. Each oracle is `pass` (10), `partial` (5), `fail` (0), or not run (excluded):
 
-| Oracle | Weight | Pass when |
-| :--- | :---: | :--- |
-| runtime | 35 | Every required command exits 0, with an evidence id. |
-| repo | 25 | The inspected diff matches the stated files. |
-| external | 15 | Material external claims are `VERIFIED_EXTERNAL`. |
-| claims | 15 | Scaled by verified / total material claims. |
-| repro | 10 | The reported failure was reproduced, or the regression command passed. |
+| Oracle | Weight | Pass | Partial |
+| :--- | :---: | :--- | :--- |
+| runtime | 35 | Every required command exits 0, and at least one check touches the changed code. | Commands pass, but none touches the change. |
+| repo | 25 | The diff touches exactly the stated files. | Extra files are only generated or lockfile output. |
+| external | 15 | Every material external claim is `VERIFIED_EXTERNAL`. | The unverified claims are off the changed path. |
+| claims | 15 | Scaled by verified / total material claims. | — |
+| repro | 10 | The failure reproduced before the fix, and the same command passes after it. | Only one of the two was run. |
 
-Q is the weighted mean of the oracles that ran. If none ran, Q is `UNMEASURED` and the task cannot be `COMPLETE`. Completion also needs every applicable gate to pass and Q to meet the risk floor (LOW 7.2, MODERATE 7.6, HIGH 8.0, CRITICAL 8.3).
+Two failures are "the same" when they share an oracle id: the command plus its first failing test id or assertion. The same failure twice ends the run as `STALLED`.
+
+Q is the weighted mean of the oracles that ran. If none ran, Q is `UNMEASURED` and the task cannot be `COMPLETE`. Q is reported, but no Q number completes a task. Completion needs every applicable gate to pass and every oracle required for the task's risk to pass:
+
+| Risk | Required oracles |
+| :--- | :--- |
+| LOW, MODERATE | runtime, repo |
+| HIGH | runtime, repo, repro |
+| CRITICAL | runtime, repo, repro, external |
+
+`partial` never satisfies a requirement, and any oracle at `fail` blocks completion. `runtime` only passes when at least one executed check touches the changed code. A required oracle may be absent only when it does not apply: `repro` with no defect in scope, `external` with no external claim.
 
 ### <a id="default-implementation-dimensions"></a> Self-card Dimensions (annotation only)
 
@@ -445,7 +455,7 @@ Agents using RDAP-Q stop within 3 rounds:
   - Round cap with ambiguous success criteria: `UNCLEAR_TASK`.
   - Round cap with no verification command run: `MISSING_TEST`.
   - Also `BLOCKED`, `CONSTRAINT_LIMITED`, and `FAILED_VERIFICATION`.
-- **TERMINAL SUCCESS** (all applicable gates pass, Q measured and at the risk floor):
+- **TERMINAL SUCCESS** (all applicable gates pass and every required oracle passes):
   - The agent declares: **`Vibe Code Build complete.`**
 
 ---
@@ -507,7 +517,7 @@ Yes. Because state and scorecards are saved as YAML in <code>.rdapq/state/</code
 
 <details>
 <summary><strong>Does RDAP-Q slow down small tasks?</strong></summary>
-No. RDAP-Q scales adaptively. For simple bug fixes or localized edits, the agent moves rapidly through Bootstrap and Discovery, runs verification, confirms a passing score (&ge; 7.2 for low risk), and terminates in a single round.
+No. RDAP-Q scales adaptively. For simple bug fixes or localized edits, the agent moves rapidly through Bootstrap and Discovery, runs verification, confirms the required oracles pass (runtime and repo for low risk), and terminates in a single round.
 </details>
 
 <details>
