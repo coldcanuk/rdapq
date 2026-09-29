@@ -44,8 +44,13 @@ const NO_VERSION = ['bin/rdapq.js', 'lib/installer.js', 'install.sh', 'install.p
 
 const SEMVER = /(?<![\d.])\d+\.\d+\.\d+(?![\d.])/g;
 
+// A prose line carrying this marker may name other versions (release history,
+// eval baselines). stamp-version leaves it alone and check-versions skips it.
+const KEEP = '<!-- keep-version -->';
+const stampable = (text) => text.split('\n').filter((line) => !line.includes(KEEP)).join('\n');
+
 function pick(data, keys) {
   return keys.reduce((node, key) => (node == null ? undefined : node[key]), data);
 }
 
-module.exports = { JSON_TARGETS, PROSE_TARGETS, NO_VERSION, SEMVER, pick };
+module.exports = { JSON_TARGETS, PROSE_TARGETS, NO_VERSION, SEMVER, KEEP, stampable, pick };

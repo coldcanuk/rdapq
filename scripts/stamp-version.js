@@ -10,7 +10,7 @@
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { JSON_TARGETS, PROSE_TARGETS, SEMVER, pick } = require('./version-targets');
+const { JSON_TARGETS, PROSE_TARGETS, SEMVER, KEEP, pick } = require('./version-targets');
 
 const ROOT = path.resolve(__dirname, '..');
 const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
@@ -42,7 +42,7 @@ for (const [rel, keys] of JSON_TARGETS) {
 }
 
 for (const rel of PROSE_TARGETS) {
-  update(rel, (text) => text.replace(SEMVER, version));
+  update(rel, (text) => text.split('\n').map((line) => (line.includes(KEEP) ? line : line.replace(SEMVER, version))).join('\n'));
 }
 
 process.stdout.write(changed.length ? `stamped ${version}: ${changed.join(', ')}\n` : `stamps already at ${version}\n`);

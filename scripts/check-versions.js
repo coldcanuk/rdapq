@@ -8,7 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { JSON_TARGETS, PROSE_TARGETS, NO_VERSION, SEMVER, pick } = require('./version-targets');
+const { JSON_TARGETS, PROSE_TARGETS, NO_VERSION, SEMVER, stampable, pick } = require('./version-targets');
 
 const ROOT = path.resolve(__dirname, '..');
 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
@@ -27,7 +27,7 @@ for (const [rel, keys] of JSON_TARGETS) {
 }
 
 for (const rel of PROSE_TARGETS) {
-  const found = read(rel).match(SEMVER) || [];
+  const found = stampable(read(rel)).match(SEMVER) || [];
   if (!found.includes(version)) {
     failures.push(`${rel}: does not mention ${version}`);
   }

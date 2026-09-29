@@ -407,7 +407,26 @@ node eval/report.js eval/results/<run> --write
 
 The headline number is the **false-DONE rate**: runs that ended with "STATUS: DONE" while the hidden tests fail. Agents run with a scoped tool allowlist (read, edit, `node`, `npm test`, `git`) and project settings only.
 
-EVAL_RESULTS_PLACEHOLDER
+### Results <!-- keep-version -->
+
+Sonnet 5.5 and Haiku 4.5, 8 tasks × 2 repetitions, 32 runs per condition. Reports: [`baseline-1.3.1`](eval/results/baseline-1.3.1/report.md) and [`v2.0.0`](eval/results/v2.0.0/report.md). <!-- keep-version -->
+
+| condition | hidden pass | false DONE | mean cost | mean turns |
+| :--- | :---: | :---: | :---: | :---: |
+| no protocol | 100% | 0% | $0.08 | 7.1 |
+| 1.3.1 lean | 91% | 9% | $0.12 | 15.2 | <!-- keep-version -->
+| 1.3.1 full | 97% | 3% | $0.15 | 17.6 | <!-- keep-version -->
+| 2.0.0 lean | 88% | 13% | $0.12 | 13.4 | <!-- keep-version -->
+| 2.0.0 full | 94% | 6% | $0.12 | 13.2 | <!-- keep-version -->
+
+What this shows:
+
+- **Neither version beats no protocol on this task set.** Unassisted, both models passed every hidden test; every false DONE came from an RDAP-Q run. The set is too easy to show a benefit, and 32 runs per cell cannot separate 9% from 13%.
+- **2.0 fixed adoption.** The engine ran in 64 of 64 runs and the gate reached a verdict in 63. In 1.3.1, lean runs usually never opened `SKILL.md` and 1 of 64 runs reported a terminal state. <!-- keep-version -->
+- **The gate cannot catch tests the agent never wrote.** All six false COMPLETEs were Haiku runs that skipped spec clauses (invalid-input errors, a DST week) and wrote tests only for what they implemented. The engine measured those tests correctly.
+- **Cost:** 2.0 full costs less than 1.3.1 full ($0.12 against $0.15); both cost more than no protocol ($0.08). <!-- keep-version -->
+
+The roadmap's ship gate for 2.0 was a lower false-COMPLETE rate at equal or lower cost. It did not pass, so 2.0 is not released. Next: harder tasks that an unassisted agent fails, and requirement-to-test mapping so the gate can see untested spec clauses.
 
 ---
 
@@ -479,7 +498,7 @@ Contributions are welcome, especially new harnesses, new eval tasks, and oracle 
 1. Fork the repository: [https://github.com/coldcanuk/rdapq](https://github.com/coldcanuk/rdapq)
 2. Create a feature branch: `git checkout -b feature/new-harness-support`
 3. Run `npm test` (Node.js 22+). It checks the installer, the engine, the eval tasks, the npm tarball, and version consistency. Protocol changes should also come with an eval run.
-4. To release, run `npm version <patch|minor|major>`. It stamps the version into every manifest and bridge (see `scripts/version-targets.js`) in the same commit and tags `vX.Y.Z`. Never edit version stamps by hand; `npm run stamp` repairs drift. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
+4. To release, run `npm version <patch|minor|major>`. It stamps the version into every manifest and bridge (see `scripts/version-targets.js`) in the same commit and tags `vX.Y.Z`. Never edit version stamps by hand; `npm run stamp` repairs drift. A README line that must name an older version (release history, eval baselines) ends with `<!-- keep-version -->`. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
 5. Submit a Pull Request.
 
 **Maintained by:** [@coldcanuk](https://github.com/coldcanuk)  
