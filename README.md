@@ -341,7 +341,7 @@ The engine, run by the agent or by you (`node .agents/skills/rdap-q/tool/rdapq.j
 
 | Command | Meaning |
 | :--- | :--- |
-| `start --risk R --files a,b --run "<cmd>" [--repro "<cmd>" \| --no-defect] [--depth full]` | Define done for this task. |
+| `start --risk R --files a,b --run "<cmd>" [--repro "<cmd>" \| --no-defect] [--depth full] [--keep]` | Define done for a new task (`--keep`: redefine the current one). |
 | `plan --add a --drop b --why "<reason>"` | Change the planned files, with a logged reason. |
 | `check [--before]` | Run the oracles (`--before`: run the repro before fixing). |
 | `gate [--json]` | Terminal state. Exit code 0 COMPLETE, 3 CONTINUE, 1 otherwise. |
@@ -360,9 +360,9 @@ The engine, run by the agent or by you (`node .agents/skills/rdap-q/tool/rdapq.j
 
 | Oracle | Weight | Pass | Partial |
 | :--- | :---: | :--- | :--- |
-| runtime | 35 | Every `--run` command exits 0, and a changed test or a test importing a changed module exists. | Commands pass, but no test touches the change. |
+| runtime | 35 | Every `--run` command exits 0, and a test changed or imports a changed file by path. | Commands pass, but no test touches the change. |
 | repo | 25 | The diff touches exactly the planned files. | Extra files are only lockfiles or build output. |
-| repro | 10 | The repro failed before the fix and passes after it. | It passes now, but was never run before the fix. |
+| repro | 10 | The repro failed before the fix (run before any source edit) and passes after it. | It passes now, but was not run before the source changed. |
 | external | 15 | Every recorded external claim is verified. | Unverified claims are all marked off the changed path. |
 | claims | 15 | Share of recorded claims that are verified, 0–10. | — |
 
@@ -372,9 +372,9 @@ Q is the weighted mean of the oracles that ran; it is reported, not used to deci
 | :--- | :--- |
 | LOW, MODERATE | runtime, repo |
 | HIGH | runtime, repo, repro (or `--no-defect`) |
-| CRITICAL | runtime, repo, repro, external |
+| CRITICAL | runtime, repo, repro, and every recorded external claim verified |
 
-Any oracle at `fail` blocks COMPLETE. Terminal states are `COMPLETE`, `STALLED` (same failure twice, or 3 rounds used), `BLOCKED` (a blocker note), `MISSING_TEST` (no required command), and `UNCLEAR_TASK` (no plan). `CONTINUE` means fix the first reason and check again. A task is COMPLETE only when `gate` prints it; the agent then says **`Vibe Code Build complete.`**
+Any oracle at `fail` blocks COMPLETE. A check is tied to the plan it ran against: editing files or changing the plan afterwards means checking again. `check` refuses a fourth round. Terminal states are `COMPLETE`, `STALLED` (same failure twice, or 3 rounds used), `BLOCKED` (a blocker note), `MISSING_TEST` (no required command), and `UNCLEAR_TASK` (not started, or no planned files by the round cap). A new `start` archives the previous task's log to `.rdapq/archive/`. `CONTINUE` means fix the first reason and check again. A task is COMPLETE only when `gate` prints it; the agent then says **`Vibe Code Build complete.`**
 
 ---
 

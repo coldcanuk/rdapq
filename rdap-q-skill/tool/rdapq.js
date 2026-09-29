@@ -33,6 +33,10 @@ const MAX_ROUNDS = 3;
 const NOTE_TYPES = ['assumption', 'decision', 'risk', 'blocker', 'question'];
 const GENERATED = /(^|\/)(package-lock\.json|npm-shrinkwrap\.json|yarn\.lock|pnpm-lock\.yaml|Cargo\.lock|poetry\.lock|go\.sum)$|(^|\/)(dist|build|coverage)\//;
 const TEST_FILE = /(^|\/)(test|tests|__tests__|spec)\/|\.(test|spec)\.[cm]?[jt]sx?$|(^|\/)test_[^/]*\.py$|_test\.(py|go)$/;
+const FIXTURE = /(^|\/)(fixtures?|__fixtures__|__snapshots__|testdata)\//;
+const isTest = (f) => TEST_FILE.test(f) && !FIXTURE.test(f);
+// Flags that never take a value, so `claim --external "text"` keeps its text.
+const BOOLEAN_FLAGS = ['before', 'json', 'external', 'verified', 'off-path', 'no-defect', 'keep'];
 const MEMORY_CAPS = { fact: 240, evidence: 160, global: 80, project: 40, search: 12 };
 const MEMORY_CLASSES = ['USER_SPECIFIED', 'OBSERVED', 'VERIFIED_EXTERNAL', 'INFERRED'];
 const MEMORY_STATUS = ['ACTIVE', 'STALE', 'SUPERSEDED', 'INVALID'];
@@ -52,7 +56,8 @@ function run(command, cwd, timeoutMs = 10 * 60 * 1000) {
 }
 
 function git(root, args) {
-  const r = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+  // quotePath=false: non-ASCII names come back as-is instead of "caf\303\251.js".
+  const r = spawnSync('git', ['-c', 'core.quotePath=false', ...args], { cwd: root, encoding: 'utf8' });
   return r.status === 0 ? r.stdout : null;
 }
 
@@ -67,18 +72,34 @@ function taskPaths(root) {
 }
 
 function readJson(file) {
+  let text;
   try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
+    text = fs.readFileSync(file, 'utf8');
   } catch (err) {
     if (err.code === 'ENOENT') return null;
     throw err;
   }
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new UsageError(`${file} is not valid JSON; run \`start\` again to rewrite it`);
+  }
 }
 
+/** A torn line from an interrupted write is skipped, never fatal. */
 function readLog(root) {
   const { log } = taskPaths(root);
   if (!fs.existsSync(log)) return [];
-  return fs.readFileSync(log, 'utf8').split('\n').filter(Boolean).map((line) => JSON.parse(line));
+  const events = [];
+  for (const line of fs.readFileSync(log, 'utf8').split('\n')) {
+    if (!line) continue;
+    try {
+      events.push(JSON.parse(line));
+    } catch {
+      // skip
+    }
+  }
+  return events;
 }
 
 function append(root, event) {
@@ -94,6 +115,17 @@ function list(value) {
   return String(value).split(',').map((s) => s.trim()).filter(Boolean);
 }
 
+/** Planned paths are compared with git's names: forward slashes, relative to the root. */
+function normalizePath(p) {
+  const n = path.posix.normalize(String(p).replace(/\\/g, '/')).replace(/^\.\//, '').replace(/\/$/, '');
+  return n === '.' ? '' : n;
+}
+
+function specHash(spec) {
+  const key = JSON.stringify([spec.risk, spec.run, spec.repro, spec.defect, [...spec.files].sort()]);
+  return crypto.createHash('sha256').update(key).digest('hex').slice(0, 12);
+}
+
 function parseFlags(argv, repeatable = []) {
   const flags = { _: [] };
   for (let i = 0; i < argv.length; i += 1) {
@@ -104,14 +136,18 @@ function parseFlags(argv, repeatable = []) {
     }
     const key = arg.slice(2);
     const next = argv[i + 1];
-    const value = next !== undefined && !next.startsWith('--') ? (i += 1, next) : true;
+    let value = true;
+    if (!BOOLEAN_FLAGS.includes(key) && next !== undefined && (repeatable.includes(key) || !next.startsWith('--'))) {
+      value = next;
+      i += 1;
+    }
     if (repeatable.includes(key)) (flags[key] = flags[key] || []).push(value);
     else flags[key] = value;
   }
   return flags;
 }
 
-function lastFailureLine(output) {
+function firstFailureLine(output) {
   const patterns = [
     /^\s*✖\s+(.+?)(?:\s+\([\d.]+m?s\))?\s*$/m, // node --test
     /^\s*not ok \d+ - (.+)$/m, // TAP
@@ -156,15 +192,21 @@ function fingerprint(root, base) {
 function allTestFiles(root) {
   const tracked = git(root, ['ls-files']) || '';
   const untracked = git(root, ['ls-files', '--others', '--exclude-standard']) || '';
-  return `${tracked}\n${untracked}`.split('\n').filter((f) => f && TEST_FILE.test(f) && !f.startsWith('.rdapq/'));
+  return `${tracked}\n${untracked}`.split('\n').filter((f) => f && isTest(f) && !f.startsWith('.rdapq/'));
 }
 
-/** At least one test file changed, or a test file imports a changed source module. */
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * At least one test file changed, or a test file imports a changed source
+ * file by its path (JS/TS relative import, or a Python dotted module). Whether
+ * the required command executes that test is not observed; the import is the proxy.
+ */
 function touchesChange(root, changed) {
-  const tests = changed.filter((f) => TEST_FILE.test(f));
+  const tests = changed.filter(isTest);
   if (tests.length) return { touches: true, via: `changed test ${tests[0]}` };
-  const stems = changed.map((f) => path.basename(f).replace(/\.[^.]+$/, '')).filter((s) => s.length > 1);
-  if (!stems.length) return { touches: false, via: 'no changed source' };
+  const sources = changed.filter((f) => !isTest(f) && /\.[cm]?[jt]sx?$|\.py$/.test(f));
+  if (!sources.length) return { touches: false, via: 'no changed source file a test could import' };
   for (const t of allTestFiles(root)) {
     let text;
     try {
@@ -172,13 +214,17 @@ function touchesChange(root, changed) {
     } catch {
       continue;
     }
-    for (const stem of stems) {
-      const escaped = stem.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const re = new RegExp(`(require\\(|import\\b|from\\b)[^\\n]*['"\`/.]${escaped}(\\.[a-z]+)?['"\`]|^\\s*(from|import)\\s+[\\w.]*\\b${escaped}\\b`, 'm');
-      if (re.test(text)) return { touches: true, via: `${t} imports ${stem}` };
+    for (const src of sources) {
+      const noExt = src.replace(/\.[^./]+$/, '');
+      let rel = path.posix.relative(path.posix.dirname(t), noExt);
+      if (!rel.startsWith('.')) rel = `./${rel}`;
+      const js = new RegExp(`(require\\(|import\\b|from\\b)[^\\n]*['"\`]${escapeRe(rel)}(\\.[cm]?[jt]sx?)?(/index(\\.[cm]?[jt]sx?)?)?['"\`]`);
+      const dotted = noExt.replace(/\//g, '.').replace(/^src\./, '');
+      const py = src.endsWith('.py') && new RegExp(`^\\s*(from\\s+(\\w+\\.)*${escapeRe(dotted.split('.').pop())}\\s+import|import\\s+[\\w.]*${escapeRe(dotted)}\\b|from\\s+[\\w.]*${escapeRe(dotted)}\\s+import)`, 'm');
+      if (js.test(text) || (py && py.test(text))) return { touches: true, via: `${t} imports ${src}` };
     }
   }
-  return { touches: false, via: 'no executed test file imports a changed module' };
+  return { touches: false, via: 'no test file imports a changed source file' };
 }
 
 function runtimeOracle(root, spec, changed) {
@@ -186,7 +232,7 @@ function runtimeOracle(root, spec, changed) {
   const results = spec.run.map((cmd) => ({ cmd, ...run(cmd, root) }));
   const failed = results.find((r) => r.code !== 0);
   if (failed) {
-    const line = lastFailureLine(failed.output);
+    const line = firstFailureLine(failed.output);
     return {
       observed: 'fail',
       detail: `${failed.cmd} exited ${failed.code}${line ? `: ${line}` : ''}`,
@@ -221,10 +267,11 @@ function reproOracle(root, spec, log) {
   const before = log.filter((e) => e.kind === 'repro-before').pop();
   const after = run(spec.repro, root);
   if (after.code !== 0) {
-    const line = lastFailureLine(after.output);
+    const line = firstFailureLine(after.output);
     return { observed: 'fail', detail: `repro still fails${line ? `: ${line}` : ''}`, oracle_id: `${spec.repro} :: ${line || `exit ${after.code}`}` };
   }
   if (!before) return { observed: 'partial', detail: 'passes now; run check --before first to prove it failed' };
+  if (before.sourceChanged) return { observed: 'partial', detail: 'check --before ran after source files were already edited' };
   if (before.code === 0) return { observed: 'partial', detail: 'repro passed before the fix, so it did not reproduce the defect' };
   return { observed: 'pass', detail: 'failed before the fix, passes after' };
 }
@@ -280,14 +327,22 @@ function cmdStart(root, argv, out) {
   const preset = fs.existsSync(depthFile) ? fs.readFileSync(depthFile, 'utf8').trim() : '';
   const depth = f.depth ? String(f.depth) : preset || 'lean';
   if (!DEPTHS.includes(depth)) throw new UsageError(`--depth must be ${DEPTHS.join('|')}`);
-  const existing = readJson(taskPaths(root).oracles);
+  const { dir, oracles, log } = taskPaths(root);
+  const existing = fs.existsSync(oracles) ? readJson(oracles) : null;
   const head = git(root, ['rev-parse', 'HEAD']);
+  // A new task gets a fresh log and base; --keep re-defines the current task instead.
+  if (existing && !f.keep && fs.existsSync(log)) {
+    const archive = path.join(dir, 'archive');
+    fs.mkdirSync(archive, { recursive: true });
+    fs.renameSync(log, path.join(archive, `${new Date().toISOString().replace(/[:.]/g, '-')}.jsonl`));
+    out('previous task log archived to .rdapq/archive/ (pass --keep to amend the current task instead)');
+  }
   const spec = {
     version: 2,
     risk,
     depth,
-    base: existing && existing.base ? existing.base : head ? head.trim() : null,
-    files: list(f.files),
+    base: f.keep && existing && existing.base ? existing.base : head ? head.trim() : null,
+    files: list(f.files).map(normalizePath).filter(Boolean),
     run: (f.run || []).filter((r) => r !== true).map(String),
     repro: typeof f.repro === 'string' ? f.repro : null,
     defect: f['no-defect'] ? false : Boolean(f.repro) || null,
@@ -310,8 +365,8 @@ function cmdPlan(root, argv, out) {
   const spec = requireSpec(root);
   const why = typeof f.why === 'string' ? f.why : '';
   if (!why) throw new UsageError('plan needs --why "<reason>"; plan changes are logged');
-  const add = list(f.add);
-  const drop = list(f.drop);
+  const add = list(f.add).map(normalizePath).filter(Boolean);
+  const drop = list(f.drop).map(normalizePath).filter(Boolean);
   spec.files = [...new Set([...spec.files.filter((x) => !drop.includes(x)), ...add])];
   fs.writeFileSync(taskPaths(root).oracles, `${JSON.stringify(spec, null, 2)}\n`);
   append(root, { kind: 'plan', add, drop, why });
@@ -336,9 +391,15 @@ function cmdCheck(root, argv, out) {
   if (f.before) {
     if (!spec.repro) throw new UsageError('no repro command; pass --repro to start');
     const r = run(spec.repro, root);
-    append(root, { kind: 'repro-before', code: r.code, line: lastFailureLine(r.output) });
+    const edited = (changedFiles(root, spec.base) || []).filter((x) => !isTest(x));
+    append(root, { kind: 'repro-before', code: r.code, line: firstFailureLine(r.output), sourceChanged: edited.length > 0 });
+    if (edited.length) out(`warning: source already edited (${edited.join(', ')}); this does not prove the defect existed before the fix`);
     out(r.code === 0 ? 'repro PASSED before the fix: it does not reproduce the defect yet' : `repro failed as expected (exit ${r.code})`);
     return 0;
+  }
+  const prior = log.filter((e) => e.kind === 'check').length;
+  if (prior >= MAX_ROUNDS) {
+    throw new UsageError(`all ${MAX_ROUNDS} rounds are used; run \`gate\` and report its verdict`);
   }
   const changed = changedFiles(root, spec.base);
   const oracles = {
@@ -347,11 +408,11 @@ function cmdCheck(root, argv, out) {
     repro: reproOracle(root, spec, log),
     ...claimOracles(log),
   };
-  const round = log.filter((e) => e.kind === 'check').length + 1;
+  const round = prior + 1;
   const Q = quality(oracles);
   const failures = Object.values(oracles).filter((o) => o.oracle_id).map((o) => o.oracle_id);
   const stored = Object.fromEntries(Object.entries(oracles).map(([k, o]) => [k, { observed: o.observed ?? null, value: o.value, detail: o.detail, oracle_id: o.oracle_id }]));
-  append(root, { kind: 'check', round, Q, oracles: stored, failures, changed, fingerprint: fingerprint(root, spec.base) });
+  append(root, { kind: 'check', round, Q, oracles: stored, failures, changed, fingerprint: fingerprint(root, spec.base), spec: specHash(spec) });
   out(`check round ${round}: Q ${Q}`);
   renderOracles(oracles, REQUIRED[spec.risk], out);
   if (oracles.runtime.tail) out(`\nlast output of the failing command:\n${oracles.runtime.tail}`);
@@ -371,16 +432,26 @@ function decide(root) {
   if (blocker) return { verdict: 'BLOCKED', reasons: [blocker.text] };
   if (!spec.run.length) return { verdict: 'MISSING_TEST', reasons: ['no required command was named with --run'] };
   if (!last) return { verdict: 'CONTINUE', reasons: ['no check has run yet'], round: 0 };
-  const current = fingerprint(root, spec.base);
-  if (current !== last.fingerprint) return { verdict: 'CONTINUE', reasons: ['files changed since the last check; run check again'], round: last.round };
+  const stale = [];
+  if (fingerprint(root, spec.base) !== last.fingerprint) stale.push('files changed since the last check');
+  if (last.spec !== specHash(spec)) stale.push('the plan (risk, files, or commands) changed since the last check');
+  if (stale.length) {
+    if (last.round >= MAX_ROUNDS) {
+      return { verdict: 'STALLED', reasons: [`round cap (${MAX_ROUNDS}) reached`, ...stale, 'the last measured check did not complete'], round: last.round, Q: last.Q };
+    }
+    return { verdict: 'CONTINUE', reasons: [...stale.map((r) => `${r}; run check again`)], round: last.round };
+  }
 
   const required = REQUIRED[spec.risk];
   const reasons = [];
   for (const name of required) {
     const o = last.oracles[name];
     const v = numeric(o);
-    if (name === 'repro' && v === null && spec.defect !== false) reasons.push('repro required: pass --repro <command>, or start --no-defect');
-    else if (name === 'external' && v === null) continue; // null only when no external claim exists
+    if (name === 'repro' && v === null) {
+      if (spec.defect !== false) reasons.push('repro required: pass --repro <command>, or start --no-defect');
+      continue;
+    }
+    if (name === 'external' && v === null) continue; // null only when no external claim was recorded
     else if (v === null) reasons.push(`${name} did not run: ${o.detail}`);
     else if (o.observed && o.observed !== 'pass') reasons.push(`${name} is ${o.observed}: ${o.detail}`);
   }
@@ -635,6 +706,14 @@ function cmdExport(root, argv, out) {
  * .rdapq/oracles.json are not RDAP-Q tasks and are never blocked.
  */
 function cmdHookStop(root, argv, out, env, stdin) {
+  try {
+    return hookStop(root, out, stdin);
+  } catch {
+    return 0; // a broken task file must never trap the user's session
+  }
+}
+
+function hookStop(root, out, stdin) {
   let input = {};
   try {
     input = JSON.parse(stdin || '{}');
@@ -714,6 +793,13 @@ function main(argv, options = {}) {
 module.exports = { main, decide, COMMANDS, REQUIRED, MAX_ROUNDS };
 
 if (require.main === module) {
-  const stdin = process.argv[2] === 'hook-stop' ? fs.readFileSync(0, 'utf8') : '';
+  let stdin = '';
+  if (process.argv[2] === 'hook-stop') {
+    try {
+      stdin = fs.readFileSync(0, 'utf8');
+    } catch {
+      stdin = '';
+    }
+  }
   process.exitCode = main(process.argv.slice(2), { stdin });
 }

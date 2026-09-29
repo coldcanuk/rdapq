@@ -23,25 +23,26 @@ RDAP-Q makes "done" something a tool measures, not something you claim. You plan
 
    - `--files`: every file you intend to change, including tests you will add.
    - `--run`: each command that must pass; repeat the flag for several. Use the repository's real test command.
-   - Fixing a bug: add `--repro "<command that fails now>"`, then run `T check --before` before editing. Nothing broken: add `--no-defect`.
-4. **Implement** the smallest change that does the job. Add or update a test that exercises it: runtime only passes when a test that ran touches the changed code.
+   - Fixing a bug: add `--repro "<command that fails now>"`, then run `T check --before` before editing source. Nothing broken: add `--no-defect`.
+   - Run `start` once per task; a new `start` archives the previous task's log. To change the plan mid-task, use `T plan`.
+4. **Implement** the smallest change that does the job. Add or update a test that exercises it: runtime only passes when a changed test, or a test that imports a changed file, exists and the commands pass. Make sure your `--run` command actually runs that test.
 5. **Check.** `T check` runs the commands and scores the oracles. If the plan changed, run `T plan --add <files> --why "<reason>"` first.
-6. **Gate.** `T gate`. On CONTINUE, fix the first reason it prints and check again. There are at most 3 rounds, and the same failure twice ends as STALLED.
+6. **Gate.** `T gate`. On CONTINUE, fix the first reason it prints and check again. `check` refuses a fourth round, and the same failure twice ends as STALLED.
 7. **Report** the terminal state exactly as `gate` printed it, with its reasons. Never say COMPLETE unless `gate` printed COMPLETE.
 
 ## What the tool measures
 
 | Oracle | Pass when |
 | --- | --- |
-| runtime | every `--run` command exits 0 and a test that ran touches the change |
+| runtime | every `--run` command exits 0, and a test changed or imports a changed file |
 | repo | the diff touches exactly the planned files |
 | repro | the repro failed before the fix and passes after it |
-| external | every external claim you recorded is verified |
+| external | every external claim you recorded is verified (not applicable if you recorded none) |
 | claims | share of recorded claims that are verified (reported, not required) |
 
-Required to complete: LOW and MODERATE need runtime and repo. HIGH adds repro. CRITICAL adds external. Any failing oracle blocks COMPLETE.
+Required to complete: LOW and MODERATE need runtime and repo. HIGH adds repro, unless you started with `--no-defect`. CRITICAL also requires every external claim to be verified, so record each outside fact the change relies on. Any failing oracle blocks COMPLETE.
 
-Terminal states: COMPLETE, STALLED, BLOCKED, MISSING_TEST (no command to run), UNCLEAR_TASK (no plan). CONTINUE is not terminal.
+Terminal states: COMPLETE, STALLED (same failure twice, or rounds used up), BLOCKED, MISSING_TEST (no `--run` command), UNCLEAR_TASK (not started, or no planned files by the round cap). CONTINUE is not terminal.
 
 ## Claims, notes, blockers
 

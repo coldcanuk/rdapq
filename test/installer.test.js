@@ -321,7 +321,7 @@ test('task commands route to the bundled engine', () => {
   assert.match(help.out, /rdapq check/);
 });
 
-test('init --hook adds the Stop hook without replacing existing settings', () => {
+test('init --hook merges the Stop hook into existing settings', () => {
   const { env, root } = tempLayout();
   const repo = path.join(root, 'repo');
   fs.mkdirSync(repo);
@@ -330,11 +330,25 @@ test('init --hook adds the Stop hook without replacing existing settings', () =>
   assert.match(settings.hooks.Stop[0].hooks[0].command, /tool\/rdapq\.js" hook-stop$/);
 
   const other = path.join(root, 'other');
+  const file = path.join(other, '.claude', 'settings.json');
   fs.mkdirSync(path.join(other, '.claude'), { recursive: true });
-  fs.writeFileSync(path.join(other, '.claude', 'settings.json'), '{"model":"x"}\n');
+  fs.writeFileSync(file, '{"model":"x","hooks":{"Stop":[{"hooks":[{"type":"command","command":"echo mine"}]}]}}\n');
   assert.equal(run(['init', '--hook'], env, { cwd: other }).code, 0);
-  assert.equal(fs.readFileSync(path.join(other, '.claude', 'settings.json'), 'utf8'), '{"model":"x"}\n');
-  assert.match(fs.readFileSync(path.join(other, '.claude', 'settings.json.rdapq'), 'utf8'), /hook-stop/);
+  const merged = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(merged.model, 'x');
+  assert.equal(merged.hooks.Stop.length, 2);
+  assert.equal(merged.hooks.Stop[0].hooks[0].command, 'echo mine');
+  assert.match(fs.readFileSync(`${file}.rdapq-backup`, 'utf8'), /echo mine/);
+  const again = run(['init', '--hook'], env, { cwd: other });
+  assert.match(again.out, /unchanged .*settings\.json/);
+  assert.equal(JSON.parse(fs.readFileSync(file, 'utf8')).hooks.Stop.length, 2);
+
+  const broken = path.join(root, 'broken');
+  fs.mkdirSync(path.join(broken, '.claude'), { recursive: true });
+  fs.writeFileSync(path.join(broken, '.claude', 'settings.json'), '{not json\n');
+  assert.equal(run(['init', '--hook'], env, { cwd: broken }).code, 0);
+  assert.equal(fs.readFileSync(path.join(broken, '.claude', 'settings.json'), 'utf8'), '{not json\n');
+  assert.match(fs.readFileSync(path.join(broken, '.claude', 'settings.json.rdapq'), 'utf8'), /hook-stop/);
 
   assert.equal(run(['install', '--hook'], env).code, 1);
 });

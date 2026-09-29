@@ -62,7 +62,7 @@ test('a real fix with an importing test reaches COMPLETE', () => {
   assert.match(failing.out, /runtime\s+fail/);
   fix(root);
   const passing = rdapq(root, ['check']);
-  assert.match(passing.out, /runtime\s+pass .*imports add/);
+  assert.match(passing.out, /runtime\s+pass .*imports src\/add\.js/);
   assert.match(passing.out, /repo\s+pass/);
   const g = rdapq(root, ['gate']);
   assert.equal(g.code, 0, g.out);
@@ -212,4 +212,101 @@ test('hook-stop blocks only while the gate says CONTINUE', () => {
   fix(root);
   rdapq(root, ['check']);
   assert.equal(hook({ cwd: root }).stdout, '');
+});
+
+test('HIGH with --no-defect completes without a repro', () => {
+  const root = fixture();
+  rdapq(root, ['start', '--risk', 'HIGH', '--files', 'src/add.js', '--run', TEST_CMD, '--no-defect']);
+  fix(root);
+  rdapq(root, ['check']);
+  assert.match(rdapq(root, ['gate']).out, /COMPLETE/);
+});
+
+test('changing the plan after a passing check invalidates it', () => {
+  const root = fixture();
+  rdapq(root, ['start', '--risk', 'LOW', '--files', 'src/add.js', '--run', TEST_CMD]);
+  fix(root);
+  rdapq(root, ['check']);
+  rdapq(root, ['start', '--keep', '--risk', 'LOW', '--files', 'src/add.js', '--run', TEST_CMD, '--run', 'node -e "process.exit(1)"']);
+  assert.match(rdapq(root, ['gate']).out, /plan .* changed since the last check/);
+});
+
+test('a new start archives the previous task log and resets the base', () => {
+  const root = fixture();
+  rdapq(root, ['start', '--risk', 'LOW', '--files', 'src/add.js', '--run', TEST_CMD]);
+  rdapq(root, ['check']);
+  rdapq(root, ['check']);
+  fix(root);
+  git(root, 'commit', '-qam', 'fix');
+  const again = rdapq(root, ['start', '--risk', 'LOW', '--files', 'README.md', '--run', TEST_CMD]);
+  assert.match(again.out, /archived/);
+  const log = fs.readFileSync(path.join(root, '.rdapq', 'state.jsonl'), 'utf8').trim().split('\n');
+  assert.equal(log.length, 1);
+  fs.writeFileSync(path.join(root, 'README.md'), 'edited\n');
+  assert.match(rdapq(root, ['check']).out, /check round 1/);
+  assert.match(rdapq(root, ['check']).out, /repo\s+pass/);
+});
+
+test('planned paths are normalized', () => {
+  const root = fixture();
+  rdapq(root, ['start', '--risk', 'LOW', '--files', './src/add.js', '--run', TEST_CMD]);
+  fix(root);
+  assert.match(rdapq(root, ['check']).out, /repo\s+pass/);
+});
+
+test('the round cap is hard, even after more edits', () => {
+  const root = fixture();
+  rdapq(root, ['start', '--risk', 'LOW', '--files', 'src/add.js', '--run', TEST_CMD]);
+  for (const body of ['a * b', 'a / b', 'a % b']) {
+    fs.writeFileSync(path.join(root, 'src', 'add.js'), `module.exports = (a, b) => ${body};\n`);
+    rdapq(root, ['check']);
+  }
+  fix(root);
+  const fourth = rdapq(root, ['check']);
+  assert.equal(fourth.code, 2);
+  assert.match(fourth.err, /rounds are used/);
+  assert.match(rdapq(root, ['gate']).out, /STALLED/);
+});
+
+test('boolean flags do not swallow the claim text', () => {
+  const root = fixture();
+  rdapq(root, ['start', '--risk', 'LOW', '--files', 'src/add.js', '--run', TEST_CMD]);
+  const c = rdapq(root, ['claim', '--external', '--verified', 'the docs say so', '--source', 'docs/x.md']);
+  assert.equal(c.code, 0, c.err);
+  assert.match(c.out, /verified, external/);
+});
+
+test('a torn log line is skipped and a broken plan never crashes the hook', () => {
+  const root = fixture();
+  rdapq(root, ['start', '--risk', 'LOW', '--files', 'src/add.js', '--run', TEST_CMD]);
+  fs.appendFileSync(path.join(root, '.rdapq', 'state.jsonl'), '{"kind":"che');
+  assert.match(rdapq(root, ['gate']).out, /CONTINUE/);
+  fs.writeFileSync(path.join(root, '.rdapq', 'oracles.json'), '{broken');
+  const hook = spawnSync(process.execPath, [TOOL, 'hook-stop'], { cwd: root, input: JSON.stringify({ cwd: root }), encoding: 'utf8' });
+  assert.equal(hook.status, 0);
+  assert.equal(hook.stdout, '');
+});
+
+test('a test that imports only a same-named file elsewhere does not count', () => {
+  const root = fixture();
+  fs.mkdirSync(path.join(root, 'lib'));
+  fs.writeFileSync(path.join(root, 'lib', 'add.js'), 'module.exports = 1;\n');
+  git(root, 'add', '-A');
+  git(root, 'commit', '-qm', 'lib');
+  rdapq(root, ['start', '--risk', 'LOW', '--files', 'lib/add.js', '--run', TEST_CMD]);
+  fs.writeFileSync(path.join(root, 'lib', 'add.js'), 'module.exports = 2;\n');
+  fix(root);
+  rdapq(root, ['plan', '--add', 'src/add.js', '--why', 'fixture']);
+  const c = rdapq(root, ['check']);
+  assert.match(c.out, /runtime\s+pass .*imports src\/add\.js/);
+});
+
+test('check --before after editing source is flagged', () => {
+  const root = fixture();
+  rdapq(root, ['start', '--risk', 'HIGH', '--files', 'src/add.js', '--run', TEST_CMD, '--repro', TEST_CMD]);
+  fs.writeFileSync(path.join(root, 'src', 'add.js'), 'module.exports = (a, b) => a * b;\n');
+  assert.match(rdapq(root, ['check', '--before']).out, /source already edited/);
+  fix(root);
+  rdapq(root, ['check']);
+  assert.match(rdapq(root, ['gate']).out, /repro is partial/);
 });
