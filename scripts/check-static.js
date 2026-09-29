@@ -38,7 +38,7 @@ if (bin.rdapq !== './bin/rdapq.js' || bin['rdap-q'] !== './bin/rdapq.js') {
   failures.push('package.json bin entries must point at bin/rdapq.js');
 }
 
-for (const rel of ['bin/rdapq.js', 'lib/installer.js', 'scripts/check-versions.js', 'scripts/check-static.js', 'scripts/materialize-skill-links.js']) {
+for (const rel of ['bin/rdapq.js', 'lib/installer.js', 'scripts/check-versions.js', 'scripts/check-static.js', 'scripts/materialize-skill-links.js', 'scripts/stamp-version.js', 'scripts/version-targets.js']) {
   const checked = spawnSync(process.execPath, ['--check', path.join(ROOT, rel)], { encoding: 'utf8' });
   if (checked.status !== 0) {
     failures.push(`${rel}: node --check failed\n${checked.stderr}`);

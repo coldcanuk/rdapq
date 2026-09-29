@@ -58,6 +58,8 @@
     "status": "node bin/rdapq.js status",
     "test": "node scripts/check-versions.js && node scripts/check-static.js && node --test --test-concurrency=1 test/*.js",
     "check": "node scripts/check-versions.js && node scripts/check-static.js",
+    "stamp": "node scripts/stamp-version.js",
+    "version": "node scripts/stamp-version.js --git-add",
     "prepack": "node scripts/materialize-skill-links.js materialize",
     "postpack": "node scripts/materialize-skill-links.js restore",
     "install:all": "node bin/rdapq.js install --all",
