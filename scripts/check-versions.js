@@ -74,8 +74,8 @@ for (const rel of ['bin/rdapq.js', 'lib/installer.js', 'install.sh', 'install.ps
   }
 }
 
-if (!String(pkg.engines && pkg.engines.node || '').includes('>=18')) {
-  failures.push('package.json engines.node must require >=18');
+if (!String(pkg.engines && pkg.engines.node || '').includes('>=22')) {
+  failures.push('package.json engines.node must require >=22');
 }
 
 if (failures.length) {

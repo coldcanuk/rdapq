@@ -1,5 +1,5 @@
 protocol: RDAP-Q
-version: "1.2.5"
+version: "1.3.0"
 on: [/rdapq, /rdap-q]
 load: .agents/skills/rdap-q/SKILL.md
 fallback: rdap-q-skill/SKILL.md

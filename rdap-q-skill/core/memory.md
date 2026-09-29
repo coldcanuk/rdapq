@@ -11,7 +11,7 @@ secrets: never values; source plus identifier only
 on_conflict: trust direct evidence; mark STALE, SUPERSEDED, or INVALID; link ids; do not silent-delete
 load_order: relevant index rows, then matching full records, project before global
 memory_cmd: relevant ACTIVE entries, status, conflicts; never print secrets; never dump the store
-resume: home, index, compact if over cap, load hits, repo state, last phase, inspect drift, continue at first unverified step
+resume: home, index, compact if over cap, load hits, repo state, depth, last phase, inspect drift, continue at first unverified step
 caps:
   load_full_records: 12
   load_index_rows: 80
@@ -21,14 +21,15 @@ caps:
   global_active: 80
   project_active: 40
   state_evidence_records: 80
-  state_iteration_rounds: 20
+  state_iteration_rounds: 3
   state_file_bytes: 49152
 refuse:
   - bulk_read of memory/ or projects/
   - diagrams (.mmd)
   - manifest.json
-  - playbooks other than current phase
+  - playbooks other than current included phase
   - gzip, base64, or one-line tarball encodings
+  - rewriting state on every output
 write_forbid:
   - secret values
   - command output, diffs, logs, chat
@@ -37,6 +38,7 @@ write_forbid:
   - fact longer than fact_chars
   - evidence longer than evidence_chars
   - promoting .rdapq/state into global memory
+  - self-scores stored as measured Q
 on_cap:
   stop_append: true
   compact: [STALE, SUPERSEDED, INVALID]

@@ -1,16 +1,14 @@
 # fields already defined in SKILL.md and core/exit-logic.md
 result:
+depth:
+round:
 risk:
-target:
-quality:
-confidence:
-coverage:
+Q:
+oracles: {}
 gates:
 critical:
 high:
 unknowns:
-aqc:
-history: []
 exit:
 verification: []
 memory:
@@ -27,5 +25,5 @@ git:
   default:
   worktree:
   status:
-terminal: "COMPLETE|BLOCKED|STALLED|CONSTRAINT_LIMITED|FAILED_VERIFICATION"
+terminal: "COMPLETE|BLOCKED|STALLED|CONSTRAINT_LIMITED|FAILED_VERIFICATION|UNCLEAR_TASK|MISSING_TEST"
 say_if_complete: "Vibe Code Build complete."
