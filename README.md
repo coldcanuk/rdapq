@@ -148,7 +148,7 @@ That is optional. It is not required for `install --claude` or `init`.
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 18 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.3.0**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
+Node.js 22 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.3.0**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -532,7 +532,7 @@ Contributions are welcome! If you want to add support for a new AI harness, opti
 
 1. Fork the repository: [https://github.com/coldcanuk/rdapq](https://github.com/coldcanuk/rdapq)
 2. Create a feature branch: `git checkout -b feature/new-harness-support`
-3. Run `npm test` (Node.js 18+). It checks installer behavior, the npm tarball, and version consistency.
+3. Run `npm test` (Node.js 22+). It checks installer behavior, the npm tarball, and version consistency.
 4. Tag a release `vX.Y.Z` only after the version in `package.json` matches every manifest. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
 5. Submit a Pull Request.
 
