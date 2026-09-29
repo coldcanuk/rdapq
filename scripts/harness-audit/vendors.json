@@ -43,12 +43,6 @@
       "allow_hosts": ["learn.chatgpt.com", "developers.openai.com"],
       "claims": [
         {
-          "id": "user-agents",
-          "installer": "path.join(layout.codex, 'AGENTS.md')",
-          "docs": ".codex",
-          "readme": "~/.codex/AGENTS.md"
-        },
-        {
           "id": "user-skill",
           "installer": "path.join(layout.agents, 'skills', 'rdap-q')",
           "docs": ".agents/skills",
@@ -85,12 +79,6 @@
       ],
       "follow": ["copilot-instructions", "customization-cheat-sheet", "custom-instructions"],
       "claims": [
-        {
-          "id": "user-instructions",
-          "installer": "path.join(home, '.copilot')",
-          "docs": ".copilot",
-          "readme": "~/.copilot/copilot-instructions.md"
-        },
         {
           "id": "repo-instructions",
           "installer": "copilot-instructions.md",

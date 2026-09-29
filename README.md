@@ -3,7 +3,7 @@
 
 [![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Protocol Version](https://img.shields.io/badge/Protocol-v1.3.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![Protocol Version](https://img.shields.io/badge/Protocol-v1.3.1-emerald.svg)](https://github.com/coldcanuk/rdapq)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
 [![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#in-harness-marketplace-installation)
@@ -29,7 +29,7 @@
   "@type": "SoftwareSourceCode",
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
@@ -119,15 +119,17 @@ The supported install is `npx --yes rdap-q`. `install --<harness>` writes that h
 | Harness | User install | What it writes | Project install (`init`) | Invoke |
 | :--- | :--- | :--- | :--- | :--- |
 | **Cursor** | `--cursor` | `~/.cursor/skills/rdap-q/` | `AGENTS.md`, `.agents/skills/rdap-q/` | `/rdap-q`, or `/rdapq` after `init` |
-| **Codex** | `--codex` | `~/.codex/AGENTS.md`, `~/.agents/skills/rdap-q/` | `AGENTS.md`, `.agents/skills/rdap-q/` | `/rdap-q` |
+| **Codex** | `--codex` | `~/.agents/skills/rdap-q/` | `AGENTS.md`, `.agents/skills/rdap-q/` | `/rdap-q` |
 | **Claude Code** | `--claude` | `~/.claude/skills/rdap-q/`, `~/.claude/commands/rdapq.md` | `CLAUDE.md`, `.claude/skills/rdap-q/`, `.claude/commands/rdapq.md` | `/rdap-q` or `/rdapq` |
-| **Copilot** | `--copilot` | `~/.copilot/copilot-instructions.md`, `~/.copilot/skills/rdap-q/` | `.github/copilot-instructions.md`, `.agents/skills/rdap-q/` | instructions are always on; `/rdap-q` where skills load |
+| **Copilot** | `--copilot` | `~/.copilot/skills/rdap-q/` | `.github/copilot-instructions.md`, `.agents/skills/rdap-q/` | `/rdap-q` where skills load; project instructions are always on after `init` |
 | **Grok Build** | `--grok` | `~/.grok/skills/rdap-q/` | `.grok/rules.md` | `/rdap-q` |
 | **Antigravity** | `--antigravity` | `~/.gemini/antigravity-cli/skills/rdap-q/`, `~/.gemini/config/skills/rdap-q/` | `GEMINI.md`, `AGENTS.md`, `.agents/skills/rdap-q/` | `/rdap-q` |
 | **Goose** | `--goose` | `~/.config/goose/.goosehints` | `.goosehints` | no slash command; hints load when the Developer extension is on |
 | **Cline** | `--cline` | `~/.cline/rules/rdapq.md` | `.clinerules/rdapq.md` | rules load with the workspace; there is no marketplace entry |
 
-`CURSOR_HOME`, `CODEX_HOME`, `CLAUDE_HOME`, `COPILOT_HOME`, `GROK_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLINE_HOME`, and `AGENTS_HOME` override those directories.
+`CURSOR_HOME`, `CLAUDE_HOME`, `COPILOT_HOME`, `GROK_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLINE_HOME`, and `AGENTS_HOME` override those directories.
+
+User installs never add always-on global rules for harnesses that load skills on demand, so RDAP-Q stays out of sessions that do not invoke it. Global bridges (the Claude command, Cline rules, Goose hints) point at the installed core under `$RDAPQ_HOME`. Earlier releases wrote `~/.codex/AGENTS.md` and `~/.copilot/copilot-instructions.md`; the installer never deletes your files, so remove those by hand if they only contain the RDAP-Q bridge.
 
 ```bash
 npx --yes rdap-q install --cursor
@@ -148,7 +150,7 @@ That is optional. It is not required for `install --claude` or `init`.
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 22 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.3.0**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
+Node.js 22 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.3.1**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -168,7 +170,7 @@ npx --yes rdap-q install --cursor
 npx --yes rdap-q install --codex --grok
 
 # This release, not whatever is tagged latest later:
-npx --yes rdap-q@1.3.0 install --claude
+npx --yes rdap-q@1.3.1 install --claude
 ```
 
 ### All 8 harnesses:
@@ -210,7 +212,7 @@ rdapq status
 rdapq init
 ```
 
-Harness homes can be redirected without touching the real user profile. `RDAPQ_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLAUDE_HOME`, `CLINE_HOME`, `CODEX_HOME`, `GROK_HOME`, `COPILOT_HOME`, and `CURSOR_HOME` are all honored.
+Harness homes can be redirected without touching the real user profile. `RDAPQ_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLAUDE_HOME`, `CLINE_HOME`, `GROK_HOME`, `COPILOT_HOME`, `CURSOR_HOME`, and `AGENTS_HOME` are all honored.
 
 A checkout of a branch that is not released yet can still be installed with `npx --yes github:coldcanuk/rdapq`. The registry package is the supported install.
 
@@ -264,7 +266,7 @@ npx --yes rdap-q@latest status
 Use the same harness flags you used the first time. `--cursor` above is only an example. To stay on this release:
 
 ```bash
-npx --yes rdap-q@1.3.0 install --cursor
+npx --yes rdap-q@1.3.1 install --cursor
 ```
 
 ### Command installed globally
@@ -278,7 +280,7 @@ rdapq status
 ```bash
 cd rdapq
 git fetch origin --tags
-git checkout v1.3.0          # or: git pull origin main
+git checkout v1.3.1          # or: git pull origin main
 ./install.sh --claude        # same flags as the first install
 ./install.sh status
 ```
@@ -286,7 +288,7 @@ git checkout v1.3.0          # or: git pull origin main
 ```powershell
 cd rdapq
 git fetch origin --tags
-git checkout v1.3.0
+git checkout v1.3.1
 .\install.ps1 -Claude
 node .\bin\rdapq.js status
 ```
@@ -357,21 +359,31 @@ RDAP-Q rejects arbitrary scores. All scores must be backed by verifiable evidenc
 | **10**| Reference Quality | Benchmark gold standard; mathematically proven or reference implementation. Rare. |
 
 > [!NOTE]
-> This scale labels the optional 8-dimension self-card written by `/rdapq score`. Since 1.3.0 the self-card is annotation only: it never enters Q and never decides an exit.
+> This scale labels the optional 8-dimension self-card written by `/rdapq score`. Since 1.3.1 the self-card is annotation only: it never enters Q and never decides an exit.
 
 ### <a id="oracle-q"></a> Oracle Q
 
 Q is computed only from oracles a tool can observe. Each oracle is `pass` (10), `partial` (5), `fail` (0), or not run (excluded):
 
-| Oracle | Weight | Pass when |
-| :--- | :---: | :--- |
-| runtime | 35 | Every required command exits 0, with an evidence id. |
-| repo | 25 | The inspected diff matches the stated files. |
-| external | 15 | Material external claims are `VERIFIED_EXTERNAL`. |
-| claims | 15 | Scaled by verified / total material claims. |
-| repro | 10 | The reported failure was reproduced, or the regression command passed. |
+| Oracle | Weight | Pass | Partial |
+| :--- | :---: | :--- | :--- |
+| runtime | 35 | Every required command exits 0, and at least one check touches the changed code. | Commands pass, but none touches the change. |
+| repo | 25 | The diff touches exactly the stated files. | Extra files are only generated or lockfile output. |
+| external | 15 | Every material external claim is `VERIFIED_EXTERNAL`. | The unverified claims are off the changed path. |
+| claims | 15 | Scaled by verified / total material claims. | — |
+| repro | 10 | The failure reproduced before the fix, and the same command passes after it. | Only one of the two was run. |
 
-Q is the weighted mean of the oracles that ran. If none ran, Q is `UNMEASURED` and the task cannot be `COMPLETE`. Completion also needs every applicable gate to pass and Q to meet the risk floor (LOW 7.2, MODERATE 7.6, HIGH 8.0, CRITICAL 8.3).
+Two failures are "the same" when they share an oracle id: the command plus its first failing test id or assertion. The same failure twice ends the run as `STALLED`.
+
+Q is the weighted mean of the oracles that ran. If none ran, Q is `UNMEASURED` and the task cannot be `COMPLETE`. Q is reported, but no Q number completes a task. Completion needs every applicable gate to pass and every oracle required for the task's risk to pass:
+
+| Risk | Required oracles |
+| :--- | :--- |
+| LOW, MODERATE | runtime, repo |
+| HIGH | runtime, repo, repro |
+| CRITICAL | runtime, repo, repro, external |
+
+`partial` never satisfies a requirement, and any oracle at `fail` blocks completion. `runtime` only passes when at least one executed check touches the changed code. A required oracle may be absent only when it does not apply: `repro` with no defect in scope, `external` with no external claim.
 
 ### <a id="default-implementation-dimensions"></a> Self-card Dimensions (annotation only)
 
@@ -445,7 +457,7 @@ Agents using RDAP-Q stop within 3 rounds:
   - Round cap with ambiguous success criteria: `UNCLEAR_TASK`.
   - Round cap with no verification command run: `MISSING_TEST`.
   - Also `BLOCKED`, `CONSTRAINT_LIMITED`, and `FAILED_VERIFICATION`.
-- **TERMINAL SUCCESS** (all applicable gates pass, Q measured and at the risk floor):
+- **TERMINAL SUCCESS** (all applicable gates pass and every required oracle passes):
   - The agent declares: **`Vibe Code Build complete.`**
 
 ---
@@ -507,14 +519,14 @@ Yes. Because state and scorecards are saved as YAML in <code>.rdapq/state/</code
 
 <details>
 <summary><strong>Does RDAP-Q slow down small tasks?</strong></summary>
-No. RDAP-Q scales adaptively. For simple bug fixes or localized edits, the agent moves rapidly through Bootstrap and Discovery, runs verification, confirms a passing score (&ge; 7.2 for low risk), and terminates in a single round.
+No. RDAP-Q scales adaptively. For simple bug fixes or localized edits, the agent moves rapidly through Bootstrap and Discovery, runs verification, confirms the required oracles pass (runtime and repo for low risk), and terminates in a single round.
 </details>
 
 <details>
 <summary><strong>How do I override the default storage directory?</strong></summary>
 Set the <code>RDAPQ_HOME</code> environment variable:
 <pre><code>export RDAPQ_HOME=/custom/path/.rdapq</code></pre>
-Per-harness homes use <code>CODEX_HOME</code>, <code>GROK_HOME</code>, <code>COPILOT_HOME</code>, <code>CLAUDE_HOME</code>, <code>CLINE_HOME</code>, <code>GEMINI_HOME</code>, and <code>GOOSE_HOME</code>.
+Per-harness homes use <code>AGENTS_HOME</code> (Codex), <code>GROK_HOME</code>, <code>COPILOT_HOME</code>, <code>CLAUDE_HOME</code>, <code>CLINE_HOME</code>, <code>GEMINI_HOME</code>, and <code>GOOSE_HOME</code>.
 This is particularly useful in containerized environments, sandboxed CI jobs, and bubblewrap runtimes.
 </details>
 
@@ -533,7 +545,7 @@ Contributions are welcome! If you want to add support for a new AI harness, opti
 1. Fork the repository: [https://github.com/coldcanuk/rdapq](https://github.com/coldcanuk/rdapq)
 2. Create a feature branch: `git checkout -b feature/new-harness-support`
 3. Run `npm test` (Node.js 22+). It checks installer behavior, the npm tarball, and version consistency.
-4. Tag a release `vX.Y.Z` only after the version in `package.json` matches every manifest. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
+4. To release, run `npm version <patch|minor|major>`. It stamps the version into every manifest and bridge (see `scripts/version-targets.js`) in the same commit and tags `vX.Y.Z`. Never edit version stamps by hand; `npm run stamp` repairs drift. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
 5. Submit a Pull Request.
 
 **Maintained by:** [@coldcanuk](https://github.com/coldcanuk)  
