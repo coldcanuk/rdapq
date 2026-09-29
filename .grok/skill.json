@@ -1,6 +1,6 @@
 {
   "name": "rdap-q",
-  "version": "1.3.1",
+  "version": "2.0.0",
   "harness": "grok",
   "rules": ".grok/rules.md",
   "entrypoint": "rdap-q-skill/SKILL.md",

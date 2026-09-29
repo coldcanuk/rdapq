@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/agent-skills/spec/main/marketplace.schema.json",
   "name": "rdap-q",
   "displayName": "RDAP-Q: Evidence-First Quality Gates",
-  "version": "1.3.1",
+  "version": "2.0.0",
   "protocol": "RDAP-Q Agent Engineering Protocol",
   "summary": "Evidence-first engineering protocol for AI coding agents. A bundled tool runs the checks and names the result, so the model never grades its own work.",
   "description": "RDAP-Q (Research-Driven Adaptive Planning with Quality Gates) makes \"done\" something a tool measures. The agent plans the change; a zero-dependency Node tool runs the required commands, checks that the diff matches the plan, proves bug fixes with a before/after repro, and names the terminal state. Append-only task log, one-line memory records, and an optional Claude Code Stop hook. Works with Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor.",
