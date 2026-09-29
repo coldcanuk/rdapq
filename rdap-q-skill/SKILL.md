@@ -44,15 +44,10 @@ memory_caps:
   state_evidence_records: 80
   state_iteration_rounds: 3
   state_file_bytes: 49152
-  train_rows: 40
 persist:
   every_output: false
   write_when: [first_needed_file, depth_switch, gate_transition, terminal, user_status_or_score_or_audit]
   unchanged: do not rewrite
-  training_log: .rdapq/state/train.md
-  training_when: same as write_when
-  training_row: [depth, effort, round, Q, runtime, repo, external, claims, repro, gates, decision, defect]
-  training_forbid: [diffs, logs, chat, secrets, restated_architecture, self_score_as_Q]
 rules:
   - evidence before inference; never invent paths, APIs, versions, flags, tests, env, or architecture
   - INFERRED or UNKNOWN cannot decide implementation when verification is possible

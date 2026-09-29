@@ -423,8 +423,7 @@ RDAP-Q strictly decouples working project state from reusable cross-project memo
     ├── risks.md                  # Identified risks & mitigations
     ├── decisions.md              # Architectural Decision Records (ADRs)
     ├── iteration-log.md          # One row per round (max 3)
-    ├── depth.md                  # Present only after /rdapq depth
-    └── train.md                  # One compact oracle row per checkpoint (cap 40)
+    └── depth.md                  # Present only after /rdapq depth
 ```
 
 ### <a id="strict-memory-safety-rules"></a> Strict Memory Safety Rules

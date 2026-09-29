@@ -23,7 +23,6 @@ caps:
   state_evidence_records: 80
   state_iteration_rounds: 3
   state_file_bytes: 49152
-  train_rows: 40
 refuse:
   - bulk_read of memory/ or projects/
   - diagrams (.mmd)

@@ -12,7 +12,6 @@ order:
   - same oracle twice, or round cap -> STALLED, UNCLEAR_TASK, or MISSING_TEST
   - gates pass and oracle Q meets the risk floor -> COMPLETE
   - else emit the accurate non-complete terminal state
-  - append one train.md row at the checkpoint; do not append on an unchanged turn
   - promote only durable lessons that pass write_forbid and caps, and only if the memory index was loaded this task
 precedence: [user_depth_switch, user_intent, direct_evidence, repo_state, project_memory, global_memory, external_for_this_version, inference]
 replan_if_changes: [scope, architecture, dependencies, sequencing, risk, verification, success_criteria]

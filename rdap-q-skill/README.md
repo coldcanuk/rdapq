@@ -70,8 +70,7 @@ Repository-local:
 ├── risks.md
 ├── decisions.md
 ├── iteration-log.md
-├── depth.md        # only after /rdapq depth
-└── train.md        # one compact row per checkpoint
+└── depth.md        # only after /rdapq depth
 ```
 
 ## Memory versus state
@@ -138,8 +137,7 @@ rdap-q-skill/
 │   ├── risks.md
 │   ├── decisions.md
 │   ├── iteration-log.md
-│   ├── depth.md
-│   └── train.md
+│   └── depth.md
 ├── memory/
 │   ├── README.md
 │   ├── engineering-preferences.md
