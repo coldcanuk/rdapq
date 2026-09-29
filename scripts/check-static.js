@@ -38,7 +38,7 @@ if (bin.rdapq !== './bin/rdapq.js' || bin['rdap-q'] !== './bin/rdapq.js') {
   failures.push('package.json bin entries must point at bin/rdapq.js');
 }
 
-for (const rel of ['bin/rdapq.js', 'lib/installer.js', 'scripts/check-versions.js', 'scripts/check-static.js', 'scripts/materialize-skill-links.js', 'scripts/stamp-version.js', 'scripts/version-targets.js']) {
+for (const rel of ['bin/rdapq.js', 'lib/installer.js', 'scripts/check-versions.js', 'scripts/check-static.js', 'scripts/materialize-skill-links.js', 'scripts/stamp-version.js', 'scripts/version-targets.js', 'rdap-q-skill/tool/rdapq.js', 'eval/run.js', 'eval/report.js', 'eval/lib/agents.js']) {
   const checked = spawnSync(process.execPath, ['--check', path.join(ROOT, rel)], { encoding: 'utf8' });
   if (checked.status !== 0) {
     failures.push(`${rel}: node --check failed\n${checked.stderr}`);
@@ -57,25 +57,28 @@ for (const rel of [...(plugin.rules || []), ...(plugin.skills || [])]) {
 
 need('rdap-q-skill/README.md', /SKILL\.md` is the instruction source/, 'README must point at SKILL.md and not act as a second protocol');
 
-for (const rel of ['manifest.json', 'rdap-q-skill/manifest.json']) {
+// Every file a manifest names must exist.
+for (const [rel, prefix] of [['manifest.json', ''], ['rdap-q-skill/manifest.json', 'rdap-q-skill/']]) {
   const manifest = JSON.parse(read(rel));
-  const bootstrap = (manifest.phase_load && manifest.phase_load.BOOTSTRAP) || [];
-  if (bootstrap.some((item) => String(item).includes('07-git-worktree'))) {
-    failures.push(`${rel}: BOOTSTRAP must not load the git mutation playbook`);
+  const named = [manifest.entrypoint, manifest.tool, ...Object.values(manifest.depth_load || {}).flat(), ...Object.values(manifest.event_load || {}).flat()];
+  for (const item of named) {
+    if (!item || !fs.existsSync(path.join(ROOT, prefix, item))) failures.push(`${rel}: names a missing file ${item}`);
   }
-  const events = manifest.event_load || {};
-  const listed = Object.values(events).flat().join('\n');
-  if (listed.includes('constitution.md')) {
-    failures.push(`${rel}: constitution.md must not be an event load`);
-  }
-  if (!Object.prototype.hasOwnProperty.call(events, 'git_mutation')) {
-    failures.push(`${rel}: git_mutation event must point at the worktree playbook`);
+  if (!(manifest.event_load && manifest.event_load.git_mutation)) {
+    failures.push(`${rel}: git_mutation event must point at the git playbook`);
   }
 }
-need('rdap-q-skill/SKILL.md', /BOOTSTRAP: \[playbooks\/00-bootstrap\.md\]/, 'SKILL bootstrap must load inspection only');
-ban('rdap-q-skill/SKILL.md', /methodology_conflict/, 'SKILL must not load the constitution stub');
-if (fs.existsSync(path.join(ROOT, 'rdap-q-skill/core/constitution.md'))) {
-  failures.push('rdap-q-skill/core/constitution.md must stay deleted');
+
+// The protocol is a token budget: SKILL.md is loaded on every /rdapq run.
+const skill = read('rdap-q-skill/SKILL.md');
+if (Buffer.byteLength(skill) > 6144) failures.push(`rdap-q-skill/SKILL.md is ${Buffer.byteLength(skill)} bytes; keep it under 6144 (about 1.5k tokens)`);
+need('rdap-q-skill/SKILL.md', /tool\/rdapq\.js/, 'SKILL must route measurement through the bundled tool');
+need('rdap-q-skill/SKILL.md', /Never say COMPLETE unless `gate` printed COMPLETE/, 'SKILL must forbid self-declared completion');
+for (const gone of ['core', 'state', 'templates']) {
+  if (fs.existsSync(path.join(ROOT, 'rdap-q-skill', gone))) failures.push(`rdap-q-skill/${gone}/ was replaced by the engine and must stay deleted`);
+}
+for (const bridge of ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', '.clinerules', '.goosehints', '.grok/rules.md', '.github/copilot-instructions.md', '.claude/commands/rdapq.md']) {
+  need(bridge, /^Fallback: /m, 'bridge needs a Fallback line the installer can point at the installed core');
 }
 
 if (failures.length) {

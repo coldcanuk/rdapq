@@ -8,13 +8,9 @@
   "commands": [
     "/rdapq",
     "/rdapq status",
-    "/rdapq score",
     "/rdapq audit",
-    "/rdapq resume",
     "/rdapq memory",
-    "/rdapq research",
-    "/rdapq explain",
-    "/rdapq depth"
+    "/rdapq depth full"
   ],
   "author": "coldcanuk",
   "repository": "https://github.com/coldcanuk/rdapq"

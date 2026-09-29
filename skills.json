@@ -5,7 +5,7 @@
       "name": "rdap-q",
       "version": "1.3.1",
       "title": "RDAP-Q: Research-Driven Adaptive Planning with Quality Gates",
-      "description": "Vendor-neutral engineering protocol for evidence-first software development, persistent state, calibrated 0-10 scoring, and diminishing-return exit gates.",
+      "description": "Evidence-first engineering protocol for AI coding agents. A bundled tool runs the checks and names the result, so the model never grades its own work.",
       "entrypoint": "rdap-q-skill/SKILL.md",
       "invocation": "/rdapq",
       "repository": "https://github.com/coldcanuk/rdapq",

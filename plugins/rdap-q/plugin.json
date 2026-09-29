@@ -1,7 +1,7 @@
 {
   "name": "rdap-q",
   "version": "1.3.1",
-  "description": "Research-Driven Adaptive Planning with Quality Gates protocol for evidence-first software engineering and diminishing-return exit gates.",
+  "description": "Evidence-first engineering protocol for AI coding agents. A bundled tool runs the checks and names the result, so the model never grades its own work.",
   "author": {
     "name": "coldcanuk"
   },
@@ -11,7 +11,7 @@
     "adaptive-planning",
     "quality-gates",
     "evidence-first",
-    "scoring",
+    "measured-gates",
     "sdlc"
   ],
   "license": "GPL-3.0-or-later",

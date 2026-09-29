@@ -4,172 +4,45 @@
 
 **Research-Driven Adaptive Planning with Quality Gates**
 
-RDAP-Q is a portable agent-engineering protocol for evidence-first software
-development.
+RDAP-Q is an evidence-first protocol for AI coding agents. The model plans the change; `tool/rdapq.js` runs the checks and names the result.
 
-It uses:
-
-- deterministic phase loading;
-- persistent repository state;
-- durable Markdown memory;
-- selectable depth (`lean`, `standard`, `full`);
-- oracle-only quality score (Q) from real commands and inspections;
-- hard quality gates;
-- a 3-round cap with honest non-complete exits;
-- vendor-neutral capability names;
-- a collision-resistant `/rdapq` command namespace.
-
-## Canonical namespace
+## Layout
 
 ```text
-Protocol:          RDAP-Q Agent Engineering Protocol
-Skill:             RDAP-Q Skill
-Slash command:     /rdapq
-Environment:       RDAPQ_HOME
-Unix home:         ~/.rdapq
-Windows home:      %USERPROFILE%\.rdapq
-Repository state:  <repo>/.rdapq/state/
+rdap-q-skill/
+├── SKILL.md            # the protocol, loaded on every /rdapq run (~1.2k tokens)
+├── tool/rdapq.js       # the engine: start, plan, check, gate, claim, note, state, memory, export, hook-stop
+├── playbooks/
+│   ├── discover.md     # full depth, before start
+│   ├── audit.md        # full depth or /rdapq audit, before reporting
+│   └── git.md          # only when asked to commit, push, or use a worktree
+├── manifest.json
+└── install/            # skill-local installers for Unix and Windows
 ```
 
-## RDAPQ_HOME
-
-Resolution order:
+## Files the tool writes
 
 ```text
-1. Explicit RDAPQ_HOME
-2. Windows: %USERPROFILE%\.rdapq
-3. Unix-like: ${HOME}/.rdapq
+<repo>/.rdapq/oracles.json   # what "done" means for the current task
+<repo>/.rdapq/state.jsonl    # append-only task log
+<repo>/.rdapq/depth          # optional default depth for this repo ("full")
+
+$RDAPQ_HOME/memory/records.jsonl          # global memory, one record per line
+$RDAPQ_HOME/projects/<id>/records.jsonl   # project memory
 ```
 
-This works cleanly with normal hosts, containers, CI, and bubblewrap sandboxes
-because `RDAPQ_HOME` may be redirected explicitly.
-
-## Storage model
-
-Global:
-
-```text
-$RDAPQ_HOME/
-├── config.md
-├── memory/
-├── projects/
-├── registry/
-└── skills/
-```
-
-Repository-local:
-
-```text
-<repo>/.rdapq/state/
-├── scope.md
-├── assumptions.md
-├── evidence.md
-├── research.md
-├── plan.md
-├── scorecard.md
-├── risks.md
-├── decisions.md
-├── iteration-log.md
-└── depth.md        # only after /rdapq depth
-```
-
-## Memory versus state
-
-**State** is transient project/build working memory.
-
-**Memory** is durable reusable knowledge.
-
-Do not promote something to durable memory unless it is:
-
-- durable;
-- reusable;
-- material;
-- safe;
-- grounded.
-
-Never persist secret values.
+`RDAPQ_HOME` defaults to `~/.rdapq` (`%USERPROFILE%\.rdapq` on Windows).
 
 ## Slash commands
 
 ```text
 /rdapq <task>
-/rdapq depth lean|standard|full
+/rdapq depth full <task>
 /rdapq status
-/rdapq score
 /rdapq audit
-/rdapq resume
-/rdapq memory
-/rdapq research
-/rdapq explain
+/rdapq memory <terms>
 ```
 
-## Package layout
+## Requirements
 
-```text
-rdap-q-skill/
-├── SKILL.md
-├── README.md
-├── manifest.json
-├── core/
-│   ├── controller.md
-│   ├── capabilities.md
-│   ├── memory.md
-│   ├── scoring.md
-│   ├── gates.md
-│   └── exit-logic.md
-├── playbooks/
-│   ├── 00-bootstrap.md
-│   ├── 01-discovery.md
-│   ├── 02-planning.md
-│   ├── 03-architecture.md
-│   ├── 04-implementation.md
-│   ├── 05-verification.md
-│   ├── 06-final-audit.md
-│   └── 07-git-worktree.md
-├── state/
-│   ├── README.md
-│   ├── scope.md
-│   ├── assumptions.md
-│   ├── evidence.md
-│   ├── research.md
-│   ├── plan.md
-│   ├── scorecard.md
-│   ├── risks.md
-│   ├── decisions.md
-│   ├── iteration-log.md
-│   └── depth.md
-├── memory/
-│   ├── README.md
-│   ├── engineering-preferences.md
-│   ├── tooling.md
-│   ├── lessons.md
-│   ├── patterns.md
-│   └── constraints.md
-├── projects/
-│   ├── project.md
-│   ├── architecture.md
-│   ├── lessons.md
-│   └── decisions.md
-├── templates/
-│   ├── task.md
-│   ├── milestone.md
-│   └── final-report.md
-└── diagrams/
-    ├── rdapq-control-loop.mmd
-    ├── rdapq-selective-loading.mmd
-    ├── rdapq-score-decision.mmd
-    ├── rdapq-evidence-flow.mmd
-    ├── rdapq-memory-model.mmd
-    └── rdapq-command-flow.mmd
-```
-
-## Loader recommendation
-
-Always load only `SKILL.md`.
-
-Load phase playbooks and event references deterministically as needed.
-
-Do not use embeddings as the primary retrieval mechanism for governance rules.
-
-Embeddings remain useful for source code, docs, issues, logs, and semantic
-repository knowledge.
+Node.js 22 or newer on the agent's PATH. The tool has no dependencies.

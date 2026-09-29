@@ -1,8 +1,10 @@
-protocol: RDAP-Q
-version: "1.3.1"
-on: [/rdapq, /rdap-q]
-load: .agents/skills/rdap-q/SKILL.md
-fallback: rdap-q-skill/SKILL.md
-then: current phase playbook only
-state: .rdapq/state
-skip: [manifest.json, other playbooks, bulk memory]
+# RDAP-Q 1.3.1
+
+The user invoked `/rdapq`. Before doing anything else, read the RDAP-Q skill and follow it for this task.
+
+Skill: `.agents/skills/rdap-q/SKILL.md` in this repository.
+Fallback: `rdap-q-skill/SKILL.md`
+
+The skill's tool is `tool/rdapq.js` in the same folder as `SKILL.md`.
+
+Task: $ARGUMENTS
