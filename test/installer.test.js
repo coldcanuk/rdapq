@@ -49,9 +49,39 @@ test('bare install command still installs every harness', () => {
   const { env } = tempLayout();
   const result = run(['install'], env);
   assert.equal(result.code, 0, result.err);
-  assert.equal(fs.existsSync(path.join(env.CODEX_HOME, 'AGENTS.md')), true);
+  assert.equal(fs.existsSync(path.join(env.HOME, '.agents', 'skills', 'rdap-q', 'SKILL.md')), true);
   assert.equal(fs.existsSync(path.join(env.GROK_HOME, 'skills', 'rdap-q', 'SKILL.md')), true);
   assert.equal(fs.existsSync(path.join(env.CLAUDE_HOME, 'commands', 'rdapq.md')), true);
+});
+
+test('codex and copilot get skills, not always-on global rules', () => {
+  const { env } = tempLayout();
+  const result = run(['install', '--codex', '--copilot'], env);
+  assert.equal(result.code, 0, result.err);
+  assert.equal(fs.existsSync(path.join(env.HOME, '.agents', 'skills', 'rdap-q', 'SKILL.md')), true);
+  assert.equal(fs.existsSync(path.join(env.COPILOT_HOME, 'skills', 'rdap-q', 'SKILL.md')), true);
+  assert.equal(fs.existsSync(path.join(env.CODEX_HOME, 'AGENTS.md')), false);
+  assert.equal(fs.existsSync(path.join(env.COPILOT_HOME, 'copilot-instructions.md')), false);
+});
+
+test('global bridges fall back to the installed core, not a repo path', () => {
+  const { env } = tempLayout();
+  const result = run(['install', '--claude', '--cline', '--goose'], env);
+  assert.equal(result.code, 0, result.err);
+  const core = path.join(env.RDAPQ_HOME, 'skills', 'rdap-q', 'SKILL.md');
+  assert.equal(fs.existsSync(core), true);
+  for (const bridge of [
+    path.join(env.CLAUDE_HOME, 'commands', 'rdapq.md'),
+    path.join(env.CLINE_HOME, 'rules', 'rdapq.md'),
+    path.join(env.GOOSE_HOME, '.goosehints'),
+  ]) {
+    const body = fs.readFileSync(bridge, 'utf8');
+    assert.ok(body.includes(`fallback: ${core}\n`), `${bridge}:\n${body}`);
+    assert.doesNotMatch(body, /fallback: rdap-q-skill/);
+  }
+  const again = run(['install', '--claude'], env);
+  assert.equal(again.code, 0, again.err);
+  assert.match(again.out, /unchanged .*rdapq\.md/);
 });
 
 test('install --claude does not install the other harnesses', () => {
@@ -92,9 +122,7 @@ test('install --all covers every harness and honors home overrides', () => {
     path.join(env.CLAUDE_HOME, 'commands', 'rdapq.md'),
     path.join(env.CLAUDE_HOME, 'skills', 'rdap-q', 'SKILL.md'),
     path.join(env.CLINE_HOME, 'rules', 'rdapq.md'),
-    path.join(env.COPILOT_HOME, 'copilot-instructions.md'),
     path.join(env.COPILOT_HOME, 'skills', 'rdap-q', 'SKILL.md'),
-    path.join(env.CODEX_HOME, 'AGENTS.md'),
     path.join(home, '.agents', 'skills', 'rdap-q', 'SKILL.md'),
     path.join(env.GROK_HOME, 'skills', 'rdap-q', 'SKILL.md'),
     path.join(env.GOOSE_HOME, '.goosehints'),
