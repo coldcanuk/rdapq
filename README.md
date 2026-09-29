@@ -3,7 +3,7 @@
 
 [![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Protocol Version](https://img.shields.io/badge/Protocol-v1.3.1-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![Protocol Version](https://img.shields.io/badge/Protocol-v1.4.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
 [![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#in-harness-marketplace-installation)
@@ -29,7 +29,7 @@
   "@type": "SoftwareSourceCode",
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
@@ -80,6 +80,7 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
 - [💾 Storage & Persistence Model](#storage-and-persistence-model)
   - [Strict Memory Safety Rules](#strict-memory-safety-rules)
 - [🛑 Exit Criteria & Diminishing Returns](#exit-criteria)
+- [📊 Eval](#eval)
 - [🧩 Directory Structure](#directory-structure)
 - [❓ Frequently Asked Questions (FAQ)](#faq)
 - [📄 License](#license)
@@ -150,7 +151,7 @@ That is optional. It is not required for `install --claude` or `init`.
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 22 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.3.1**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
+Node.js 22 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.4.0**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -170,7 +171,7 @@ npx --yes rdap-q install --cursor
 npx --yes rdap-q install --codex --grok
 
 # This release, not whatever is tagged latest later:
-npx --yes rdap-q@1.3.1 install --claude
+npx --yes rdap-q@1.4.0 install --claude
 ```
 
 ### All 8 harnesses:
@@ -266,7 +267,7 @@ npx --yes rdap-q@latest status
 Use the same harness flags you used the first time. `--cursor` above is only an example. To stay on this release:
 
 ```bash
-npx --yes rdap-q@1.3.1 install --cursor
+npx --yes rdap-q@1.4.0 install --cursor
 ```
 
 ### Command installed globally
@@ -280,7 +281,7 @@ rdapq status
 ```bash
 cd rdapq
 git fetch origin --tags
-git checkout v1.3.1          # or: git pull origin main
+git checkout v1.4.0          # or: git pull origin main
 ./install.sh --claude        # same flags as the first install
 ./install.sh status
 ```
@@ -288,7 +289,7 @@ git checkout v1.3.1          # or: git pull origin main
 ```powershell
 cd rdapq
 git fetch origin --tags
-git checkout v1.3.1
+git checkout v1.4.0
 .\install.ps1 -Claude
 node .\bin\rdapq.js status
 ```
@@ -359,7 +360,7 @@ RDAP-Q rejects arbitrary scores. All scores must be backed by verifiable evidenc
 | **10**| Reference Quality | Benchmark gold standard; mathematically proven or reference implementation. Rare. |
 
 > [!NOTE]
-> This scale labels the optional 8-dimension self-card written by `/rdapq score`. Since 1.3.1 the self-card is annotation only: it never enters Q and never decides an exit.
+> This scale labels the optional 8-dimension self-card written by `/rdapq score`. Since 1.4.0 the self-card is annotation only: it never enters Q and never decides an exit.
 
 ### <a id="oracle-q"></a> Oracle Q
 
@@ -462,6 +463,31 @@ Agents using RDAP-Q stop within 3 rounds:
 
 ---
 
+## <a id="eval"></a> 📊 Eval
+
+`eval/` measures whether RDAP-Q helps instead of asserting it. Eight small Node tasks (three bug fixes, two features, a refactor, and two traps whose visible tests pass on a naive fix) each ship hidden tests and a reference solution. `node eval/run.js --self-test` proves the hidden tests fail on the starting code and pass on the reference; `npm test` runs it.
+
+```bash
+node eval/run.js --agents claude:claude-sonnet-5-5,claude:claude-haiku-4-5-20251001 --conditions none,lean,full --reps 2
+node eval/report.js eval/results/<run> --write
+```
+
+The headline number is the **false-DONE rate**: runs that ended with "STATUS: DONE" while the hidden tests fail. Agents run headless with a scoped tool allowlist (read, edit, `node`, `npm test`, `git`) and project settings only.
+
+### Baseline: RDAP-Q 1.3.1 (2026-09-30) <!-- keep-version -->
+
+Sonnet 5.5 and Haiku 4.5, 8 tasks × 2 repetitions, 32 runs per condition. Full report: [`eval/results/baseline-1.3.1/report.md`](eval/results/baseline-1.3.1/report.md). <!-- keep-version -->
+
+| condition | hidden pass | false DONE | mean cost | mean turns |
+| :--- | :---: | :---: | :---: | :---: |
+| no protocol | 100% | 0% | $0.08 | 7.1 |
+| RDAP-Q lean | 91% | 9% | $0.12 | 15.2 |
+| RDAP-Q full | 97% | 3% | $0.15 | 17.6 |
+
+On this set, 1.3.1 cost 1.5–1.9× more and did not improve outcomes; all four false DONEs came from RDAP-Q runs. `lean` runs usually never opened `SKILL.md`, and only 1 of 64 RDAP-Q runs reported a terminal state. The tasks are also too easy for an unassisted agent to fail, so this set can show cost but not yet benefit. Harder tasks are the next addition. <!-- keep-version -->
+
+---
+
 ## <a id="directory-structure"></a> 🧩 Directory Structure
 
 ```text
@@ -481,6 +507,7 @@ rdapq/
 ├── lib/installer.js              # Installer implementation
 ├── test/                         # node:test coverage for install/init/status/pack
 ├── scripts/                      # Version, static, and npm pack checks
+├── eval/                         # Hidden-test eval harness and published results
 ├── .clinerules/rdapq.md          # Cline workspace rule
 ├── .goosehints                   # Block Goose agent hints
 ├── .claude-plugin/               # Claude Code marketplace definition
@@ -545,7 +572,7 @@ Contributions are welcome! If you want to add support for a new AI harness, opti
 1. Fork the repository: [https://github.com/coldcanuk/rdapq](https://github.com/coldcanuk/rdapq)
 2. Create a feature branch: `git checkout -b feature/new-harness-support`
 3. Run `npm test` (Node.js 22+). It checks installer behavior, the npm tarball, and version consistency.
-4. To release, run `npm version <patch|minor|major>`. It stamps the version into every manifest and bridge (see `scripts/version-targets.js`) in the same commit and tags `vX.Y.Z`. Never edit version stamps by hand; `npm run stamp` repairs drift. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
+4. To release, run `npm version <patch|minor|major>`. It stamps the version into every manifest and bridge (see `scripts/version-targets.js`) in the same commit and tags `vX.Y.Z`. Never edit version stamps by hand; `npm run stamp` repairs drift. A README line that must name an older version (release history, eval baselines) ends with `<!-- keep-version -->`. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
 5. Submit a Pull Request.
 
 **Maintained by:** [@coldcanuk](https://github.com/coldcanuk)  

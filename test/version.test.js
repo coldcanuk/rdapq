@@ -29,6 +29,7 @@ test('stamp-version moves every target to the package version and check-versions
   ];
   for (const rel of files) copy(rel, root);
 
+  fs.appendFileSync(path.join(root, 'README.md'), '\nMeasured on 0.9.1 <!-- keep-version -->\n');
   const pkgPath = path.join(root, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
   pkg.version = '9.8.7';
@@ -44,6 +45,8 @@ test('stamp-version moves every target to the package version and check-versions
   const checked = spawnSync(process.execPath, ['scripts/check-versions.js'], { cwd: root, encoding: 'utf8' });
   assert.equal(checked.status, 0, checked.stderr);
   assert.match(checked.stdout, /versions ok \(9\.8\.7\)/);
+
+  assert.match(fs.readFileSync(path.join(root, 'README.md'), 'utf8'), /Measured on 0\.9\.1 <!-- keep-version -->/);
 
   const again = spawnSync(process.execPath, ['scripts/stamp-version.js'], { cwd: root, encoding: 'utf8' });
   assert.match(again.stdout, /already at 9\.8\.7/);
