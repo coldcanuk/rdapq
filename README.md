@@ -80,6 +80,7 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
 - [💾 Storage & Persistence Model](#storage-and-persistence-model)
   - [Strict Memory Safety Rules](#strict-memory-safety-rules)
 - [🛑 Exit Criteria & Diminishing Returns](#exit-criteria)
+- [📊 Eval](#eval)
 - [🧩 Directory Structure](#directory-structure)
 - [❓ Frequently Asked Questions (FAQ)](#faq)
 - [📄 License](#license)
@@ -462,6 +463,31 @@ Agents using RDAP-Q stop within 3 rounds:
 
 ---
 
+## <a id="eval"></a> 📊 Eval
+
+`eval/` measures whether RDAP-Q helps instead of asserting it. Eight small Node tasks (three bug fixes, two features, a refactor, and two traps whose visible tests pass on a naive fix) each ship hidden tests and a reference solution. `node eval/run.js --self-test` proves the hidden tests fail on the starting code and pass on the reference; `npm test` runs it.
+
+```bash
+node eval/run.js --agents claude:claude-sonnet-5-5,claude:claude-haiku-4-5-20251001 --conditions none,lean,full --reps 2
+node eval/report.js eval/results/<run> --write
+```
+
+The headline number is the **false-DONE rate**: runs that ended with "STATUS: DONE" while the hidden tests fail. Agents run headless with a scoped tool allowlist (read, edit, `node`, `npm test`, `git`) and project settings only.
+
+### Baseline: RDAP-Q 1.3.1 (2026-09-30)
+
+Sonnet 5.5 and Haiku 4.5, 8 tasks × 2 repetitions, 32 runs per condition. Full report: [`eval/results/baseline-1.3.1/report.md`](eval/results/baseline-1.3.1/report.md).
+
+| condition | hidden pass | false DONE | mean cost | mean turns |
+| :--- | :---: | :---: | :---: | :---: |
+| no protocol | 100% | 0% | $0.08 | 7.1 |
+| RDAP-Q lean | 91% | 9% | $0.12 | 15.2 |
+| RDAP-Q full | 97% | 3% | $0.15 | 17.6 |
+
+On this set, 1.3.1 cost 1.5–1.9× more and did not improve outcomes; all four false DONEs came from RDAP-Q runs. `lean` runs usually never opened `SKILL.md`, and only 1 of 64 RDAP-Q runs reported a terminal state. The tasks are also too easy for an unassisted agent to fail, so this set can show cost but not yet benefit. Harder tasks are the next addition.
+
+---
+
 ## <a id="directory-structure"></a> 🧩 Directory Structure
 
 ```text
@@ -481,6 +507,7 @@ rdapq/
 ├── lib/installer.js              # Installer implementation
 ├── test/                         # node:test coverage for install/init/status/pack
 ├── scripts/                      # Version, static, and npm pack checks
+├── eval/                         # Hidden-test eval harness and published results
 ├── .clinerules/rdapq.md          # Cline workspace rule
 ├── .goosehints                   # Block Goose agent hints
 ├── .claude-plugin/               # Claude Code marketplace definition
