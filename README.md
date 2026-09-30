@@ -3,7 +3,7 @@
 
 [![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Protocol Version](https://img.shields.io/badge/Protocol-v1.4.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![Protocol Version](https://img.shields.io/badge/Protocol-v2.0.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
 [![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#in-harness-marketplace-installation)
@@ -19,8 +19,7 @@
 
 ## <a id="description"></a> 📌 Description
 
-> **Short Description (SEO & Registries):**  
-> **RDAP-Q: Research-Driven Adaptive Planning with Quality Gates** — Vendor-neutral AI agent engineering protocol & marketplace skill for **Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor**. Delivers evidence-first software engineering, calibrated quality scoring (0–10), persistent project state, and diminishing-return exit gates.
+> **RDAP-Q: Research-Driven Adaptive Planning with Quality Gates** — an evidence-first protocol and skill for AI coding agents in **Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor**. A bundled tool runs the checks and names the result, so the model never grades its own work.
 
 <!-- Machine-Readable Structured Metadata (Schema.org / JSON-LD for Crawlers & Robots) -->
 ```json
@@ -29,14 +28,14 @@
   "@type": "SoftwareSourceCode",
   "name": "RDAP-Q",
   "alternateName": "Research-Driven Adaptive Planning with Quality Gates",
-  "version": "1.4.0",
-  "description": "Universal AI agent engineering protocol for evidence-first software development, calibrated scoring, and diminishing-return exit gates across OpenAI Codex, xAI Grok, GitHub Copilot, Google Antigravity, Block Goose, Anthropic Claude, Cline, and Cursor.",
+  "version": "2.0.0",
+  "description": "Evidence-first engineering protocol for AI coding agents. A bundled tool runs the checks and names the result, so the model never grades its own work.",
   "codeRepository": "https://github.com/coldcanuk/rdapq",
   "license": "https://www.gnu.org/licenses/gpl-3.0",
-  "programmingLanguage": ["JavaScript", "YAML", "Markdown", "Shell", "PowerShell", "JSON"],
+  "programmingLanguage": ["JavaScript", "Markdown", "Shell", "PowerShell", "JSON"],
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Linux, macOS, Windows",
-  "keywords": "ai-agent, agent-skills, openai-codex, xai-grok, github-copilot, google-antigravity, block-goose, anthropic-claude, claude-code, cline, roo-code, cursor, quality-gates, adaptive-planning, software-engineering, autonomous-agent, sdlc-automation, slash-command, evidence-first, calibrated-scoring"
+  "keywords": "ai-agent, agent-skills, openai-codex, xai-grok, github-copilot, google-antigravity, block-goose, anthropic-claude, claude-code, cline, roo-code, cursor, quality-gates, evidence-first, autonomous-agent, slash-command"
 }
 ```
 
@@ -44,22 +43,25 @@
 
 ## <a id="overview"></a> 🚀 Overview
 
-**RDAP-Q** (Research-Driven Adaptive Planning with Quality Gates) is an open, vendor-neutral engineering methodology designed for autonomous coding agents, LLMs, and AI coding harnesses.
+Coding agents often say "done" when they are not. They grade their own work, and a self-grade is an opinion. RDAP-Q moves that decision into code: **the model proposes, the tool decides.**
 
-Standard AI assistants often suffer from hallucinated dependencies, ungrounded assumptions, premature completion declarations, and infinite optimization loops. RDAP-Q replaces guesswork with a disciplined, evidence-backed loop:
+The agent reads `SKILL.md` (about 1.2k tokens), plans the change, and then drives `tool/rdapq.js`, a zero-dependency Node script that ships inside the skill:
 
-$$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measured Quality} \longrightarrow \text{Worthwhile Improvement} \longrightarrow \text{Deterministic Stop}$$
+| Step | Command | What the tool does |
+| :--- | :--- | :--- |
+| Plan | `start --risk LOW --files a,b --run "npm test"` | Records what "done" means: risk, planned files, required commands, optional repro. |
+| Prove the bug | `check --before` | Runs the repro so the fix can be shown to change it from failing to passing. |
+| Measure | `check` | Runs the commands and scores five oracles. Appends one line to the task log. |
+| Decide | `gate` | Names the terminal state from the log. COMPLETE only when every required oracle passes. |
 
-### Why Autonomous Agents Need RDAP-Q
-
-| Pain Point in Typical Agents | How RDAP-Q Solves It |
+| Problem in typical agents | What RDAP-Q does |
 | :--- | :--- |
-| **Hallucinated Implementation Facts** | **Fact Tracking**: Enforces strict categorization (`OBSERVED`, `USER_SPECIFIED`, `VERIFIED_EXTERNAL`, `INFERRED`, `UNKNOWN`). Decisions cannot rely on `INFERRED` facts when verification is possible. |
-| **Premature "Task Complete" Claims** | **Hard Quality Gates**: Objective gate failures (failing tests, broken integrations, unverified behavior) categorically override numerical scores. |
-| **Vague Quality Metrics** | **Calibrated 8-Dimension Scoring**: Evaluates Functional Correctness (25%), Requirements Coverage (15%), Verification Strength (15%), and more on an anchored 0–10 scale. |
-| **Context Window Amnesia** | **Dual Persistence Model**: Separates ephemeral repository state (`.rdapq/state/`) from durable, secret-free cross-session memory (`$RDAPQ_HOME/memory/`). |
-| **Runaway Agent Costs** | **Diminishing-Return Exit Logic**: Mathematically halts iterations when marginal quality improvement drops below threshold ($< 0.15$), saving tokens and compute. |
-| **Vendor Lock-in** | **Universal Harness Support**: Native plug-and-play configuration for **Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor**. |
+| "Done" with failing or missing tests | `gate` refuses COMPLETE unless the required commands ran and passed. No command at all is `MISSING_TEST`. |
+| Tests pass but never touch the change | runtime only passes when a test that ran changed, or imports a changed module. |
+| Scope creep and stray edits | repo passes only when the diff matches the planned files; changing the plan needs a logged reason. |
+| Fixes that never proved the bug | HIGH and CRITICAL need a repro that failed before and passes after. |
+| Endless retry loops | At most 3 rounds, and the same failure twice ends as `STALLED`. |
+| Token-heavy state files | One append-only task log written by the tool. Memory is one record per line, searched rather than read. |
 
 ---
 
@@ -67,47 +69,42 @@ $$\text{Evidence} \longrightarrow \text{Correctness} \longrightarrow \text{Measu
 
 - [📌 Description](#description)
 - [🚀 Overview](#overview)
-- [🧭 System Architecture & Control Loop](#system-architecture)
+- [🧭 How it works](#system-architecture)
 - [📦 Harness install](#in-harness-marketplace-installation)
 - [⚡ Install](#npm-npx-installation)
 - [📜 Local clone](#universal-install-scripts)
 - [🔄 Update](#update)
 - [🔁 Weekly harness audit](#harness-audit)
-- [⚡ Canonical Commands (`/rdapq`)](#canonical-commands)
-- [🎯 Calibrated Quality Scale (0–10)](#calibrated-quality-scale)
-  - [Default Implementation Dimensions](#default-implementation-dimensions)
-  - [Evidence Caps & Hard Gates](#evidence-caps--hard-gates)
-- [💾 Storage & Persistence Model](#storage-and-persistence-model)
-  - [Strict Memory Safety Rules](#strict-memory-safety-rules)
-- [🛑 Exit Criteria & Diminishing Returns](#exit-criteria)
+- [⚡ Commands](#canonical-commands)
+- [🎯 Oracles and gates](#oracles)
+- [💾 Task log and memory](#storage-and-persistence-model)
 - [📊 Eval](#eval)
 - [🧩 Directory Structure](#directory-structure)
-- [❓ Frequently Asked Questions (FAQ)](#faq)
+- [❓ FAQ](#faq)
 - [📄 License](#license)
-- [🤝 Contributing & Community](#contributing)
+- [🤝 Contributing](#contributing)
 
 ---
 
-## <a id="system-architecture"></a> 🧭 System Architecture & Control Loop
+## <a id="system-architecture"></a> 🧭 How it works
 
-The host model is the control plane. RDAP-Q does not run a server. `bin/rdapq.js` is the only installer implementation; `install.sh` and `install.ps1` refuse a piped launch and then exec that CLI. Personal harness files are created when missing and are not replaced unless you pass `--force` (the previous file is kept as `*.rdapq-backup`). Skill trees are staged and renamed into place, so a failed copy cannot delete a working install.
+The host model is the control plane; RDAP-Q runs no server. `bin/rdapq.js` is the only installer, and it also forwards task commands to the engine. `install.sh` and `install.ps1` refuse a piped launch and then exec that CLI. Personal harness files are created when missing and are not replaced unless you pass `--force` (the previous file is kept as `*.rdapq-backup`). Skill trees are staged and renamed into place, so a failed copy cannot delete a working install.
 
 ```mermaid
 flowchart TD
-    A["/rdapq &lt;task&gt;"] --> B["Phase 00: Bootstrap<br/>(Load persistent memory &amp; state)"]
-    B --> C["Phase 01: Discovery &amp; Research<br/>(Gather OBSERVED facts)"]
-    C --> D{"Evidence Complete?"}
-    D -- No --> C
-    D -- Yes --> E["Phase 02 &amp; 03: Plan &amp; Architecture<br/>(Set quality targets)"]
-    E --> F["Phase 04: Implementation<br/>(Small verified milestones)"]
-    F --> G["Phase 05: Verification<br/>(Automated tests &amp; runtime checks)"]
-    G --> H["Phase 06: Final Audit &amp; Scoring<br/>(Calculate 8-dimension scorecard)"]
-    H --> I{"Hard Gates Pass?"}
-    I -- FAIL --> F
-    I -- PASS --> J{"Marginal Gain &ge; 0.15?"}
-    J -- Yes --> F
-    J -- No --> K["COMPLETE<br/>('Vibe Code Build complete.')"]
+    A["/rdapq &lt;task&gt;"] --> B["Read SKILL.md<br/>look at the code, search memory"]
+    B --> C["start: risk, planned files,<br/>required commands, repro"]
+    C --> D["Implement the smallest change<br/>plus a test that exercises it"]
+    D --> E["check: run commands,<br/>score the oracles"]
+    E --> F{"gate"}
+    F -- "CONTINUE (new failure, rounds &lt; 3)" --> D
+    F -- "same failure twice / round cap" --> G["STALLED"]
+    F -- "no command" --> H["MISSING_TEST"]
+    F -- "blocker noted" --> I["BLOCKED"]
+    F -- "required oracles pass" --> J["COMPLETE"]
 ```
+
+With `init --hook`, Claude Code also gets a Stop hook: while an RDAP-Q task's gate says CONTINUE, or files changed since the last check, the agent cannot end its turn.
 
 ---
 
@@ -151,7 +148,7 @@ That is optional. It is not required for `install --claude` or `init`.
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 22 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **1.4.0**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
+Node.js 22 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **2.0.0**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -171,7 +168,7 @@ npx --yes rdap-q install --cursor
 npx --yes rdap-q install --codex --grok
 
 # This release, not whatever is tagged latest later:
-npx --yes rdap-q@1.4.0 install --claude
+npx --yes rdap-q@2.0.0 install --claude
 ```
 
 ### All 8 harnesses:
@@ -188,8 +185,11 @@ That writes `$RDAPQ_HOME` (default `~/.rdapq`): `skills/rdap-q/`, plus empty `me
 
 ### Initialize the current project:
 ```bash
-# Missing bridges and .rdapq/state. Does not clobber a file you already edited.
+# Missing bridges and the skill tree. Does not clobber a file you already edited.
 npx --yes rdap-q init
+
+# Also add the Claude Code Stop hook to .claude/settings.json:
+npx --yes rdap-q init --hook
 
 # Replace existing bridges, keeping backups:
 npx --yes rdap-q init --force
@@ -267,7 +267,7 @@ npx --yes rdap-q@latest status
 Use the same harness flags you used the first time. `--cursor` above is only an example. To stay on this release:
 
 ```bash
-npx --yes rdap-q@1.4.0 install --cursor
+npx --yes rdap-q@2.0.0 install --cursor
 ```
 
 ### Command installed globally
@@ -281,7 +281,7 @@ rdapq status
 ```bash
 cd rdapq
 git fetch origin --tags
-git checkout v1.4.0          # or: git pull origin main
+git checkout v2.0.0          # or: git pull origin main
 ./install.sh --claude        # same flags as the first install
 ./install.sh status
 ```
@@ -289,7 +289,7 @@ git checkout v1.4.0          # or: git pull origin main
 ```powershell
 cd rdapq
 git fetch origin --tags
-git checkout v1.4.0
+git checkout v2.0.0
 .\install.ps1 -Claude
 node .\bin\rdapq.js status
 ```
@@ -325,166 +325,108 @@ The weekly script is what you cron. It does not use Grok cloud credits. Set `RDA
 
 ---
 
-## <a id="canonical-commands"></a> ⚡ Canonical Commands
+## <a id="canonical-commands"></a> ⚡ Commands
 
-Every harness adheres to the standardized `/rdapq` command suite:
+In the agent:
 
-| Command | Action / Semantic Meaning |
+| Command | Meaning |
 | :--- | :--- |
-| `/rdapq <task>` | Execute task using RDAP-Q protocol at the current depth: implement, verify with real commands, and stop cleanly within 3 rounds. |
-| `/rdapq depth lean\|standard\|full` | Set how many phases run. `lean` (default): IMPLEMENT + VERIFY. `standard`: adds BOOTSTRAP + DISCOVERY. `full`: all phases. The user switch wins over the effort fallback. |
-| `/rdapq status` | Show phase, depth, oracle Q, gates, blockers, and round. |
-| `/rdapq score` | Show oracle Q. Writes the 8-dimension self-card only for this command, as a label that never enters Q or the exit. |
-| `/rdapq audit` | Run the adversarial final-audit verification checklist. Loads AUDIT even at `lean`. |
-| `/rdapq resume` | Reload persistent memory/state, check for file/git drift, and safely resume. |
-| `/rdapq memory` | Query active persistent memories, lessons, patterns, and constraints. |
-| `/rdapq research`| Trigger structured discovery and evidence collection. Implies `standard` or `full` for this task. |
-| `/rdapq explain` | Explain the current depth, phase, or exit decision. |
+| `/rdapq <task>` | Run the task with RDAP-Q: plan, implement, check, gate. |
+| `/rdapq depth full <task>` | Also run discovery before `start` and the audit checklist before reporting. |
+| `/rdapq status` | Risk, planned files, last check, and the current gate verdict. |
+| `/rdapq audit` | Adversarial audit checklist, then check and gate again. |
+| `/rdapq memory <terms>` | Search durable memory (at most 12 records). |
+
+The engine, run by the agent or by you (`node .agents/skills/rdap-q/tool/rdapq.js <command>`, or `rdapq <command>` after `npm install -g rdap-q`):
+
+| Command | Meaning |
+| :--- | :--- |
+| `start --risk R --files a,b --run "<cmd>" [--repro "<cmd>" \| --no-defect] [--depth full] [--keep]` | Define done for a new task (`--keep`: redefine the current one). |
+| `plan --add a --drop b --why "<reason>"` | Change the planned files, with a logged reason. |
+| `check [--before]` | Run the oracles (`--before`: run the repro before fixing). |
+| `gate [--json]` | Terminal state. Exit code 0 COMPLETE, 3 CONTINUE, 1 otherwise. |
+| `claim "<fact>" [--external] [--source s] [--verified] [--off-path]` | Record a claim for the external and claims oracles. |
+| `note decision\|assumption\|risk\|question\|blocker "<text>"` | Log a note. A blocker makes the gate report BLOCKED. |
+| `state` | Task summary. |
+| `memory add\|search\|stale\|stats\|compact` | Durable memory. |
+| `export --out <file> [--repo <dir>]...` | Append anonymized measurement rows (no text, paths, or code) for training or eval. |
+| `hook-stop` | Claude Code Stop hook. |
 
 ---
 
-## <a id="calibrated-quality-scale"></a> 🎯 Calibrated Quality Scale (0–10)
+## <a id="oracles"></a> 🎯 Oracles and gates
 
-RDAP-Q rejects arbitrary scores. All scores must be backed by verifiable evidence:
-
-| Score | Calibration | Meaning & Criteria |
-| :---: | :--- | :--- |
-| **0** | Absent | Non-existent implementation; missing required components. |
-| **1–2**| Fundamentally Broken | Severe runtime crashes, syntax errors, or critical security vulnerabilities. |
-| **3–4**| Materially Deficient | Significant known defects, missing core requirements, or non-functional logic. |
-| **5** | Plausible Unverified | Appears correct on inspection, but lacks empirical verification or unit tests. |
-| **6** | Functional with Gaps | Executes successfully, but lacks edge case handling or thorough coverage. |
-| **7** | Solid | Standard acceptable quality; passes automated test suite with clean architecture. |
-| **8** | Strong Production | **Standard target.** Verified with comprehensive tests, failure handling, and documentation. |
-| **9** | Exceptional | Very low residual uncertainty; exhaustive edge case testing, fuzzing, and benchmarking. |
-| **10**| Reference Quality | Benchmark gold standard; mathematically proven or reference implementation. Rare. |
-
-> [!NOTE]
-> This scale labels the optional 8-dimension self-card written by `/rdapq score`. Since 1.4.0 the self-card is annotation only: it never enters Q and never decides an exit.
-
-### <a id="oracle-q"></a> Oracle Q
-
-Q is computed only from oracles a tool can observe. Each oracle is `pass` (10), `partial` (5), `fail` (0), or not run (excluded):
+`check` computes five oracles. Each is `pass`, `partial`, `fail`, or not applicable:
 
 | Oracle | Weight | Pass | Partial |
 | :--- | :---: | :--- | :--- |
-| runtime | 35 | Every required command exits 0, and at least one check touches the changed code. | Commands pass, but none touches the change. |
-| repo | 25 | The diff touches exactly the stated files. | Extra files are only generated or lockfile output. |
-| external | 15 | Every material external claim is `VERIFIED_EXTERNAL`. | The unverified claims are off the changed path. |
-| claims | 15 | Scaled by verified / total material claims. | — |
-| repro | 10 | The failure reproduced before the fix, and the same command passes after it. | Only one of the two was run. |
+| runtime | 35 | Every `--run` command exits 0, and a test changed or imports a changed file by path. | Commands pass, but no test touches the change. |
+| repo | 25 | The diff touches exactly the planned files. | Extra files are only lockfiles or build output. |
+| repro | 10 | The repro failed before the fix (run before any source edit) and passes after it. | It passes now, but was not run before the source changed. |
+| external | 15 | Every recorded external claim is verified. | Unverified claims are all marked off the changed path. |
+| claims | 15 | Share of recorded claims that are verified, 0–10. | — |
 
-Two failures are "the same" when they share an oracle id: the command plus its first failing test id or assertion. The same failure twice ends the run as `STALLED`.
+Q is the weighted mean of the oracles that ran; it is reported, not used to decide. `gate` decides:
 
-Q is the weighted mean of the oracles that ran. If none ran, Q is `UNMEASURED` and the task cannot be `COMPLETE`. Q is reported, but no Q number completes a task. Completion needs every applicable gate to pass and every oracle required for the task's risk to pass:
-
-| Risk | Required oracles |
+| Risk | Required to pass |
 | :--- | :--- |
 | LOW, MODERATE | runtime, repo |
-| HIGH | runtime, repo, repro |
-| CRITICAL | runtime, repo, repro, external |
+| HIGH | runtime, repo, repro (or `--no-defect`) |
+| CRITICAL | runtime, repo, repro, and every recorded external claim verified |
 
-`partial` never satisfies a requirement, and any oracle at `fail` blocks completion. `runtime` only passes when at least one executed check touches the changed code. A required oracle may be absent only when it does not apply: `repro` with no defect in scope, `external` with no external claim.
-
-### <a id="default-implementation-dimensions"></a> Self-card Dimensions (annotation only)
-
-```
-Functional Correctness        [25%] █████████████████████████
-Requirements Coverage         [15%] ███████████████
-Verification Strength         [15%] ███████████████
-Integration & Compatibility   [10%] ██████████
-Security & Failure Handling   [10%] ██████████
-Maintainability               [10%] ██████████
-Architectural Fit              [8%] ████████
-Operability & Documentation    [7%] ███████
-```
-
-### <a id="evidence-caps--hard-gates"></a> Evidence Caps & Hard Gates
-
-- **Unverified Behavior:** Dimension score capped at $\le 5.0$.
-- **Inferred Implementation Dependency:** Dimension score capped at $\le 5.0$.
-- **Known Material Defect:** Dimension score capped at $\le 4.0$.
-- **Failing Required Test:** Hard Gate **`FAIL`** (Overrides numerical score).
-- **Unexercised Integration:** Hard Gate **`FAIL`**.
+Any oracle at `fail` blocks COMPLETE. A check is tied to the plan it ran against: editing files or changing the plan afterwards means checking again. `check` refuses a fourth round. Terminal states are `COMPLETE`, `STALLED` (same failure twice, or 3 rounds used), `BLOCKED` (a blocker note), `MISSING_TEST` (no required command), and `UNCLEAR_TASK` (not started, or no planned files by the round cap). A new `start` archives the previous task's log to `.rdapq/archive/`. `CONTINUE` means fix the first reason and check again. A task is COMPLETE only when `gate` prints it; the agent then says **`Vibe Code Build complete.`**
 
 ---
 
-## <a id="storage-and-persistence-model"></a> 💾 Storage & Persistence Model
-
-RDAP-Q strictly decouples working project state from reusable cross-project memory:
+## <a id="storage-and-persistence-model"></a> 💾 Task log and memory
 
 ```
-├── Global Memory ($RDAPQ_HOME/ or ~/.rdapq/)
-│   ├── config.md                 # Global environment & harness settings
-│   ├── memory/                   # Durable cross-project lessons & patterns
-│   │   ├── engineering-preferences.md
-│   │   ├── tooling.md
-│   │   ├── lessons.md
-│   │   ├── patterns.md
-│   │   └── constraints.md
-│   ├── projects/                 # Cross-session project architecture records
-│   ├── registry/                 # Tool & harness capability registry
-│   └── skills/                   # Installed agent skills
-│
-└── Repository State (<repo>/.rdapq/state/)
-    ├── scope.md                  # Task boundary & success criteria
-    ├── assumptions.md            # Tracked assumptions & validation status
-    ├── evidence.md               # Empirical observations (test runs, inspects)
-    ├── research.md               # Discovery findings & API contracts
-    ├── plan.md                   # Milestone roadmap & phase checklist
-    ├── scorecard.md              # Oracle Q rows; self-card only after /rdapq score
-    ├── risks.md                  # Identified risks & mitigations
-    ├── decisions.md              # Architectural Decision Records (ADRs)
-    ├── iteration-log.md          # One row per round (max 3)
-    └── depth.md                  # Present only after /rdapq depth
+<repo>/.rdapq/
+├── oracles.json     # what "done" means: risk, files, commands, repro (written by start and plan)
+├── state.jsonl      # append-only: start, plan, check, claim, note, gate
+└── depth            # optional: "full" to default this repo to full depth
+
+$RDAPQ_HOME/ (default ~/.rdapq)
+├── skills/rdap-q/   # installed skill and tool
+├── memory/records.jsonl              # global memory, one record per line
+└── projects/<id>/records.jsonl       # per-project memory
 ```
 
-### <a id="strict-memory-safety-rules"></a> Strict Memory Safety Rules
-1. **Never Persist Secrets:** No API keys, passwords, bearer tokens, private keys, or credentials may ever be saved to memory or state. Store secret references (e.g. `Secret source: pass | identifier: api/key`), never raw values.
-2. **Evidence Overrides Memory:** Fresh observations in the current repository always take precedence over historical memories.
-
----
-
-## <a id="exit-criteria"></a> 🛑 Exit Criteria & Round Cap
-
-Agents using RDAP-Q stop within 3 rounds:
-
-- **ITERATE** (only while rounds remain):
-  - A gate failed with a new failing oracle, or
-  - An in-scope `HIGH` or `CRITICAL` defect has a reproduction.
-  - Self-score gaps, prose polish, and a repeated identical failure never justify another round.
-- **STOP, NOT COMPLETE**:
-  - The same oracle fails twice: `STALLED`.
-  - Round cap with ambiguous success criteria: `UNCLEAR_TASK`.
-  - Round cap with no verification command run: `MISSING_TEST`.
-  - Also `BLOCKED`, `CONSTRAINT_LIMITED`, and `FAILED_VERIFICATION`.
-- **TERMINAL SUCCESS** (all applicable gates pass and every required oracle passes):
-  - The agent declares: **`Vibe Code Build complete.`**
+The agent never rewrites task files; the tool appends to them. Memory records are one line each, with provenance (`class`, `evidence`, `verified` date) and status (`ACTIVE`, `STALE`, `SUPERSEDED`, `INVALID`). The tool enforces the rules instead of asking the model to: facts up to 240 characters, evidence up to 160, at most 80 active global and 40 active project records, no duplicates, and nothing that looks like a secret. `memory search` returns at most 12 matching records, so memory never loads in bulk. `memory compact` moves retired records to `archive/YYYY-MM.jsonl`.
 
 ---
 
 ## <a id="eval"></a> 📊 Eval
 
-`eval/` measures whether RDAP-Q helps instead of asserting it. Eight small Node tasks (three bug fixes, two features, a refactor, and two traps whose visible tests pass on a naive fix) each ship hidden tests and a reference solution. `node eval/run.js --self-test` proves the hidden tests fail on the starting code and pass on the reference; `npm test` runs it.
+`eval/` measures whether RDAP-Q helps instead of asserting it. Eight small Node tasks (bug fixes, features, a refactor, and two traps whose visible tests pass on a naive fix) each ship hidden tests and a reference solution. `node eval/run.js --self-test` proves the hidden tests fail on the starting code and pass on the reference; `npm test` runs it.
 
 ```bash
 node eval/run.js --agents claude:claude-sonnet-5-5,claude:claude-haiku-4-5-20251001 --conditions none,lean,full --reps 2
 node eval/report.js eval/results/<run> --write
 ```
 
-The headline number is the **false-DONE rate**: runs that ended with "STATUS: DONE" while the hidden tests fail. Agents run headless with a scoped tool allowlist (read, edit, `node`, `npm test`, `git`) and project settings only.
+The headline number is the **false-DONE rate**: runs that ended with "STATUS: DONE" while the hidden tests fail. Agents run with a scoped tool allowlist (read, edit, `node`, `npm test`, `git`) and project settings only.
 
-### Baseline: RDAP-Q 1.3.1 (2026-09-30) <!-- keep-version -->
+### Results <!-- keep-version -->
 
-Sonnet 5.5 and Haiku 4.5, 8 tasks × 2 repetitions, 32 runs per condition. Full report: [`eval/results/baseline-1.3.1/report.md`](eval/results/baseline-1.3.1/report.md). <!-- keep-version -->
+Sonnet 5.5 and Haiku 4.5, 8 tasks × 2 repetitions, 32 runs per condition. Reports: [`baseline-1.3.1`](eval/results/baseline-1.3.1/report.md) and [`v2.0.0`](eval/results/v2.0.0/report.md). <!-- keep-version -->
 
 | condition | hidden pass | false DONE | mean cost | mean turns |
 | :--- | :---: | :---: | :---: | :---: |
 | no protocol | 100% | 0% | $0.08 | 7.1 |
-| RDAP-Q lean | 91% | 9% | $0.12 | 15.2 |
-| RDAP-Q full | 97% | 3% | $0.15 | 17.6 |
+| 1.3.1 lean | 91% | 9% | $0.12 | 15.2 | <!-- keep-version -->
+| 1.3.1 full | 97% | 3% | $0.15 | 17.6 | <!-- keep-version -->
+| 2.0.0 lean | 88% | 13% | $0.12 | 13.4 | <!-- keep-version -->
+| 2.0.0 full | 94% | 6% | $0.12 | 13.2 | <!-- keep-version -->
 
-On this set, 1.3.1 cost 1.5–1.9× more and did not improve outcomes; all four false DONEs came from RDAP-Q runs. `lean` runs usually never opened `SKILL.md`, and only 1 of 64 RDAP-Q runs reported a terminal state. The tasks are also too easy for an unassisted agent to fail, so this set can show cost but not yet benefit. Harder tasks are the next addition. <!-- keep-version -->
+What this shows:
+
+- **Neither version beats no protocol on this task set.** Unassisted, both models passed every hidden test; every false DONE came from an RDAP-Q run. The set is too easy to show a benefit, and 32 runs per cell cannot separate 9% from 13%.
+- **2.0 fixed adoption.** The engine ran in 64 of 64 runs and the gate reached a verdict in 63. In 1.3.1, lean runs usually never opened `SKILL.md` and 1 of 64 runs reported a terminal state. <!-- keep-version -->
+- **The gate cannot catch tests the agent never wrote.** All six false COMPLETEs were Haiku runs that skipped spec clauses (invalid-input errors, a DST week) and wrote tests only for what they implemented. The engine measured those tests correctly.
+- **Cost:** 2.0 full costs less than 1.3.1 full ($0.12 against $0.15); both cost more than no protocol ($0.08). <!-- keep-version -->
+
+The roadmap's ship gate for 2.0 was a lower false-COMPLETE rate at equal or lower cost. It did not pass, so 2.0 is not released. Next: harder tasks that an unassisted agent fails, and requirement-to-test mapping so the gate can see untested spec clauses.
 
 ---
 
@@ -492,42 +434,22 @@ On this set, 1.3.1 cost 1.5–1.9× more and did not improve outcomes; all four 
 
 ```text
 rdapq/
-├── .gitignore                    # Complete exclusions for state, caches, secrets
-├── AGENTS.md                     # OpenAI Codex & Universal Agent Bridge
-├── CLAUDE.md                     # Anthropic Claude Code Workspace Bridge
-├── GEMINI.md                     # Google Antigravity & Gemini Bridge
-├── LICENSE                       # GNU General Public License v3.0
-├── README.md                     # High-density technical documentation
-├── marketplace.json              # Agent Skills Marketplace catalog entry
-├── package.json                  # NPM / VS Code registry metadata & keywords
-├── manifest.json                 # RDAP-Q protocol entrypoint definition
-├── install.sh                    # Thin Unix wrapper around bin/rdapq.js
-├── install.ps1                   # Thin Windows wrapper around bin/rdapq.js
-├── bin/rdapq.js                  # CLI entrypoint
-├── lib/installer.js              # Installer implementation
-├── test/                         # node:test coverage for install/init/status/pack
-├── scripts/                      # Version, static, and npm pack checks
-├── eval/                         # Hidden-test eval harness and published results
-├── .clinerules/rdapq.md          # Cline workspace rule
-├── .goosehints                   # Block Goose agent hints
-├── .claude-plugin/               # Claude Code marketplace definition
-├── .grok-plugin/                 # xAI Grok marketplace definition
-├── plugins/                      # Grok / Antigravity plugin catalog
-├── .claude/
-│   └── commands/rdapq.md         # Claude Code /rdapq slash command
-├── .github/
-│   └── copilot-instructions.md   # GitHub Copilot workspace instructions
-├── .grok/
-│   └── rules.md                  # xAI Grok developer rules
-└── rdap-q-skill/                 # Core protocol package
-    ├── SKILL.md                  # Primary protocol specification
-    ├── manifest.json             # Protocol manifest
-    ├── core/                     # Governance, scoring, gates, exit logic
-    ├── playbooks/                # Deterministic phase playbooks (00–07)
-    ├── state/                    # State templates
-    ├── memory/                   # Durable memory templates
-    ├── templates/                # Task & milestone templates
-    └── diagrams/                 # Mermaid architecture diagrams
+├── AGENTS.md, CLAUDE.md, GEMINI.md, .clinerules, .goosehints   # harness bridges
+├── .claude/commands/rdapq.md     # Claude Code /rdapq command
+├── .github/copilot-instructions.md, .grok/rules.md
+├── bin/rdapq.js                  # CLI: install, init, status, and task commands
+├── lib/installer.js              # installer implementation
+├── install.sh, install.ps1       # thin wrappers around bin/rdapq.js
+├── eval/                         # hidden-test eval harness and results
+├── scripts/                      # version stamping, static checks, harness audit
+├── test/                         # node:test suites
+├── manifest.json, marketplace.json, package.json, plugin manifests
+└── rdap-q-skill/                 # the skill that gets installed
+    ├── SKILL.md                  # the protocol (loaded on every /rdapq run)
+    ├── tool/rdapq.js             # the engine: start, check, gate, memory, export, hook
+    ├── playbooks/                # discover.md and audit.md (full depth), git.md
+    ├── manifest.json
+    └── install/                  # skill-local installers
 ```
 
 ---
@@ -535,18 +457,18 @@ rdapq/
 ## <a id="faq"></a> ❓ Frequently Asked Questions (FAQ)
 
 <details>
-<summary><strong>How does RDAP-Q differ from standard system prompts?</strong></summary>
-Standard system prompts are static and easily forgotten as the agent's context fills up. RDAP-Q is an active, deterministic protocol that uses phased playbook loading, persistent file-based state (<code>.rdapq/state/</code>), evidence caps, and rigorous mathematical exit gates.
+<summary><strong>How does RDAP-Q differ from a system prompt that says "run the tests"?</strong></summary>
+A prompt asks the model to check itself and trusts what it reports. RDAP-Q hands the checking to a script: the model cannot mark a task COMPLETE, only the <code>gate</code> command can, and it reads results the script recorded, not the model's summary.
 </details>
 
 <details>
-<summary><strong>Can I use RDAP-Q in existing CI/CD pipelines?</strong></summary>
-Yes. Because state and scorecards are saved as YAML in <code>.rdapq/state/</code> (the files keep a <code>.md</code> name), CI/CD runners can verify gate compliance, inspect scorecards, or audit the evidence log before approving pull requests.
+<summary><strong>Can I use RDAP-Q in CI?</strong></summary>
+Yes. <code>rdapq gate</code> exits 0 only on COMPLETE, and <code>.rdapq/state.jsonl</code> is plain JSON lines, so a CI job can re-run <code>rdapq check && rdapq gate</code> on the agent's branch.
 </details>
 
 <details>
 <summary><strong>Does RDAP-Q slow down small tasks?</strong></summary>
-No. RDAP-Q scales adaptively. For simple bug fixes or localized edits, the agent moves rapidly through Bootstrap and Discovery, runs verification, confirms the required oracles pass (runtime and repo for low risk), and terminates in a single round.
+Lean depth, the default, is one plan command, the edit, one check, and one gate. The eval section reports the measured token and time cost against no protocol.
 </details>
 
 <details>
@@ -554,7 +476,11 @@ No. RDAP-Q scales adaptively. For simple bug fixes or localized edits, the agent
 Set the <code>RDAPQ_HOME</code> environment variable:
 <pre><code>export RDAPQ_HOME=/custom/path/.rdapq</code></pre>
 Per-harness homes use <code>AGENTS_HOME</code> (Codex), <code>GROK_HOME</code>, <code>COPILOT_HOME</code>, <code>CLAUDE_HOME</code>, <code>CLINE_HOME</code>, <code>GEMINI_HOME</code>, and <code>GOOSE_HOME</code>.
-This is particularly useful in containerized environments, sandboxed CI jobs, and bubblewrap runtimes.
+</details>
+
+<details>
+<summary><strong>Coming from 1.x?</strong></summary>
+The YAML phase playbooks, the 8-dimension self-score, and the ten <code>.rdapq/state/*.md</code> files are gone. Old state files are ignored; delete <code>.rdapq/state/</code> when you no longer need it. Markdown memory files under <code>$RDAPQ_HOME/memory/</code> are not read by 2.x; re-add anything worth keeping with <code>rdapq memory add</code>.
 </details>
 
 ---
@@ -567,11 +493,11 @@ This project is licensed under the **GNU General Public License v3.0** (GPL-3.0-
 
 ## <a id="contributing"></a> 🤝 Contributing & Community
 
-Contributions are welcome! If you want to add support for a new AI harness, optimize scoring rubrics, or improve phase playbooks:
+Contributions are welcome, especially new harnesses, new eval tasks, and oracle improvements backed by eval results:
 
 1. Fork the repository: [https://github.com/coldcanuk/rdapq](https://github.com/coldcanuk/rdapq)
 2. Create a feature branch: `git checkout -b feature/new-harness-support`
-3. Run `npm test` (Node.js 22+). It checks installer behavior, the npm tarball, and version consistency.
+3. Run `npm test` (Node.js 22+). It checks the installer, the engine, the eval tasks, the npm tarball, and version consistency. Protocol changes should also come with an eval run.
 4. To release, run `npm version <patch|minor|major>`. It stamps the version into every manifest and bridge (see `scripts/version-targets.js`) in the same commit and tags `vX.Y.Z`. Never edit version stamps by hand; `npm run stamp` repairs drift. A README line that must name an older version (release history, eval baselines) ends with `<!-- keep-version -->`. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
 5. Submit a Pull Request.
 

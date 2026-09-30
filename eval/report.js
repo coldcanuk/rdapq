@@ -99,14 +99,25 @@ function report(dir) {
   });
   out.push(table(taskHeader, taskRows), '');
 
+  const gated = rows.filter((r) => r.gate);
+  if (gated.length) {
+    out.push('## Engine verdicts (RDAP-Q 2.x)', '');
+    const verdicts = group(gated, (r) => `${r.condition}: ${r.gate}`);
+    out.push(table(['condition: gate verdict', 'runs', 'hidden pass', 'false COMPLETE'], [...verdicts].sort().map(([k, v]) => [
+      k, v.length, `${v.filter((r) => r.hiddenPass).length}/${v.length}`, v.filter((r) => r.gate === 'COMPLETE' && !r.hiddenPass).length,
+    ])), '');
+    const engineRuns = rows.filter((r) => r.condition !== 'none' && !r.error);
+    out.push(`Engine used in ${engineRuns.filter((r) => r.engineCalls > 0).length}/${engineRuns.length} RDAP-Q runs; gate reached in ${gated.length}.`, '');
+  }
+
   const rdapq = rows.filter((r) => r.condition !== 'none' && !r.error);
   if (rdapq.length) {
     out.push('## RDAP-Q terminal states and state footprint', '');
     const terminals = group(rdapq, (r) => `${r.condition}: ${(r.terminal || []).join('+') || 'none reported'}`);
     out.push(table(['condition: terminal', 'runs'], [...terminals].sort().map(([k, v]) => [k, v.length])), '');
-    out.push(table(['condition', 'mean state files', 'mean state bytes'], conditions.filter((c) => c !== 'none').map((c) => {
+    out.push(table(['condition', 'SKILL.md read', 'mean state files', 'mean state bytes'], conditions.filter((c) => c !== 'none').map((c) => {
       const subset = rdapq.filter((r) => r.condition === c);
-      return [c, fmt(mean(subset.map((r) => r.state && r.state.files)), 1), fmt(mean(subset.map((r) => r.state && r.state.bytes)))];
+      return [c, `${subset.filter((r) => r.skillRead).length}/${subset.length}`, fmt(mean(subset.map((r) => r.state && r.state.files)), 1), fmt(mean(subset.map((r) => r.state && r.state.bytes)))];
     })), '');
   }
 

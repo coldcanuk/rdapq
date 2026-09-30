@@ -1,20 +1,16 @@
 {
   "$schema": "https://raw.githubusercontent.com/agent-skills/spec/main/agentskills.schema.json",
   "name": "rdap-q",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "type": "skill",
   "entrypoint": "rdap-q-skill/SKILL.md",
   "invocation": "/rdapq",
   "commands": [
     "/rdapq",
     "/rdapq status",
-    "/rdapq score",
     "/rdapq audit",
-    "/rdapq resume",
     "/rdapq memory",
-    "/rdapq research",
-    "/rdapq explain",
-    "/rdapq depth"
+    "/rdapq depth full"
   ],
   "author": "coldcanuk",
   "repository": "https://github.com/coldcanuk/rdapq"

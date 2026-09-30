@@ -1,90 +1,50 @@
 {
   "name": "rdap-q",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "protocol_name": "RDAP-Q Agent Engineering Protocol",
   "entrypoint": "rdap-q-skill/SKILL.md",
+  "tool": "rdap-q-skill/tool/rdapq.js",
   "invocation": "/rdapq",
   "home_env": "RDAPQ_HOME",
   "home_defaults": {
     "windows": "%USERPROFILE%\\.rdapq",
     "unix": "${HOME}/.rdapq"
   },
-  "repository_state": ".rdapq/state",
+  "task_files": {
+    "plan": ".rdapq/oracles.json",
+    "log": ".rdapq/state.jsonl",
+    "depth": ".rdapq/depth"
+  },
   "always_load": [
     "rdap-q-skill/SKILL.md"
   ],
-  "phase_load": {
-    "BOOTSTRAP": [
-      "rdap-q-skill/playbooks/00-bootstrap.md"
-    ],
-    "DISCOVERY": [
-      "rdap-q-skill/playbooks/01-discovery.md"
-    ],
-    "PLAN": [
-      "rdap-q-skill/playbooks/02-planning.md"
-    ],
-    "ARCHITECTURE": [
-      "rdap-q-skill/playbooks/03-architecture.md"
-    ],
-    "IMPLEMENT": [
-      "rdap-q-skill/playbooks/04-implementation.md"
-    ],
-    "VERIFY": [
-      "rdap-q-skill/playbooks/05-verification.md"
-    ],
-    "AUDIT": [
-      "rdap-q-skill/playbooks/06-final-audit.md",
-      "rdap-q-skill/playbooks/07-git-worktree.md"
+  "depth_load": {
+    "lean": [],
+    "full": [
+      "rdap-q-skill/playbooks/discover.md",
+      "rdap-q-skill/playbooks/audit.md"
     ]
   },
   "event_load": {
-    "controller_ambiguity": [
-      "rdap-q-skill/core/controller.md"
-    ],
-    "tool_mapping": [
-      "rdap-q-skill/core/capabilities.md"
-    ],
-    "memory_read_write_invalidate": [
-      "rdap-q-skill/core/memory.md"
-    ],
-    "gate_evaluation": [
-      "rdap-q-skill/core/gates.md"
-    ],
-    "score_calculation": [
-      "rdap-q-skill/core/scoring.md"
-    ],
-    "milestone_quality_decision": [
-      "rdap-q-skill/core/scoring.md",
-      "rdap-q-skill/core/gates.md",
-      "rdap-q-skill/core/exit-logic.md"
-    ],
-    "terminal_decision": [
-      "rdap-q-skill/core/scoring.md",
-      "rdap-q-skill/core/gates.md",
-      "rdap-q-skill/core/exit-logic.md"
-    ],
     "git_mutation": [
-      "rdap-q-skill/playbooks/07-git-worktree.md"
+      "rdap-q-skill/playbooks/git.md"
+    ],
+    "audit_command": [
+      "rdap-q-skill/playbooks/audit.md"
     ]
   },
   "commands": {
-    "/rdapq": "Start or continue RDAP-Q execution on the supplied task.",
-    "/rdapq status": "Show phase, depth, oracle Q, gates, blockers, and round.",
-    "/rdapq score": "Show oracle Q. Write the 8-dimension card only for this command, as a model label.",
-    "/rdapq depth": "Set depth to lean, standard, or full. The user switch wins over the effort fallback.",
-    "/rdapq audit": "Run the adversarial final-audit procedure.",
-    "/rdapq resume": "Reload persistent memory/state, inspect drift, and resume safely.",
-    "/rdapq memory": "Show relevant RDAP-Q memory and its validity status.",
-    "/rdapq research": "Enter discovery. Implies standard or full for this task.",
-    "/rdapq explain": "Explain the current depth, phase, or exit."
+    "/rdapq": "Run the task with RDAP-Q: plan, implement, and let the bundled tool check and gate it.",
+    "/rdapq status": "Show the task's risk, planned files, last check, and current gate verdict.",
+    "/rdapq audit": "Run the adversarial audit checklist, then check and gate again.",
+    "/rdapq memory": "Search durable memory (at most 12 matching records).",
+    "/rdapq depth full": "Run the task at full depth: discovery before start, audit before reporting."
   },
   "terminal_states": [
     "COMPLETE",
     "BLOCKED",
     "STALLED",
-    "CONSTRAINT_LIMITED",
-    "FAILED_VERIFICATION",
-    "UNCLEAR_TASK",
-    "MISSING_TEST"
+    "MISSING_TEST",
+    "UNCLEAR_TASK"
   ]
 }

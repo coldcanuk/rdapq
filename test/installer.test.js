@@ -76,8 +76,8 @@ test('global bridges fall back to the installed core, not a repo path', () => {
     path.join(env.GOOSE_HOME, '.goosehints'),
   ]) {
     const body = fs.readFileSync(bridge, 'utf8');
-    assert.ok(body.includes(`fallback: ${core}\n`), `${bridge}:\n${body}`);
-    assert.doesNotMatch(body, /fallback: rdap-q-skill/);
+    assert.ok(body.includes(`Fallback: \`${core}\`\n`), `${bridge}:\n${body}`);
+    assert.doesNotMatch(body, /Fallback: `rdap-q-skill/);
   }
   const again = run(['install', '--claude'], env);
   assert.equal(again.code, 0, again.err);
@@ -142,7 +142,7 @@ test('install --cursor writes a Cursor skill and leaves other harnesses alone', 
   const body = fs.readFileSync(skill, 'utf8');
   assert.match(body, /^---\nname: rdap-q\n/);
   assert.match(body, /disable-model-invocation: true/);
-  assert.equal(fs.existsSync(path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'playbooks', '00-bootstrap.md')), true);
+  assert.equal(fs.existsSync(path.join(env.CURSOR_HOME, 'skills', 'rdap-q', 'tool', 'rdapq.js')), true);
   assert.equal(fs.existsSync(path.join(env.CLAUDE_HOME, 'commands', 'rdapq.md')), false);
   assert.equal(fs.existsSync(path.join(home, '.cursor')), false);
 });
@@ -169,7 +169,7 @@ test('init keeps a custom harness file unless --force, and never follows a symli
   assert.equal(first.code, 0, first.err);
   assert.equal(fs.readFileSync(path.join(repo, 'AGENTS.md'), 'utf8'), 'custom rules\n');
   assert.match(fs.readFileSync(path.join(repo, 'AGENTS.md.rdapq'), 'utf8'), /RDAP-Q/);
-  assert.equal(fs.existsSync(path.join(repo, '.rdapq', 'state')), true);
+  assert.equal(fs.existsSync(path.join(repo, '.rdapq')), true);
   assert.equal(fs.existsSync(path.join(repo, '.agents', 'skills', 'rdap-q', 'SKILL.md')), true);
   assert.equal(fs.existsSync(path.join(repo, '.claude', 'skills', 'rdap-q', 'SKILL.md')), true);
   assert.equal(fs.existsSync(path.join(repo, '.clinerules', 'rdapq.md')), true);
@@ -308,4 +308,47 @@ test('skill-local installer swaps only after a verified stage', () => {
   assert.equal(fs.existsSync(path.join(dest, 'STALE.md')), false);
   assert.equal(fs.existsSync(path.join(dest, 'SKILL.md')), true);
   assert.match(second.stdout, /Installed RDAP-Q/);
+});
+
+test('task commands route to the bundled engine', () => {
+  const { env, root } = tempLayout();
+  const repo = path.join(root, 'repo');
+  fs.mkdirSync(repo);
+  const gate = run(['gate'], env, { cwd: repo });
+  assert.equal(gate.code, 1);
+  assert.match(gate.out, /UNCLEAR_TASK/);
+  const help = run(['--help'], env);
+  assert.match(help.out, /rdapq check/);
+});
+
+test('init --hook merges the Stop hook into existing settings', () => {
+  const { env, root } = tempLayout();
+  const repo = path.join(root, 'repo');
+  fs.mkdirSync(repo);
+  assert.equal(run(['init', '--hook'], env, { cwd: repo }).code, 0);
+  const settings = JSON.parse(fs.readFileSync(path.join(repo, '.claude', 'settings.json'), 'utf8'));
+  assert.match(settings.hooks.Stop[0].hooks[0].command, /tool\/rdapq\.js" hook-stop$/);
+
+  const other = path.join(root, 'other');
+  const file = path.join(other, '.claude', 'settings.json');
+  fs.mkdirSync(path.join(other, '.claude'), { recursive: true });
+  fs.writeFileSync(file, '{"model":"x","hooks":{"Stop":[{"hooks":[{"type":"command","command":"echo mine"}]}]}}\n');
+  assert.equal(run(['init', '--hook'], env, { cwd: other }).code, 0);
+  const merged = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(merged.model, 'x');
+  assert.equal(merged.hooks.Stop.length, 2);
+  assert.equal(merged.hooks.Stop[0].hooks[0].command, 'echo mine');
+  assert.match(fs.readFileSync(`${file}.rdapq-backup`, 'utf8'), /echo mine/);
+  const again = run(['init', '--hook'], env, { cwd: other });
+  assert.match(again.out, /unchanged .*settings\.json/);
+  assert.equal(JSON.parse(fs.readFileSync(file, 'utf8')).hooks.Stop.length, 2);
+
+  const broken = path.join(root, 'broken');
+  fs.mkdirSync(path.join(broken, '.claude'), { recursive: true });
+  fs.writeFileSync(path.join(broken, '.claude', 'settings.json'), '{not json\n');
+  assert.equal(run(['init', '--hook'], env, { cwd: broken }).code, 0);
+  assert.equal(fs.readFileSync(path.join(broken, '.claude', 'settings.json'), 'utf8'), '{not json\n');
+  assert.match(fs.readFileSync(path.join(broken, '.claude', 'settings.json.rdapq'), 'utf8'), /hook-stop/);
+
+  assert.equal(run(['install', '--hook'], env).code, 1);
 });

@@ -1,8 +1,8 @@
 {
   "name": "rdap-q",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "displayName": "RDAP-Q: Adaptive Planning with Quality Gates",
-  "description": "Vendor-neutral Research-Driven Adaptive Planning with Quality Gates protocol for Claude Code. Enforces evidence-first engineering, calibrated 0-10 scoring, and diminishing-return exit gates.",
+  "description": "Evidence-first engineering protocol for AI coding agents. A bundled tool runs the checks and names the result, so the model never grades its own work.",
   "author": {
     "name": "coldcanuk",
     "url": "https://github.com/coldcanuk"

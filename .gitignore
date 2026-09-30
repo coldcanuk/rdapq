@@ -7,6 +7,9 @@
 # ------------------------------------------------------------------------------
 # Ignore transient runtime state created by /rdapq execution inside workspaces
 .rdapq/state/
+.rdapq/oracles.json
+.rdapq/state.jsonl
+.rdapq/depth
 .rdapq/cache/
 .rdapq/logs/
 .rdapq/sessions/
@@ -17,11 +20,6 @@
 # Weekly vendor-doc audit cache and reports. The checker script is tracked.
 reports/harness-audit/
 
-# Preserve gitkeep if state directories need to exist in templates
-!rdap-q-skill/state/*.md
-!rdap-q-skill/memory/*.md
-!rdap-q-skill/projects/*.md
-!rdap-q-skill/templates/*.md
 
 # ------------------------------------------------------------------------------
 # Secrets & Credentials (NEVER PERSIST OR COMMIT)
