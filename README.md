@@ -4,6 +4,7 @@
 [![CI](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml/badge.svg)](https://github.com/coldcanuk/rdapq/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Protocol Version](https://img.shields.io/badge/Protocol-v2.0.0-emerald.svg)](https://github.com/coldcanuk/rdapq)
+[![npm](https://img.shields.io/npm/v/rdap-q.svg)](https://www.npmjs.com/package/rdap-q)
 [![Command](https://img.shields.io/badge/Command-%2Frdapq-purple.svg)](https://github.com/coldcanuk/rdapq)
 [![Marketplace: Universal](https://img.shields.io/badge/Marketplace-Ready-orange.svg)](https://github.com/coldcanuk/rdapq/blob/main/marketplace.json)
 [![Codex](https://img.shields.io/badge/OpenAI%20Codex-Supported-green.svg)](#in-harness-marketplace-installation)
@@ -20,6 +21,8 @@
 ## <a id="description"></a> 📌 Description
 
 > **RDAP-Q: Research-Driven Adaptive Planning with Quality Gates** — an evidence-first protocol and skill for AI coding agents in **Codex, Grok, Copilot, Antigravity, Goose, Claude, Cline, and Cursor**. A bundled tool runs the checks and names the result, so the model never grades its own work.
+
+This GitHub tree is protocol **2.0.0**. It is on `main` and is not published to npm: the 2.0 eval ship gate did not pass, so there is no `rdap-q@2.0.0` registry package and no `v2.0.0` git tag. The npm package [`rdap-q`](https://www.npmjs.com/package/rdap-q) `latest` is **1.4.0** (the 1.x protocol). Confirm with `npm view rdap-q version`. <!-- keep-version -->
 
 <!-- Machine-Readable Structured Metadata (Schema.org / JSON-LD for Crawlers & Robots) -->
 ```json
@@ -112,7 +115,9 @@ With `init --hook`, Claude Code also gets a Stop hook: while an RDAP-Q task's ga
 
 This package is not in the Anthropic, xAI, or GitHub Copilot catalogs. Do not use `gh extension install`, a VS Code extension search, or `goose toolkit add`. Those commands do not install RDAP-Q.
 
-The supported install is `npx --yes rdap-q`. `install --<harness>` writes that harness's user files. `init` writes the project files. A harness slash command is `/rdap-q` when the client loads `SKILL.md`. `/rdapq` works where a project bridge or Claude command file is present.
+`install --<harness>` writes that harness's user files. `init` writes the project files. A harness slash command is `/rdap-q` when the client loads `SKILL.md`. `/rdapq` works where a project bridge or Claude command file is present.
+
+`npx --yes rdap-q` and `npx --yes rdap-q@latest` install npm `latest`, which is **1.4.0**. To install **this** 2.0.0 tree, clone the repo or use the GitHub specifier below. <!-- keep-version -->
 
 | Harness | User install | What it writes | Project install (`init`) | Invoke |
 | :--- | :--- | :--- | :--- | :--- |
@@ -130,9 +135,13 @@ The supported install is `npx --yes rdap-q`. `install --<harness>` writes that h
 User installs never add always-on global rules for harnesses that load skills on demand, so RDAP-Q stays out of sessions that do not invoke it. Global bridges (the Claude command, Cline rules, Goose hints) point at the installed core under `$RDAPQ_HOME`. Earlier releases wrote `~/.codex/AGENTS.md` and `~/.copilot/copilot-instructions.md`; the installer never deletes your files, so remove those by hand if they only contain the RDAP-Q bridge.
 
 ```bash
-npx --yes rdap-q install --cursor
-npx --yes rdap-q install --codex --claude
-npx --yes rdap-q init
+# This GitHub tree (2.0.0, not on npm):
+npx --yes github:coldcanuk/rdapq install --cursor
+npx --yes github:coldcanuk/rdapq install --codex --claude
+npx --yes github:coldcanuk/rdapq init
+
+# Released npm package (pin; latest is 1.4.0): <!-- keep-version -->
+npx --yes rdap-q@$(npm view rdap-q version) install --cursor
 ```
 
 Claude Code can also add this repository as a plugin marketplace from inside a session, because `.claude-plugin/marketplace.json` is in the repo:
@@ -148,7 +157,7 @@ That is optional. It is not required for `install --claude` or `init`.
 
 ## <a id="npm-npx-installation"></a> ⚡ Install
 
-Node.js 22 or newer is required. Install from [`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public npm registry. This tree is package version **2.0.0**. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
+Node.js 22 or newer is required. Do not pipe an installer from the network (`curl | bash`, `irm | iex`). A piped script cannot see the skill tree and is refused.
 
 `SKILL.md` is the instruction source the agent loads. This README is the human guide.
 
@@ -156,66 +165,74 @@ With no harness flag, `install` configures all eight. Name a harness to leave th
 
 Edited harness files are kept. Pass `--force` to replace one. The previous file is saved as `<file>.rdapq-backup`. A file that is kept also gets the new copy beside it as `<file>.rdapq`. Skill trees are copied to a staging directory and renamed into place only after `SKILL.md` is present, so a failed update does not delete a working install.
 
-### One harness, or several:
+### This tree (2.0.0, GitHub `main`, not on npm)
+
 ```bash
-# Core skill plus Claude only.
-npx --yes rdap-q install --claude
+git clone https://github.com/coldcanuk/rdapq.git
+cd rdapq
+./install.sh --claude
 
-# Cursor only. The skill lands in ~/.cursor/skills/rdap-q.
-npx --yes rdap-q install --cursor
-
-# Codex and Grok together:
-npx --yes rdap-q install --codex --grok
-
-# This release, not whatever is tagged latest later:
-npx --yes rdap-q@2.0.0 install --claude
+# or, without cloning first:
+npx --yes github:coldcanuk/rdapq install --claude
+npx --yes github:coldcanuk/rdapq install --cursor
+npx --yes github:coldcanuk/rdapq install --codex --grok
+npx --yes github:coldcanuk/rdapq install --all
+npx --yes github:coldcanuk/rdapq install --global-only
 ```
 
-### All 8 harnesses:
+### Released npm package (1.4.0) <!-- keep-version -->
+
+[`rdap-q`](https://www.npmjs.com/package/rdap-q) on the public registry. Pin the version; `@latest` currently resolves to 1.4.0, which is the 1.x protocol. <!-- keep-version -->
+
 ```bash
-npx --yes rdap-q install --all
+# Pin npm latest (1.4.0). <!-- keep-version -->
+npx --yes rdap-q@$(npm view rdap-q version) install --claude
+npx --yes rdap-q@$(npm view rdap-q version) install --cursor
+npx --yes rdap-q@$(npm view rdap-q version) install --codex --grok
+npx --yes rdap-q@$(npm view rdap-q version) install --all
+npx --yes rdap-q@$(npm view rdap-q version) install --global-only
 ```
 
-### This repository only, no harness files:
-```bash
-npx --yes rdap-q install --global-only
-```
+Right after a publish, npm may advertise `latest` before the tarball is queryable. `npm error notarget No matching version found for rdap-q@x.y.z` is that window, or a stale local cache. Wait until `npm view rdap-q version` prints the version you expect, then pin as above. `npm cache clean --force` if a cached packument still names the previous latest.
 
-That writes `$RDAPQ_HOME` (default `~/.rdapq`): `skills/rdap-q/`, plus empty `memory/`, `projects/`, and `registry/` directories. It does not create harness bridges.
+`--global-only` writes `$RDAPQ_HOME` (default `~/.rdapq`): `skills/rdap-q/`, plus empty `memory/`, `projects/`, and `registry/` directories. It does not create harness bridges.
 
 ### Initialize the current project:
 ```bash
-# Missing bridges and the skill tree. Does not clobber a file you already edited.
-npx --yes rdap-q init
+# This tree:
+npx --yes github:coldcanuk/rdapq init
+npx --yes github:coldcanuk/rdapq init --hook
+npx --yes github:coldcanuk/rdapq init --force
+npx --yes github:coldcanuk/rdapq init --repo /path/to/my-project
 
-# Also add the Claude Code Stop hook to .claude/settings.json:
-npx --yes rdap-q init --hook
-
-# Replace existing bridges, keeping backups:
-npx --yes rdap-q init --force
-
-# Or target a specific workspace:
-npx --yes rdap-q --repo /path/to/my-project
+# Released npm package:
+npx --yes rdap-q@$(npm view rdap-q version) init
 ```
 
 `init` writes `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.clinerules/rdapq.md`, `.goosehints`, `.grok/rules.md`, `.github/copilot-instructions.md`, `.claude/commands/rdapq.md`, and skill trees at `.agents/skills/rdap-q/` and `.claude/skills/rdap-q/`. Cursor, Codex, Copilot, and Antigravity read `.agents/skills`. Claude Code reads `.claude/skills`.
 
 ### Check installation status:
 ```bash
-npx --yes rdap-q status
+npx --yes github:coldcanuk/rdapq status
+npx --yes rdap-q@$(npm view rdap-q version) status
 ```
 
 ### Install the command globally:
 ```bash
-npm install -g rdap-q
+# Released npm package (1.4.0): <!-- keep-version -->
+npm install -g rdap-q@$(npm view rdap-q version)
 rdapq install --claude
 rdapq status
 rdapq init
+
+# This tree, from a clone:
+npm install -g .
+rdapq install --claude
 ```
 
 Harness homes can be redirected without touching the real user profile. `RDAPQ_HOME`, `GEMINI_HOME`, `GOOSE_HOME`, `CLAUDE_HOME`, `CLINE_HOME`, `GROK_HOME`, `COPILOT_HOME`, `CURSOR_HOME`, and `AGENTS_HOME` are all honored.
 
-A checkout of a branch that is not released yet can still be installed with `npx --yes github:coldcanuk/rdapq`. The registry package is the supported install.
+`npx --yes github:coldcanuk/rdapq` always installs this GitHub tree. `npx --yes rdap-q` installs whatever npm currently tags `latest`.
 
 ---
 
@@ -253,59 +270,63 @@ These are not inside the skill tree and are kept:
 
 - `$RDAPQ_HOME/memory/`
 - `$RDAPQ_HOME/projects/`
-- repository task state in `<repo>/.rdapq/state/`
+- repository task files in `<repo>/.rdapq/` (`oracles.json`, `state.jsonl`)
 - a harness file you have edited, unless you pass `--force`
 
 `npm install` updates the CLI package only. It does not refresh `~/.rdapq` or the harness files. Run `rdapq install` again after the package is newer.
 
-### Registry (normal path)
+### This tree (GitHub `main`)
 ```bash
-npx --yes rdap-q@latest install --cursor
-npx --yes rdap-q@latest status
+npx --yes github:coldcanuk/rdapq install --cursor
+npx --yes github:coldcanuk/rdapq status
 ```
 
-Use the same harness flags you used the first time. `--cursor` above is only an example. To stay on this release:
+Use the same harness flags you used the first time. `--cursor` above is only an example.
 
-```bash
-npx --yes rdap-q@2.0.0 install --cursor
-```
+From a clone already on disk:
 
-### Command installed globally
-```bash
-npm install -g rdap-q@latest
-rdapq install --cursor
-rdapq status
-```
-
-### Checkout you already have
 ```bash
 cd rdapq
-git fetch origin --tags
-git checkout v2.0.0          # or: git pull origin main
-./install.sh --claude        # same flags as the first install
-./install.sh status
+git pull --ff-only origin main
+./install.sh --claude
+node ./bin/rdapq.js status
 ```
 
 ```powershell
 cd rdapq
-git fetch origin --tags
-git checkout v2.0.0
+git pull --ff-only origin main
 .\install.ps1 -Claude
 node .\bin\rdapq.js status
+```
+
+There is no `v2.0.0` tag. `git checkout v1.4.0` is the last tagged release. <!-- keep-version -->
+
+### Released npm package
+```bash
+# Pin; @latest is 1.4.0 and is the 1.x protocol. <!-- keep-version -->
+npx --yes rdap-q@$(npm view rdap-q version) install --cursor
+npx --yes rdap-q@$(npm view rdap-q version) status
+```
+
+### Command installed globally
+```bash
+npm install -g rdap-q@$(npm view rdap-q version)
+rdapq install --cursor
+rdapq status
 ```
 
 ### Take the new harness text
 A re-install that sees a different `AGENTS.md`, `CLAUDE.md`, or other bridge leaves your file in place and writes the packaged copy next to it as `<file>.rdapq`. Diff that sidecar. When you want the packaged text:
 
 ```bash
-npx --yes rdap-q install --claude --force
+npx --yes github:coldcanuk/rdapq install --claude --force
 ```
 
 `--force` copies the current file to `<file>.rdapq-backup`, then writes the new one. It does not delete `$RDAPQ_HOME/memory`.
 
 ### Workspace already initialized
 ```bash
-npx --yes rdap-q init
+npx --yes github:coldcanuk/rdapq init
 ```
 
 That refreshes `.agents/skills/rdap-q/` and creates any bridge that is missing. Add `--force` only when you want the bridges replaced. Start a new harness session afterward so it does not keep the previous `SKILL.md` in context.
@@ -426,7 +447,7 @@ What this shows:
 - **The gate cannot catch tests the agent never wrote.** All six false COMPLETEs were Haiku runs that skipped spec clauses (invalid-input errors, a DST week) and wrote tests only for what they implemented. The engine measured those tests correctly.
 - **Cost:** 2.0 full costs less than 1.3.1 full ($0.12 against $0.15); both cost more than no protocol ($0.08). <!-- keep-version -->
 
-The roadmap's ship gate for 2.0 was a lower false-COMPLETE rate at equal or lower cost. It did not pass, so 2.0 is not released. Next: harder tasks that an unassisted agent fails, and requirement-to-test mapping so the gate can see untested spec clauses.
+The roadmap's ship gate for 2.0 was a lower false-COMPLETE rate at equal or lower cost. It did not pass, so 2.0 is not released: npm `latest` remains **1.4.0**, and there is no `v2.0.0` tag. Next: harder tasks that an unassisted agent fails, and requirement-to-test mapping so the gate can see untested spec clauses. <!-- keep-version -->
 
 ---
 
@@ -475,7 +496,12 @@ Lean depth, the default, is one plan command, the edit, one check, and one gate.
 <summary><strong>How do I override the default storage directory?</strong></summary>
 Set the <code>RDAPQ_HOME</code> environment variable:
 <pre><code>export RDAPQ_HOME=/custom/path/.rdapq</code></pre>
-Per-harness homes use <code>AGENTS_HOME</code> (Codex), <code>GROK_HOME</code>, <code>COPILOT_HOME</code>, <code>CLAUDE_HOME</code>, <code>CLINE_HOME</code>, <code>GEMINI_HOME</code>, and <code>GOOSE_HOME</code>.
+Per-harness homes use <code>AGENTS_HOME</code> (Codex), <code>CURSOR_HOME</code>, <code>GROK_HOME</code>, <code>COPILOT_HOME</code>, <code>CLAUDE_HOME</code>, <code>CLINE_HOME</code>, <code>GEMINI_HOME</code>, and <code>GOOSE_HOME</code>.
+</details>
+
+<details>
+<summary><strong>Which version does <code>npx rdap-q</code> install?</strong></summary>
+npm <code>latest</code>, which is <strong>1.4.0</strong> (the 1.x protocol). This GitHub tree is <strong>2.0.0</strong> and is not on the registry. Install this tree with <code>npx --yes github:coldcanuk/rdapq</code> or a git clone. Pin a registry install with <code>npx --yes rdap-q@$(npm view rdap-q version)</code>. <!-- keep-version -->
 </details>
 
 <details>
@@ -498,7 +524,7 @@ Contributions are welcome, especially new harnesses, new eval tasks, and oracle 
 1. Fork the repository: [https://github.com/coldcanuk/rdapq](https://github.com/coldcanuk/rdapq)
 2. Create a feature branch: `git checkout -b feature/new-harness-support`
 3. Run `npm test` (Node.js 22+). It checks the installer, the engine, the eval tasks, the npm tarball, and version consistency. Protocol changes should also come with an eval run.
-4. To release, run `npm version <patch|minor|major>`. It stamps the version into every manifest and bridge (see `scripts/version-targets.js`) in the same commit and tags `vX.Y.Z`. Never edit version stamps by hand; `npm run stamp` repairs drift. A README line that must name an older version (release history, eval baselines) ends with `<!-- keep-version -->`. Publishing runs in `.github/workflows/release.yml` once the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publisher is configured for this repo.
+4. To cut a release, run `npm version <patch|minor|major>`. It stamps the version into every manifest and bridge (see `scripts/version-targets.js`) in the same commit and tags `vX.Y.Z`. Never edit version stamps by hand; `npm run stamp` repairs drift. A README line that must name an older version (release history, eval baselines, the npm `latest` that is not this tree) ends with `<!-- keep-version -->`. `.github/workflows/release.yml` publishes from a `v*` tag only when the `NPM_PUBLISH` repository variable is `true` and npm Trusted Publishing is configured for `coldcanuk/rdapq`. Until that is on, publish from a clean checkout of the tagged commit with `npm test` then `npm publish --access public`. Wait until `npm view rdap-q version` matches the tag before telling people to run `npx`; npm can take a few minutes to serve a new version. Publish this 2.0.0 tree only after the eval ship gate passes; npm `latest` is 1.4.0. <!-- keep-version -->
 5. Submit a Pull Request.
 
 **Maintained by:** [@coldcanuk](https://github.com/coldcanuk)  
